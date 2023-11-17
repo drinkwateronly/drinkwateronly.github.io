@@ -2812,4 +2812,40 @@ main函数终止，所有goroutine也会一并结束；终止goroutine的最好�
         <category>Go基础</category>
       </categories>
   </entry>
+  <entry>
+    <title>git报错与解决方案</title>
+    <url>/2023/11/17/git/git/</url>
+    <content><![CDATA[<h2 id="报错1"><a href="#报错1" class="headerlink" title="报错1"></a>报错1</h2><p>当pull遇到如下错误时</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&gt; PS E:\_code\go_project\interpreter_in_Go-master&gt; git pull remote main:master</span><br><span class="line">From https://github.com/drinkwateronly/interpreter_in_Go</span><br><span class="line"> ! [rejected]        main       -&gt; master  (non-fast-forward)</span><br></pre></td></tr></table></figure>
+
+<p>github上的肯定是最新的代码，可能的原因是本机的代码添加了无关紧要的注释，且添加前没有pull，造成的冲突导致的。</p>
+<p>此时的解决方案是将remote的main分支，pull到本机新建的main branch中，然后切换到main分支，将原分支master删除。此做法只适合本机没有更新代码的情况。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&gt; git pull remote main:main</span><br><span class="line">&gt; git checkout main</span><br><span class="line">&gt; git branch -D master </span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<p>fatal: unable to access ‘<a href="https://github.com/drinkwateronly/gstonegames_Spider_in_Go.git/">https://github.com/drinkwateronly/gstonegames_Spider_in_Go.git/</a>‘: Recv failure: Connection was reset ：</p>
+<p>git config –global http.proxy <a href="http://127.0.0.1:7890/">http://127.0.0.1:7890</a><br>git config –global https.proxy <a href="http://127.0.0.1:7890/">http://127.0.0.1:7890</a></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">git push -f  强推</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h2 id="错误-HTTP-408"><a href="#错误-HTTP-408" class="headerlink" title="错误 HTTP 408"></a>错误 HTTP 408</h2><p>主要原因：文件太大&#x2F;太多，缓存不够</p>
+<blockquote>
+<p><a href="https://blog.csdn.net/kanbarakun/article/details/134390526">https://blog.csdn.net/kanbarakun/article/details/134390526</a></p>
+</blockquote>
+<blockquote>
+<p>error: RPC failed; HTTP 408 curl 22 The requested URL returned error: 408<br>send-pack: unexpected disconnect while reading sideband packet<br>fatal: the remote end hung up unexpectedly<br>Everything up-to-date<br>FATAL Something’s wrong. Maybe you can find the solution here: <a href="https://hexo.io/docs/troubleshooting.html">https://hexo.io/docs/troubleshooting.html</a><br>Error: Spawn failed<br>    at ChildProcess.<anonymous> (C:\Users\wallnut\myBlog\node_modules\hexo-deployer-git\node_modules\hexo-util\lib\spawn.js:51:21)<br>    at ChildProcess.emit (node:events:513:28)<br>    at cp.emit (C:\Users\wallnut\myBlog\node_modules\cross-spawn\lib\enoent.js:34:29)<br>    at ChildProcess._handle.onexit (node:internal&#x2F;child_process:291:12)</p>
+</blockquote>
+<figure class="highlight cmd"><table><tr><td class="code"><pre><span class="line">git config --global http.postBuffer <span class="number">524288000</span>  </span><br><span class="line"># 或者  </span><br><span class="line">git config http.postBuffer <span class="number">524288000</span></span><br></pre></td></tr></table></figure>
+
+]]></content>
+      <categories>
+        <category>git</category>
+      </categories>
+  </entry>
 </search>

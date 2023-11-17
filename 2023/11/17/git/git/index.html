@@ -21,27 +21,27 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.18.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
 
-    <meta name="description" content="错误1报错内容无法往mysql中插入 0000-00-00 00:00:00的空时间  Error 1292 (22007): Incorrect datetime value: ‘0000-00-00’ for column ‘login_time’ at row 1 [9.386ms] [rows:0] INSERT INTO user_basic (created_at,updated_at">
+    <meta name="description" content="报错1当pull遇到如下错误时 123&gt; PS E:\_code\go_project\interpreter_in_Go-master&gt; git pull remote main:masterFrom https:&#x2F;&#x2F;github.com&#x2F;drinkwateronly&#x2F;interpreter_in_Go ! [rejected]        main       -&gt; mas">
 <meta property="og:type" content="article">
-<meta property="og:title" content="MySQL报错与解决方案">
-<meta property="og:url" content="http://example.com/2023/11/17/MySQL/error_report/index.html">
+<meta property="og:title" content="git报错与解决方案">
+<meta property="og:url" content="http://example.com/2023/11/17/git/git/index.html">
 <meta property="og:site_name" content="Wallnut">
-<meta property="og:description" content="错误1报错内容无法往mysql中插入 0000-00-00 00:00:00的空时间  Error 1292 (22007): Incorrect datetime value: ‘0000-00-00’ for column ‘login_time’ at row 1 [9.386ms] [rows:0] INSERT INTO user_basic (created_at,updated_at">
+<meta property="og:description" content="报错1当pull遇到如下错误时 123&gt; PS E:\_code\go_project\interpreter_in_Go-master&gt; git pull remote main:masterFrom https:&#x2F;&#x2F;github.com&#x2F;drinkwateronly&#x2F;interpreter_in_Go ! [rejected]        main       -&gt; mas">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2023-11-17T11:21:00.000Z">
-<meta property="article:modified_time" content="2023-11-17T12:01:15.537Z">
+<meta property="article:published_time" content="2023-11-17T02:42:07.000Z">
+<meta property="article:modified_time" content="2023-11-17T12:22:31.119Z">
 <meta property="article:author" content="Wallnut">
 <meta name="twitter:card" content="summary">
 
 
-<link rel="canonical" href="http://example.com/2023/11/17/MySQL/error_report/">
+<link rel="canonical" href="http://example.com/2023/11/17/git/git/">
 
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://example.com/2023/11/17/MySQL/error_report/","path":"2023/11/17/MySQL/error_report/","title":"MySQL报错与解决方案"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://example.com/2023/11/17/git/git/","path":"2023/11/17/git/git/","title":"git报错与解决方案"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>MySQL报错与解决方案 | Wallnut</title>
+<title>git报错与解决方案 | Wallnut</title>
   
 
 
@@ -140,7 +140,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%94%99%E8%AF%AF1"><span class="nav-number">1.</span> <span class="nav-text">错误1</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8A%A5%E9%94%99%E5%86%85%E5%AE%B9"><span class="nav-number">1.1.</span> <span class="nav-text">报错内容</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A7%A3%E5%86%B3%E6%96%B9%E5%BC%8F"><span class="nav-number">1.2.</span> <span class="nav-text">解决方式</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%94%99%E8%AF%AF2"><span class="nav-number">2.</span> <span class="nav-text">错误2</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%94%99%E8%AF%AF%E5%86%85%E5%AE%B9%EF%BC%9A"><span class="nav-number">2.1.</span> <span class="nav-text">错误内容：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A7%A3%E5%86%B3%E6%96%B9%E5%BC%8F-1"><span class="nav-number">2.2.</span> <span class="nav-text">解决方式</span></a></li></ol></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8A%A5%E9%94%991"><span class="nav-number">1.</span> <span class="nav-text">报错1</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%94%99%E8%AF%AF-HTTP-408"><span class="nav-number">2.</span> <span class="nav-text">错误 HTTP 408</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -193,7 +193,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2023/11/17/MySQL/error_report/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/11/17/git/git/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.png">
@@ -206,12 +206,12 @@
     </span>
 
     <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="MySQL报错与解决方案 | Wallnut">
+      <meta itemprop="name" content="git报错与解决方案 | Wallnut">
       <meta itemprop="description" content="">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          MySQL报错与解决方案
+          git报错与解决方案
         </h1>
 
         <div class="post-meta-container">
@@ -223,7 +223,7 @@
       <span class="post-meta-item-text">发表于</span>
       
 
-      <time title="创建时间：2023-11-17 19:21:00 / 修改时间：20:01:15" itemprop="dateCreated datePublished" datetime="2023-11-17T19:21:00+08:00">2023-11-17</time>
+      <time title="创建时间：2023-11-17 10:42:07 / 修改时间：20:22:31" itemprop="dateCreated datePublished" datetime="2023-11-17T10:42:07+08:00">2023-11-17</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -231,7 +231,7 @@
       </span>
       <span class="post-meta-item-text">分类于</span>
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/MySQL/" itemprop="url" rel="index"><span itemprop="name">MySQL</span></a>
+          <a href="/categories/git/" itemprop="url" rel="index"><span itemprop="name">git</span></a>
         </span>
     </span>
 
@@ -244,26 +244,34 @@
     
     
     
-    <div class="post-body" itemprop="articleBody"><h1 id="错误1"><a href="#错误1" class="headerlink" title="错误1"></a>错误1</h1><h2 id="报错内容"><a href="#报错内容" class="headerlink" title="报错内容"></a>报错内容</h2><p>无法往mysql中插入 0000-00-00 00:00:00的空时间</p>
+    <div class="post-body" itemprop="articleBody"><h2 id="报错1"><a href="#报错1" class="headerlink" title="报错1"></a>报错1</h2><p>当pull遇到如下错误时</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&gt; PS E:\_code\go_project\interpreter_in_Go-master&gt; git pull remote main:master</span><br><span class="line">From https://github.com/drinkwateronly/interpreter_in_Go</span><br><span class="line"> ! [rejected]        main       -&gt; master  (non-fast-forward)</span><br></pre></td></tr></table></figure>
+
+<p>github上的肯定是最新的代码，可能的原因是本机的代码添加了无关紧要的注释，且添加前没有pull，造成的冲突导致的。</p>
+<p>此时的解决方案是将remote的main分支，pull到本机新建的main branch中，然后切换到main分支，将原分支master删除。此做法只适合本机没有更新代码的情况。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&gt; git pull remote main:main</span><br><span class="line">&gt; git checkout main</span><br><span class="line">&gt; git branch -D master </span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<p>fatal: unable to access ‘<a target="_blank" rel="noopener" href="https://github.com/drinkwateronly/gstonegames_Spider_in_Go.git/">https://github.com/drinkwateronly/gstonegames_Spider_in_Go.git/</a>‘: Recv failure: Connection was reset ：</p>
+<p>git config –global http.proxy <a target="_blank" rel="noopener" href="http://127.0.0.1:7890/">http://127.0.0.1:7890</a><br>git config –global https.proxy <a target="_blank" rel="noopener" href="http://127.0.0.1:7890/">http://127.0.0.1:7890</a></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git push -f  强推</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h2 id="错误-HTTP-408"><a href="#错误-HTTP-408" class="headerlink" title="错误 HTTP 408"></a>错误 HTTP 408</h2><p>主要原因：文件太大&#x2F;太多，缓存不够</p>
 <blockquote>
-<p>Error 1292 (22007): Incorrect datetime value: ‘0000-00-00’ for column ‘login_time’ at row 1 [9.386ms] [rows:0] INSERT INTO <code>user_basic</code> (<code>created_at</code>,<code>updated_at</code>,<code>deleted_at</code>,<code>name</code>,<code>password</code>,<code>phone</code>,<code>email</code>,<code>identity</code>,<code>client_ip</code>,<code>client_port</code>,<code>login_time</code>,<code>heartbeat_time</code>,<code>login_out_time</code>,<code>is_login_out</code>,<code>device_info</code>) VALUES (‘2023-09-05 10:04:15.45’,’2023-09-05 10:04:15.45’,NULL,’chenjie’,’’,’’,’’,’’,’’,’’,’0000-00-00 00:00:00’,’0000-00-00 00:00:00’,’0000-00-00 00:00:00’,false,’’)</p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/kanbarakun/article/details/134390526">https://blog.csdn.net/kanbarakun/article/details/134390526</a></p>
 </blockquote>
-<h2 id="解决方式"><a href="#解决方式" class="headerlink" title="解决方式"></a>解决方式</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">show variables like &#x27;sql_mode&#x27;;</span><br><span class="line">    -&gt; ;</span><br><span class="line">+---------------+-----------------------------------------------------------------------------------------------------------------------+</span><br><span class="line">| Variable_name | Value                                                                                                                 |</span><br><span class="line">+---------------+-----------------------------------------------------------------------------------------------------------------------+</span><br><span class="line">| sql_mode      | ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION |</span><br><span class="line">+---------------+-----------------------------------------------------------------------------------------------------------------------+</span><br><span class="line">1 row in set, 1 warning (0.00 sec)</span><br></pre></td></tr></table></figure>
-
-<p>可以看到sql_mode字段有NO_ZERO_IN_DATE，NO_ZERO_DATE，都删除即可</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">set global sql_mode=&#x27;ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION&#x27;;</span><br></pre></td></tr></table></figure>
-
-
-
-<h1 id="错误2"><a href="#错误2" class="headerlink" title="错误2"></a>错误2</h1><h2 id="错误内容："><a href="#错误内容：" class="headerlink" title="错误内容："></a>错误内容：</h2><blockquote>
-<p>SQL_ERROR_INFO: “Expression #3 of SELECT list is not in GROUP BY clause and contains nonaggregated column ‘practice_record.submit_time’ which is not functionally dependent on columns in GROUP BY clause; this is incompatible with sql_mode&#x3D;only_full_group_by”</p>
-</blockquote>
-<p><a target="_blank" rel="noopener" href="https://www.nowcoder.com/practice/f6b4770f453d4163acc419e3d19e6746?tpId=240&tqId=2183006&ru=/exam/oj&qru=/ta/sql-advanced/question-ranking&sourceUrl=/exam/oj">月总刷题数和日均刷题数_牛客题霸_牛客网 (nowcoder.com)</a></p>
 <blockquote>
-<p>ONLY_FULL_GROUP_BY的语义就是确定select list中的值要么是来自于聚合函数（sum、avg、max等）的结果，要么是来自于group by list中的表达式的值，在计算日均刷题数的时候，使用了day( last_day( submit_time))，这个数据是临时定义的，它即不来自聚合函数又不来自group by list，所以会报错。</p>
+<p>error: RPC failed; HTTP 408 curl 22 The requested URL returned error: 408<br>send-pack: unexpected disconnect while reading sideband packet<br>fatal: the remote end hung up unexpectedly<br>Everything up-to-date<br>FATAL Something’s wrong. Maybe you can find the solution here: <a target="_blank" rel="noopener" href="https://hexo.io/docs/troubleshooting.html">https://hexo.io/docs/troubleshooting.html</a><br>Error: Spawn failed<br>    at ChildProcess.<anonymous> (C:\Users\wallnut\myBlog\node_modules\hexo-deployer-git\node_modules\hexo-util\lib\spawn.js:51:21)<br>    at ChildProcess.emit (node:events:513:28)<br>    at cp.emit (C:\Users\wallnut\myBlog\node_modules\cross-spawn\lib\enoent.js:34:29)<br>    at ChildProcess._handle.onexit (node:internal&#x2F;child_process:291:12)</p>
 </blockquote>
-<h2 id="解决方式-1"><a href="#解决方式-1" class="headerlink" title="解决方式"></a>解决方式</h2><p>MySQL提供了 <strong>any_value()</strong> 函数来抑制ONLY_FULL_GROUP_BY值被拒绝</p>
-<p>any_value()会选择被分到同一组的数据里第一条数据的指定列值作为返回数据。在计算日均刷题数的时候，选择submit_month作为返回数据，这样就忽略了分母中的day( last_day( submit_time))，从而避免ONLY_FULL_GROUP_BY 报错。</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git config --global http.postBuffer <span class="number">524288000</span>  </span><br><span class="line"># 或者  </span><br><span class="line">git config http.postBuffer <span class="number">524288000</span></span><br></pre></td></tr></table></figure>
+
 
     </div>
 
@@ -277,11 +285,14 @@
 
           <div class="post-nav">
             <div class="post-nav-item">
-                <a href="/2023/11/17/MySQL/tutorial/" rel="prev" title="基础教程">
-                  <i class="fa fa-angle-left"></i> 基础教程
+                <a href="/2023/11/17/Golang/Tutorial/ch10%20%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86/" rel="prev" title="ch10-错误处理">
+                  <i class="fa fa-angle-left"></i> ch10-错误处理
                 </a>
             </div>
             <div class="post-nav-item">
+                <a href="/2023/11/17/408/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86/ch4%E6%8C%87%E4%BB%A4%E7%B3%BB%E7%BB%9F/" rel="next" title="ch4 指令系统">
+                  ch4 指令系统 <i class="fa fa-angle-right"></i>
+                </a>
             </div>
           </div>
     </footer>
