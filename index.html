@@ -1348,128 +1348,6 @@ Savepoints: NO
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://drinkwateronly.github.io/2023/11/17/Golang/Tutorial/ch10%20%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="Wallnut">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Wallnut">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Wallnut">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2023/11/17/Golang/Tutorial/ch10%20%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86/" class="post-title-link" itemprop="url">ch10-错误处理</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-      
-
-      <time title="创建时间：2023-11-17 00:00:00 / 修改时间：19:48:28" itemprop="dateCreated datePublished" datetime="2023-11-17T00:00:00+08:00">2023-11-17</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Golang/" itemprop="url" rel="index"><span itemprop="name">Golang</span></a>
-        </span>
-          ，
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Golang/Go%E5%9F%BA%E7%A1%80/" itemprop="url" rel="index"><span itemprop="name">Go基础</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="第十章-错误处理"><a href="#第十章-错误处理" class="headerlink" title="第十章 错误处理"></a>第十章 错误处理</h1><p>go使用函数的返回值来处理错误，如果返回nil，则表示没有错误。</p>
-<h2 id="10-2-自定义错误"><a href="#10-2-自定义错误" class="headerlink" title="10.2 自定义错误"></a>10.2 自定义错误</h2><p><strong>go语言常量要是编译时就能确定的数据，errors.New(“xxx”) 要等到运行时才能确定，所以不能作为常量</strong></p>
-<h3 id="10-2-1-错误类型"><a href="#10-2-1-错误类型" class="headerlink" title="10.2.1 错误类型"></a>10.2.1 错误类型</h3><p>error类型实际是个接口，error接口包含Error方法，调用这个方法就会返回一个字符串，这个字符串是显示当前的错误详情。</p>
-<p>自定一个类型，类型实现了Error方法，它就实现了error接口，就是一个自定义的错误。</p>
-<p>和struct一样，用<code>type</code>关键字定义一个错误。</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> <span class="type">error</span> <span class="keyword">interface</span> &#123;</span><br><span class="line">    Error() <span class="type">string</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="10-2-2-创建错误"><a href="#10-2-2-创建错误" class="headerlink" title="10.2.2 创建错误"></a>10.2.2 创建错误</h3><p>来自标准库的errors包，可以自定义错误内容</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">err := errors.New(<span class="string">&quot;this is an error&quot;</span>)</span><br></pre></td></tr></table></figure>
-<h3 id="10-2-3-格式化错误格式"><a href="#10-2-3-格式化错误格式" class="headerlink" title="10.2.3 格式化错误格式"></a>10.2.3 格式化错误格式</h3><p>来自标准库fmt包的<code>Errorf</code>方法，也是生成一个错误对象，但可以设置返回的错误字符串的内容格式（即可以添加变量）</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Errorf</span><span class="params">(format <span class="type">string</span>, a ...<span class="keyword">interface</span>&#123;&#125;)</span></span> <span class="type">error</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> errors.New(Sprintf(format, a...)) <span class="comment">// 内部实际上也是调用了errors包</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>demo：</p>
-<p>runtime包中的<code>runtime.Caller(0)</code>获取了当前代码所在行数。然后由fmt的Errorf()将行数格式化进错误信息中，再由错误对象调用Error()方法返回错误信息。</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> _, _, line, ok := runtime.Caller(<span class="number">0</span>); ok == <span class="literal">true</span> &#123;</span><br><span class="line">	err := fmt.Errorf(<span class="string">&quot;***Line %d error***&quot;</span>, line)</span><br><span class="line">	fmt.Println(err.Error())</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-<h2 id="10-3-宕机"><a href="#10-3-宕机" class="headerlink" title="10.3 宕机"></a>10.3 宕机</h2><p>当程序发出<strong>不可逆</strong>的错误，会使用内置函数panic方法触发宕机，中断程序。调用panic方法后的代码无效。</p>
-<p>panic会直接将错误打印。</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="built_in">panic</span>(<span class="string">&quot;Serious Bug&quot;</span>)</span><br><span class="line">	fmt.Println(<span class="string">&quot;this is a invalid code&quot;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="10-4-宕机恢复"><a href="#10-4-宕机恢复" class="headerlink" title="10.4 宕机恢复"></a>10.4 宕机恢复</h2><h3 id="10-4-1-捕获宕机"><a href="#10-4-1-捕获宕机" class="headerlink" title="10.4.1 捕获宕机"></a>10.4.1 捕获宕机</h3><p>在panic后，<strong>会执行defer语句</strong>。此处需要注意panic后程序执行的流程，除了main中的defer，可以看出<code>paincCode()</code>里的匿名函数的defer也被执行了。</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">panicCode</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">defer</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123; <span class="comment">// 匿名函数</span></span><br><span class="line">		fmt.Println(<span class="string">&quot;func panicCode() exit&quot;</span>) <span class="comment">// 1</span></span><br><span class="line">	&#125;() </span><br><span class="line">	<span class="built_in">panic</span>(<span class="string">&quot;bug&quot;</span>) <span class="comment">// painc</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">defer</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123; <span class="comment">// 匿名函数</span></span><br><span class="line">		fmt.Println(<span class="string">&quot;main() exit&quot;</span>) <span class="comment">// 2</span></span><br><span class="line">	&#125;()</span><br><span class="line">	panicCode()</span><br><span class="line">	fmt.Println(<span class="string">&quot;test&quot;</span>) <span class="comment">// no appear</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>可以利用到defer语句+ 匿名函数+ recover方法捕获宕机。</p>
-<ul>
-<li>触发panic后，执行defer，defer指向匿名函数，匿名函数里使用recover捕获。</li>
-</ul>
-<p>使用recover函数，可以让进入宕机流程中的 goroutine 恢复过来，recover 仅在延迟函数 defer 中有效，类似try-catch机制。</p>
-<h3 id="10-4-2-recover的应用"><a href="#10-4-2-recover的应用" class="headerlink" title="10.4.2 recover的应用"></a>10.4.2 recover的应用</h3><p>实际编程中会专门封装一个函数，以一种较安全的方式运行传入的方法，即使发生panic，主程序仍继续运行。</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">protect</span><span class="params">(f <span class="keyword">func</span>()</span></span>) &#123;  <span class="comment">// protect()的参数是一个函数</span></span><br><span class="line">	<span class="keyword">defer</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">		<span class="keyword">if</span> err := <span class="built_in">recover</span>(); err != <span class="literal">nil</span> &#123; <span class="comment">// recover捕获宕机</span></span><br><span class="line">            <span class="comment">//recover函数获取panic的传入参数</span></span><br><span class="line">			fmt.Println(err)</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;()</span><br><span class="line">	f() <span class="comment">// 让f运行</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	protect(<span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;  <span class="comment">// 传入匿名函数1 并panic</span></span><br><span class="line">		fmt.Println(<span class="string">&quot;func 1&quot;</span>)</span><br><span class="line">		<span class="built_in">panic</span>(<span class="string">&quot;Bug in func 1&quot;</span>)</span><br><span class="line">	&#125;)</span><br><span class="line">	protect(<span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123; <span class="comment">// 传入匿名函数2 并panic</span></span><br><span class="line">		fmt.Println(<span class="string">&quot;func 2&quot;</span>)</span><br><span class="line">		<span class="built_in">panic</span>(<span class="string">&quot;Bug in func 2&quot;</span>)</span><br><span class="line">	&#125;)</span><br><span class="line">	fmt.Println(<span class="string">&quot;test&quot;</span>) <span class="comment">// 仍会被运行</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="10-5-error的简单应用"><a href="#10-5-error的简单应用" class="headerlink" title="10.5 error的简单应用"></a>10.5 error的简单应用</h3><p>panic和recover能模拟其他语言的try-catch机制，但不建议使用，推荐使用多值返回来返回错误。不过我挺喜欢try-catch方式。</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">div</span><span class="params">(dividend <span class="type">int</span>, divisor <span class="type">int</span>)</span></span> (<span class="type">int</span>, <span class="type">error</span>) &#123;</span><br><span class="line">	<span class="keyword">if</span> divisor == <span class="number">0</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="number">0</span>, errors.New(<span class="string">&quot;divisor is zero&quot;</span>) <span class="comment">// 返回一个error</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> dividend / divisor, <span class="literal">nil</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    res1, err := div(<span class="number">4</span>, <span class="number">3</span>)</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        fmt.Println(err.Error())</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        fmt.Println(res1)  <span class="comment">// 1</span></span><br><span class="line">    &#125;</span><br><span class="line">    res2, err := div(<span class="number">4</span>, <span class="number">0</span>)</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        fmt.Println(err.Error()) <span class="comment">//divisor is zero</span></span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        fmt.Println(res2)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-
-<h2 id="10-7-error接口的应用"><a href="#10-7-error接口的应用" class="headerlink" title="10.7 error接口的应用"></a>10.7 error接口的应用</h2><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">&quot;fmt&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> ErrZeroDivisor <span class="type">int</span> <span class="comment">// 自定义类型</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(e ErrZeroDivisor)</span></span> Error() <span class="type">string</span> &#123; <span class="comment">// 实现Error()方法</span></span><br><span class="line">    <span class="keyword">return</span> fmt.Sprintf(<span class="string">&quot;Divisor is %d&quot;</span>, e) <span class="comment">// Error()方法返回的字符串</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">div1</span><span class="params">(dividend <span class="type">int</span>, divisor <span class="type">int</span>)</span></span> (<span class="type">int</span>, <span class="type">error</span>) &#123;</span><br><span class="line">	<span class="keyword">if</span> divisor == <span class="number">0</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="number">0</span>, ErrZeroDivisor(<span class="number">0</span>) <span class="comment">// 此处的调用方式暂未见过 留有疑问？</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> dividend / divisor, <span class="literal">nil</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	_, error1 := div1(<span class="number">3</span>, <span class="number">2</span>)</span><br><span class="line">	_, error2 := div1(<span class="number">3</span>, <span class="number">0</span>)</span><br><span class="line">	fmt.Println(error1)</span><br><span class="line">	fmt.Println(error2)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
     <link itemprop="mainEntityOfPage" href="https://drinkwateronly.github.io/2023/11/17/Golang/Tutorial/ch11%20%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1647,6 +1525,320 @@ Savepoints: NO
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> key, value := <span class="keyword">range</span> map1 &#123;</span><br><span class="line">    <span class="keyword">switch</span> data := value.(<span class="keyword">type</span>) &#123;</span><br><span class="line">    <span class="keyword">case</span> <span class="type">string</span>:</span><br><span class="line">        fmt.Println(<span class="string">&quot;string&quot;</span>, key, data)</span><br><span class="line">    <span class="keyword">case</span> <span class="type">bool</span>:</span><br><span class="line">        fmt.Println(<span class="string">&quot;bool&quot;</span>, key, data)</span><br><span class="line">    <span class="keyword">case</span> <span class="type">int</span>:</span><br><span class="line">        fmt.Println(<span class="string">&quot;int&quot;</span>, key, data)</span><br><span class="line">    <span class="keyword">case</span> []<span class="type">string</span>:</span><br><span class="line">        fmt.Println(<span class="string">&quot;[]string&quot;</span>, key, data)</span><br><span class="line">    <span class="keyword">case</span> []<span class="keyword">interface</span>&#123;&#125;:</span><br><span class="line">        fmt.Println(<span class="string">&quot;[]interface&quot;</span>, key, data)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <h4 id="使用struct存放（推荐）"><a href="#使用struct存放（推荐）" class="headerlink" title="使用struct存放（推荐）"></a>使用struct存放（推荐）</h4><p>其实就说struct内部已经定义好了类型，所以无需类型判断</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> person1 Person <span class="comment">// 用到了11.3.1的Person结构体</span></span><br><span class="line">err2 := json.Unmarshal([]<span class="type">byte</span>(jsonStr), &amp;person1)</span><br><span class="line"><span class="keyword">if</span> err2 != <span class="literal">nil</span> &#123;</span><br><span class="line">	fmt.Println(err)</span><br><span class="line">&#125;</span><br><span class="line">fmt.Printf(<span class="string">&quot;person = %+v&quot;</span>, person1) </span><br><span class="line">   <span class="comment">//person = &#123;Name: Age:10 Sex:false Birthday:1900-1-1 Company: Language:[go json]&#125; </span></span><br></pre></td></tr></table></figure>
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://drinkwateronly.github.io/2023/11/17/Golang/Tutorial/ch10%20%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Wallnut">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Wallnut">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Wallnut">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2023/11/17/Golang/Tutorial/ch10%20%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86/" class="post-title-link" itemprop="url">ch10-错误处理</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2023-11-17 00:00:00 / 修改时间：19:48:28" itemprop="dateCreated datePublished" datetime="2023-11-17T00:00:00+08:00">2023-11-17</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Golang/" itemprop="url" rel="index"><span itemprop="name">Golang</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Golang/Go%E5%9F%BA%E7%A1%80/" itemprop="url" rel="index"><span itemprop="name">Go基础</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="第十章-错误处理"><a href="#第十章-错误处理" class="headerlink" title="第十章 错误处理"></a>第十章 错误处理</h1><p>go使用函数的返回值来处理错误，如果返回nil，则表示没有错误。</p>
+<h2 id="10-2-自定义错误"><a href="#10-2-自定义错误" class="headerlink" title="10.2 自定义错误"></a>10.2 自定义错误</h2><p><strong>go语言常量要是编译时就能确定的数据，errors.New(“xxx”) 要等到运行时才能确定，所以不能作为常量</strong></p>
+<h3 id="10-2-1-错误类型"><a href="#10-2-1-错误类型" class="headerlink" title="10.2.1 错误类型"></a>10.2.1 错误类型</h3><p>error类型实际是个接口，error接口包含Error方法，调用这个方法就会返回一个字符串，这个字符串是显示当前的错误详情。</p>
+<p>自定一个类型，类型实现了Error方法，它就实现了error接口，就是一个自定义的错误。</p>
+<p>和struct一样，用<code>type</code>关键字定义一个错误。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> <span class="type">error</span> <span class="keyword">interface</span> &#123;</span><br><span class="line">    Error() <span class="type">string</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="10-2-2-创建错误"><a href="#10-2-2-创建错误" class="headerlink" title="10.2.2 创建错误"></a>10.2.2 创建错误</h3><p>来自标准库的errors包，可以自定义错误内容</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">err := errors.New(<span class="string">&quot;this is an error&quot;</span>)</span><br></pre></td></tr></table></figure>
+<h3 id="10-2-3-格式化错误格式"><a href="#10-2-3-格式化错误格式" class="headerlink" title="10.2.3 格式化错误格式"></a>10.2.3 格式化错误格式</h3><p>来自标准库fmt包的<code>Errorf</code>方法，也是生成一个错误对象，但可以设置返回的错误字符串的内容格式（即可以添加变量）</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Errorf</span><span class="params">(format <span class="type">string</span>, a ...<span class="keyword">interface</span>&#123;&#125;)</span></span> <span class="type">error</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> errors.New(Sprintf(format, a...)) <span class="comment">// 内部实际上也是调用了errors包</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>demo：</p>
+<p>runtime包中的<code>runtime.Caller(0)</code>获取了当前代码所在行数。然后由fmt的Errorf()将行数格式化进错误信息中，再由错误对象调用Error()方法返回错误信息。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> _, _, line, ok := runtime.Caller(<span class="number">0</span>); ok == <span class="literal">true</span> &#123;</span><br><span class="line">	err := fmt.Errorf(<span class="string">&quot;***Line %d error***&quot;</span>, line)</span><br><span class="line">	fmt.Println(err.Error())</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="10-3-宕机"><a href="#10-3-宕机" class="headerlink" title="10.3 宕机"></a>10.3 宕机</h2><p>当程序发出<strong>不可逆</strong>的错误，会使用内置函数panic方法触发宕机，中断程序。调用panic方法后的代码无效。</p>
+<p>panic会直接将错误打印。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="built_in">panic</span>(<span class="string">&quot;Serious Bug&quot;</span>)</span><br><span class="line">	fmt.Println(<span class="string">&quot;this is a invalid code&quot;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="10-4-宕机恢复"><a href="#10-4-宕机恢复" class="headerlink" title="10.4 宕机恢复"></a>10.4 宕机恢复</h2><h3 id="10-4-1-捕获宕机"><a href="#10-4-1-捕获宕机" class="headerlink" title="10.4.1 捕获宕机"></a>10.4.1 捕获宕机</h3><p>在panic后，<strong>会执行defer语句</strong>。此处需要注意panic后程序执行的流程，除了main中的defer，可以看出<code>paincCode()</code>里的匿名函数的defer也被执行了。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">panicCode</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">defer</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123; <span class="comment">// 匿名函数</span></span><br><span class="line">		fmt.Println(<span class="string">&quot;func panicCode() exit&quot;</span>) <span class="comment">// 1</span></span><br><span class="line">	&#125;() </span><br><span class="line">	<span class="built_in">panic</span>(<span class="string">&quot;bug&quot;</span>) <span class="comment">// painc</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">defer</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123; <span class="comment">// 匿名函数</span></span><br><span class="line">		fmt.Println(<span class="string">&quot;main() exit&quot;</span>) <span class="comment">// 2</span></span><br><span class="line">	&#125;()</span><br><span class="line">	panicCode()</span><br><span class="line">	fmt.Println(<span class="string">&quot;test&quot;</span>) <span class="comment">// no appear</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>可以利用到defer语句+ 匿名函数+ recover方法捕获宕机。</p>
+<ul>
+<li>触发panic后，执行defer，defer指向匿名函数，匿名函数里使用recover捕获。</li>
+</ul>
+<p>使用recover函数，可以让进入宕机流程中的 goroutine 恢复过来，recover 仅在延迟函数 defer 中有效，类似try-catch机制。</p>
+<h3 id="10-4-2-recover的应用"><a href="#10-4-2-recover的应用" class="headerlink" title="10.4.2 recover的应用"></a>10.4.2 recover的应用</h3><p>实际编程中会专门封装一个函数，以一种较安全的方式运行传入的方法，即使发生panic，主程序仍继续运行。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">protect</span><span class="params">(f <span class="keyword">func</span>()</span></span>) &#123;  <span class="comment">// protect()的参数是一个函数</span></span><br><span class="line">	<span class="keyword">defer</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">		<span class="keyword">if</span> err := <span class="built_in">recover</span>(); err != <span class="literal">nil</span> &#123; <span class="comment">// recover捕获宕机</span></span><br><span class="line">            <span class="comment">//recover函数获取panic的传入参数</span></span><br><span class="line">			fmt.Println(err)</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;()</span><br><span class="line">	f() <span class="comment">// 让f运行</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	protect(<span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;  <span class="comment">// 传入匿名函数1 并panic</span></span><br><span class="line">		fmt.Println(<span class="string">&quot;func 1&quot;</span>)</span><br><span class="line">		<span class="built_in">panic</span>(<span class="string">&quot;Bug in func 1&quot;</span>)</span><br><span class="line">	&#125;)</span><br><span class="line">	protect(<span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123; <span class="comment">// 传入匿名函数2 并panic</span></span><br><span class="line">		fmt.Println(<span class="string">&quot;func 2&quot;</span>)</span><br><span class="line">		<span class="built_in">panic</span>(<span class="string">&quot;Bug in func 2&quot;</span>)</span><br><span class="line">	&#125;)</span><br><span class="line">	fmt.Println(<span class="string">&quot;test&quot;</span>) <span class="comment">// 仍会被运行</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="10-5-error的简单应用"><a href="#10-5-error的简单应用" class="headerlink" title="10.5 error的简单应用"></a>10.5 error的简单应用</h3><p>panic和recover能模拟其他语言的try-catch机制，但不建议使用，推荐使用多值返回来返回错误。不过我挺喜欢try-catch方式。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">div</span><span class="params">(dividend <span class="type">int</span>, divisor <span class="type">int</span>)</span></span> (<span class="type">int</span>, <span class="type">error</span>) &#123;</span><br><span class="line">	<span class="keyword">if</span> divisor == <span class="number">0</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="number">0</span>, errors.New(<span class="string">&quot;divisor is zero&quot;</span>) <span class="comment">// 返回一个error</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> dividend / divisor, <span class="literal">nil</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    res1, err := div(<span class="number">4</span>, <span class="number">3</span>)</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        fmt.Println(err.Error())</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        fmt.Println(res1)  <span class="comment">// 1</span></span><br><span class="line">    &#125;</span><br><span class="line">    res2, err := div(<span class="number">4</span>, <span class="number">0</span>)</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        fmt.Println(err.Error()) <span class="comment">//divisor is zero</span></span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        fmt.Println(res2)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="10-7-error接口的应用"><a href="#10-7-error接口的应用" class="headerlink" title="10.7 error接口的应用"></a>10.7 error接口的应用</h2><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">&quot;fmt&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> ErrZeroDivisor <span class="type">int</span> <span class="comment">// 自定义类型</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(e ErrZeroDivisor)</span></span> Error() <span class="type">string</span> &#123; <span class="comment">// 实现Error()方法</span></span><br><span class="line">    <span class="keyword">return</span> fmt.Sprintf(<span class="string">&quot;Divisor is %d&quot;</span>, e) <span class="comment">// Error()方法返回的字符串</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">div1</span><span class="params">(dividend <span class="type">int</span>, divisor <span class="type">int</span>)</span></span> (<span class="type">int</span>, <span class="type">error</span>) &#123;</span><br><span class="line">	<span class="keyword">if</span> divisor == <span class="number">0</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="number">0</span>, ErrZeroDivisor(<span class="number">0</span>) <span class="comment">// 此处的调用方式暂未见过 留有疑问？</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> dividend / divisor, <span class="literal">nil</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	_, error1 := div1(<span class="number">3</span>, <span class="number">2</span>)</span><br><span class="line">	_, error2 := div1(<span class="number">3</span>, <span class="number">0</span>)</span><br><span class="line">	fmt.Println(error1)</span><br><span class="line">	fmt.Println(error2)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://drinkwateronly.github.io/2023/11/17/Golang/Tutorial/ch12%20%E6%8E%A5%E5%8F%A3%E4%B8%8E%E7%B1%BB%E5%9E%8B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Wallnut">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Wallnut">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Wallnut">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2023/11/17/Golang/Tutorial/ch12%20%E6%8E%A5%E5%8F%A3%E4%B8%8E%E7%B1%BB%E5%9E%8B/" class="post-title-link" itemprop="url">ch12-接口类型</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2023-11-17 00:00:00 / 修改时间：19:48:38" itemprop="dateCreated datePublished" datetime="2023-11-17T00:00:00+08:00">2023-11-17</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Golang/" itemprop="url" rel="index"><span itemprop="name">Golang</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Golang/Go%E5%9F%BA%E7%A1%80/" itemprop="url" rel="index"><span itemprop="name">Go基础</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="第12章-接口与类型"><a href="#第12章-接口与类型" class="headerlink" title="第12章 接口与类型"></a>第12章 接口与类型</h1><p>接口是为了抽象，方便代码解耦。</p>
+<p>我对接口就是定义某些数据类型能够实现的方法集合，只要实现了这些方法集合的数据类型，就属于某个接口。</p>
+<p>比较常用的是对struct去实现，因为struct内部能同时维护多个不同类型的数据，相当于是C++类的成员变量。当实现接口时，接口里的方法相当于是C++类里的方法，方法是可以对struct里的数据进行操作的。</p>
+<p>虽然不同的struct可能实现方法的方式不同，但都属于一个接口。一个显而易见的好处就是，在函数传参的时候，参数定义为该interface类型，只要是实现了这个接口的实例，就能被当作参数传入，这样不用针对不同的数据类型定义参数不同但内部实现完全相同的函数。</p>
+<blockquote>
+<ul>
+<li>鸭子类型：动态类型的一种风格，一个对象的有效语义不是继承自特定的类 或 实现特定的接口来决定，而是由当前的<strong>方法和属性</strong>的集合所决定。</li>
+<li>鸭子测试：当一只鸟走起来像鸭子，游泳起来像鸭子，叫起来也像鸭子，那这只鸟就可以被称为鸭子。</li>
+</ul>
+</blockquote>
+<p>一个类型可以实现多个接口；多个类型可以实现同一个接口；任何一个接口必然实现了空接口。</p>
+<h2 id="12-1-接口的定义"><a href="#12-1-接口的定义" class="headerlink" title="12.1 接口的定义"></a>12.1 接口的定义</h2><p>接口是一个自定义<strong>类型</strong>，所以也需要type关键字，</p>
+<ul>
+<li><p>不会暴露内部属性结构，只会展示出方法，因此不能将接口实例化。</p>
+</li>
+<li><p>单个函数的接口名以”er”为后缀，接口的实现去掉“er”</p>
+</li>
+</ul>
+<h2 id="12-2-接口的创建和实现"><a href="#12-2-接口的创建和实现" class="headerlink" title="12.2 接口的创建和实现"></a>12.2 接口的创建和实现</h2><h3 id="12-2-1-接口创建"><a href="#12-2-1-接口创建" class="headerlink" title="12.2.1 接口创建"></a>12.2.1 接口创建</h3><p>接口创建时内部只需要声明存在什么方法，而不需要实现。这是由用户定义的类型去实现的，实现了这些方法的具体类型就叫这个接口类型的实例。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> InterfaceName <span class="keyword">interface</span>&#123;</span><br><span class="line">    Method()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="12-2-2-demo"><a href="#12-2-2-demo" class="headerlink" title="12.2.2 demo"></a>12.2.2 demo</h3><p>创建一个数据库操作接口：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> IDatabaser <span class="keyword">interface</span>&#123;</span><br><span class="line">    Connect() <span class="type">error</span></span><br><span class="line">    Disconncet() <span class="type">error</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>以下是两个类型实现了数据库操作接口IDatabaser的方法，所以是IDatabaser接口的实例。</p>
+<p><img src="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/iimage/image-20230510111558257.png" alt="image-20230510111558257"></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Mysql <span class="keyword">struct</span> &#123; </span><br><span class="line">    DBName    <span class="type">string</span></span><br><span class="line">    isConnect <span class="type">bool</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(mysql *Mysql)</span></span> Connect() <span class="type">error</span> &#123;  <span class="comment">// 指针类型，可以修改Mysql内部元素</span></span><br><span class="line">	fmt.Println(<span class="string">&quot;Mysql Connect DB =&gt;&quot;</span> + mysql.DBName)</span><br><span class="line">	mysql.isConnect = <span class="literal">true</span></span><br><span class="line">	fmt.Println(<span class="string">&quot;Mysql connect Success!&quot;</span>)</span><br><span class="line">	<span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(mysql *Mysql)</span></span> Disconnect() <span class="type">error</span> &#123;</span><br><span class="line">	fmt.Println(<span class="string">&quot;Mysql Disconnect Success!&quot;</span>)</span><br><span class="line">	<span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Redis <span class="keyword">struct</span> &#123;</span><br><span class="line">	DBName    <span class="type">string</span></span><br><span class="line">	isConnect <span class="type">bool</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(redis *Redis)</span></span> Connect() <span class="type">error</span> &#123;</span><br><span class="line">	fmt.Println(<span class="string">&quot;Redis Connect DB =&gt;&quot;</span> + redis.DBName)</span><br><span class="line">	redis.isConnect = <span class="literal">true</span></span><br><span class="line">	fmt.Println(<span class="string">&quot;Redis connect Success!&quot;</span>)</span><br><span class="line">	<span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(redis *Redis)</span></span> Disconnect() <span class="type">error</span> &#123;</span><br><span class="line">	fmt.Println(<span class="string">&quot;Redis Disconnect Success!&quot;</span>)</span><br><span class="line">	<span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> mysql1 = Mysql&#123;DBName: <span class="string">&quot;student&quot;</span>&#125;</span><br><span class="line">fmt.Println(<span class="string">&quot;开始连接&quot;</span>)</span><br><span class="line">mysql1.Connect()</span><br><span class="line">fmt.Println(<span class="string">&quot;断开连接&quot;</span>)</span><br><span class="line">mysql1.Disconnect()</span><br><span class="line"><span class="keyword">var</span> redis1 = Redis&#123;DBName: <span class="string">&quot;teacher&quot;</span>&#125;</span><br><span class="line">fmt.Println(<span class="string">&quot;开始连接&quot;</span>)</span><br><span class="line">redis1.Connect()</span><br><span class="line">fmt.Println(<span class="string">&quot;断开连接&quot;</span>)</span><br><span class="line">redis1.Disconnect()</span><br></pre></td></tr></table></figure>
+
+<p>可以看到，虽然定义了接口，但没有面向接口编程，很多地方有冗余。当面向接口编程时，如使用如下<code>HandleDB</code>，就可以处理多种不同的数据类型，称为go的多态：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">HandleDB</span><span class="params">(db IDatabser)</span></span> &#123;</span><br><span class="line">   fmt.Println(<span class="string">&quot;开始连接&quot;</span>)</span><br><span class="line">   db.Connect()</span><br><span class="line">   fmt.Println(<span class="string">&quot;断开连接&quot;</span>)</span><br><span class="line">   db.Disconnect()</span><br><span class="line">&#125;</span><br><span class="line">HandleDB(&amp;mysql1)</span><br><span class="line">HandleDB(&amp;redis1)</span><br></pre></td></tr></table></figure>
+
+<h3 id="12-2-3-接口赋值"><a href="#12-2-3-接口赋值" class="headerlink" title="12.2.3 接口赋值"></a>12.2.3 接口赋值</h3><p>如果用户自定义的类型实现了某个接口类型所声明的一组方法，那么这个用户定义的类型的 值 就可以赋值给这个接口。这个赋值会把用户定义的类型的值存入接口类型的值。个人认为，赋值后，这个接口实例就是类型实例。</p>
+<p>这里涉及接口变量：1、分配给接口变量的具体值 2、值的类型的描述器（接口实现者的类型）</p>
+<ul>
+<li>情况1：对象实例赋值给接口</li>
+<li>情况2：一个接口赋值给另一个接口<ul>
+<li>两个接口拥有同样的方法，他们就是相同，可以相互赋值。</li>
+<li>接口A方法集是接口B方法集的子集（B&gt;A），B可以赋值给A。反之不行</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 接口IDatabser</span></span><br><span class="line"><span class="keyword">type</span> IDatabser <span class="keyword">interface</span> &#123;</span><br><span class="line">	Connect() <span class="type">error</span></span><br><span class="line">	Disconnect() <span class="type">error</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 接口IRedisr，是IDatabser的子集</span></span><br><span class="line"><span class="keyword">type</span> IRedisr <span class="keyword">interface</span> &#123;</span><br><span class="line">	Connect() <span class="type">error</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 自定义类型，用于实现接口</span></span><br><span class="line"><span class="comment">/* 来自12.2.2，实现了Connect()和Disconnect()方法</span></span><br><span class="line"><span class="comment">type Redis struct &#123;</span></span><br><span class="line"><span class="comment">	DBName    string</span></span><br><span class="line"><span class="comment">	isConnect bool</span></span><br><span class="line"><span class="comment">&#125;</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 情况1：类型的对象实例赋值给接口</span></span><br><span class="line"><span class="keyword">var</span> idb IDatabser = &amp;Redis&#123;DBName: <span class="string">&quot;teacher&quot;</span>&#125; <span class="comment">// IDatabser接口idb就是这个Redis实例</span></span><br><span class="line"><span class="comment">// 情况2：一个接口赋值给他的子集接口</span></span><br><span class="line"><span class="keyword">var</span> irds IRedisr = idb <span class="comment">// IRedisr接口irds被IDatabser接口idb赋值，并忽略了没有实现的方法</span></span><br><span class="line">irds.Connect()</span><br><span class="line"><span class="comment">// irds.Disconnect() 不可用</span></span><br><span class="line">fmt.Println(reflect.TypeOf(idb)) <span class="comment">// *main.Redis</span></span><br><span class="line">fmt.Println(reflect.TypeOf(irds)) <span class="comment">// *main.Redis</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/iimage/image-20230510115437386.png" alt="image-20230510115437386"></p>
+<h2 id="12-3-接口嵌入-组合接口"><a href="#12-3-接口嵌入-组合接口" class="headerlink" title="12.3 接口嵌入&#x2F;组合接口"></a>12.3 接口嵌入&#x2F;组合接口</h2><p>类似于C++的继承。如果接口A作为接口B的嵌入字段，那么B隐式包含了A接口的所有方法。</p>
+<ul>
+<li><p>除了嵌入接口，接口不能嵌入其他类型。</p>
+</li>
+<li><p>不能嵌入自身，包括直接嵌入和间接嵌入。</p>
+<p>否则都会报<code>invalid recursive type</code>错误。</p>
+</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> interfaceA <span class="keyword">interface</span> &#123;</span><br><span class="line">    Method()</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">type</span> interfaceB <span class="keyword">interface</span> &#123;</span><br><span class="line">    interfaceA</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="12-4-空接口"><a href="#12-4-空接口" class="headerlink" title="12.4 空接口"></a>12.4 空接口</h2><p><code>interface&#123;&#125;</code>不包含任何方法的接口，所以空接口可以存储任意类型的数值。但空接口存的内容 不能 能赋值给其他明确的类型（当然使用<code>:=</code>是可用的，但并不是其他类型，编译器仍推断其为空接口）。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> str <span class="type">string</span> = <span class="string">&quot;123&quot;</span> </span><br><span class="line"><span class="keyword">var</span> interfaceStr <span class="keyword">interface</span>&#123;&#125; = str <span class="comment">// 空接口</span></span><br><span class="line"><span class="keyword">var</span> str2 = interfaceStr <span class="comment">// 可以</span></span><br><span class="line"><span class="comment">// var str2 string = interfaceStr // 不可以</span></span><br><span class="line">fmt.Println(reflect.TypeOf(interfaceStr)) <span class="comment">// string</span></span><br><span class="line">fmt.Println(reflect.TypeOf(str2))  <span class="comment">// string</span></span><br></pre></td></tr></table></figure>
+
+<p>空接口常用在函数参数里，如下，用来传递多个不同类型的参数。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Log</span><span class="params">(paras ...<span class="keyword">interface</span>&#123;&#125;)</span></span> &#123;</span><br><span class="line">   <span class="keyword">for</span> _, para := <span class="keyword">range</span> paras &#123;</span><br><span class="line">      fmt.Println(para)</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br><span class="line">interList := <span class="built_in">make</span>([]<span class="keyword">interface</span>&#123;&#125;, <span class="number">3</span>)</span><br><span class="line">interList[<span class="number">0</span>] = <span class="number">1</span></span><br><span class="line">interList[<span class="number">1</span>] = <span class="string">&quot;2&quot;</span></span><br><span class="line">interList[<span class="number">2</span>] = []<span class="type">string</span>&#123;<span class="string">&quot;str1&quot;</span>, <span class="string">&quot;str2&quot;</span>&#125;</span><br><span class="line">Log(interList...)  <span class="comment">// ...意思是将该切片拆散传入参数列表</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="12-5-类型断言"><a href="#12-5-类型断言" class="headerlink" title="12.5 类型断言"></a>12.5 类型断言</h2><p>通过类型断言，我们可以将接口值转换为其底层的具体类型，并访问该类型特有的方法或属性。</p>
+<p><strong>类型断言是应用在接口变量上的操作</strong>，空接口不能赋值给其他类型，只能用类型断言。</p>
+<p>类型断言其实就是类型转换，但不是强制类型转换，存了int的空接口只能用类型断言赋值给int变量。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">valT, ok := X.(T) </span><br></pre></td></tr></table></figure>
+<p>断言失败时会抛出panic，除非用两个变量接收检查的结果。<br>判断接口变量X，是否为T类型，</p>
+<ul>
+<li>如果断言成功，valT是接口变量X的动态值，</li>
+<li>如果断言失败，valT的类型为T，值为T的初始值</li>
+</ul>
+<h3 id="动态类型和静态类型"><a href="#动态类型和静态类型" class="headerlink" title="动态类型和静态类型"></a>动态类型和静态类型</h3><ul>
+<li>动态类型</li>
+<li>静态类型</li>
+</ul>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/258617170">22. 图解：Go语言中的静态类型与动态类型 - 知乎 (zhihu.com)</a></p>
+</blockquote>
+<h3 id="情况1：TypeName是具体类型"><a href="#情况1：TypeName是具体类型" class="headerlink" title="情况1：TypeName是具体类型"></a>情况1：TypeName是具体类型</h3><p>如果断言的类型T是一个具体类型，X.(T)就检查X的<strong>动态类型</strong>是否和T的相同</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">checkType</span><span class="params">(valT <span class="keyword">interface</span>&#123;&#125;, ok <span class="type">bool</span>)</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> ok &#123;</span><br><span class="line">		fmt.Println(<span class="string">&quot;断言成功&quot;</span>)</span><br><span class="line">	&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">		fmt.Println(<span class="string">&quot;断言失败&quot;</span>)</span><br><span class="line">	&#125;</span><br><span class="line">	fmt.Printf(<span class="string">&quot;type =&gt; %T value =&gt; %v\n&quot;</span>, valT, valT)</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> interfaceX <span class="keyword">interface</span>&#123;&#125; = <span class="number">1</span> <span class="comment">// 空接口存int类型</span></span><br><span class="line">	valT0, OK := interfaceX.(<span class="type">string</span>) <span class="comment">// 断言为string，失败，valT0是string类型，初始值&quot;&quot;</span></span><br><span class="line">	checkType(valT0, OK)  </span><br><span class="line">    <span class="comment">//  断言失败</span></span><br><span class="line">    <span class="comment">// type =&gt; string value =&gt; </span></span><br><span class="line">	valT1, OK := interfaceX.(<span class="type">int</span>)  <span class="comment">// 断言为int，成功</span></span><br><span class="line">	checkType(valT1, OK) </span><br><span class="line">    <span class="comment">//  断言成功                </span></span><br><span class="line">    <span class="comment">// type =&gt; int value =&gt; 1</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="情况2：TypeName是接口类型"><a href="#情况2：TypeName是接口类型" class="headerlink" title="情况2：TypeName是接口类型"></a>情况2：TypeName是接口类型</h3><p>如果断言的类型TypeName是一个接口类型，就检查interfaceX的<strong>动态类型</strong>是否满足TypeName的接口</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 接口Person</span></span><br><span class="line"><span class="keyword">type</span> Person <span class="keyword">interface</span> &#123;</span><br><span class="line">	Speak()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Student结构体类型</span></span><br><span class="line"><span class="keyword">type</span> Student <span class="keyword">struct</span> &#123;</span><br><span class="line">	Nmae <span class="type">string</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 实现Person接口方法，所以Student是接口Person的实例</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(s Student)</span></span> Speak() &#123;</span><br><span class="line">	fmt.Println(s.Nmae)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">checkType</span><span class="params">(valT <span class="keyword">interface</span>&#123;&#125;, ok <span class="type">bool</span>)</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> ok &#123;</span><br><span class="line">		fmt.Println(<span class="string">&quot;断言成功&quot;</span>)</span><br><span class="line">	&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">		fmt.Println(<span class="string">&quot;断言失败&quot;</span>)</span><br><span class="line">	&#125;</span><br><span class="line">	fmt.Printf(<span class="string">&quot;type =&gt; %T value =&gt; %v\n&quot;</span>, valT, valT)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> student <span class="keyword">interface</span>&#123;&#125; = Student&#123;<span class="string">&quot;walle&quot;</span>&#125;</span><br><span class="line">	valT0, ok := student.(<span class="type">int</span>)  <span class="comment">// 检查student的动态类型是否与int相同</span></span><br><span class="line">	checkType(valT0, ok)</span><br><span class="line">	<span class="comment">// 断言失败</span></span><br><span class="line">	<span class="comment">// type =&gt; int value =&gt; 0</span></span><br><span class="line">    </span><br><span class="line">	valT1, ok := student.(Person) <span class="comment">// 检查student的动态类型是否与Person相同</span></span><br><span class="line">	checkType(valT1, ok)</span><br><span class="line">	<span class="comment">// 断言成功                             </span></span><br><span class="line">	<span class="comment">// type =&gt; main.Student value =&gt; &#123;walle&#125;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="12-5-1-ok-pattern和switch-type"><a href="#12-5-1-ok-pattern和switch-type" class="headerlink" title="12.5.1 ok-pattern和switch-type"></a>12.5.1 ok-pattern和switch-type</h3><p>接口类型断言的两种方式：ok-pattern和switch-type</p>
+<h4 id="ok-pattern"><a href="#ok-pattern" class="headerlink" title="ok-pattern"></a>ok-pattern</h4><p>适用于要断言的<strong>接口类型种类</strong>typeName较少</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> value, ok := 接口变量.(类型)； ok ==<span class="literal">true</span> &#123;</span><br><span class="line">    <span class="comment">// 是该类型时的处理</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="switch-pattern"><a href="#switch-pattern" class="headerlink" title="switch-pattern"></a>switch-pattern</h4><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">switch</span> value := 接口变量.(<span class="keyword">type</span>) &#123;</span><br><span class="line">    <span class="keyword">case</span> 类型<span class="number">1</span>:</span><br><span class="line">        <span class="comment">// 是该类型时的处理</span></span><br><span class="line">    <span class="keyword">case</span> 类型<span class="number">2</span>:</span><br><span class="line">        <span class="comment">//</span></span><br><span class="line">    <span class="keyword">default</span>:</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="例程"><a href="#例程" class="headerlink" title="例程"></a>例程</h4><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Person <span class="keyword">struct</span> &#123;</span><br><span class="line">	Name <span class="type">string</span></span><br><span class="line">	Age  <span class="type">int</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	s := <span class="built_in">make</span>([]<span class="keyword">interface</span>&#123;&#125;, <span class="number">3</span>)</span><br><span class="line">	s[<span class="number">0</span>] = <span class="number">1</span></span><br><span class="line">	s[<span class="number">1</span>] = <span class="string">&quot;abc&quot;</span></span><br><span class="line">	s[<span class="number">2</span>] = Person&#123;<span class="string">&quot;walle&quot;</span>, <span class="number">100</span>&#125;</span><br><span class="line">	<span class="comment">// ok-pattern</span></span><br><span class="line">	<span class="keyword">for</span> _, value := <span class="keyword">range</span> s &#123;</span><br><span class="line">		<span class="keyword">if</span> t, ok := value.(<span class="type">int</span>); ok &#123;</span><br><span class="line">			fmt.Printf(<span class="string">&quot;type =&gt; %T value =&gt; %v\n&quot;</span>, t, t)</span><br><span class="line">		&#125; <span class="keyword">else</span> <span class="keyword">if</span> t, ok := value.(<span class="type">string</span>); ok &#123;</span><br><span class="line">			fmt.Printf(<span class="string">&quot;type =&gt; %T value =&gt; %v\n&quot;</span>, t, t)</span><br><span class="line">		&#125; <span class="keyword">else</span> <span class="keyword">if</span> t, ok := value.(Person); ok &#123;</span><br><span class="line">			fmt.Printf(<span class="string">&quot;type =&gt; %T value =&gt; %v\n&quot;</span>, t, t)</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">// switch-pattern</span></span><br><span class="line">	<span class="keyword">for</span> _, value := <span class="keyword">range</span> s &#123;</span><br><span class="line">		<span class="keyword">switch</span> t := value.(<span class="keyword">type</span>) &#123;</span><br><span class="line">		<span class="keyword">case</span> <span class="type">int</span>:</span><br><span class="line">			fmt.Printf(<span class="string">&quot;type =&gt; %T value =&gt; %v\n&quot;</span>, t, t)</span><br><span class="line">		<span class="keyword">case</span> <span class="type">string</span>:</span><br><span class="line">			fmt.Printf(<span class="string">&quot;type =&gt; %T value =&gt; %v\n&quot;</span>, t, t)</span><br><span class="line">		<span class="keyword">case</span> Person:</span><br><span class="line">			fmt.Printf(<span class="string">&quot;type =&gt; %T value =&gt; %v\n&quot;</span>, t, t)</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="12-7-侵入式-非侵入式接口"><a href="#12-7-侵入式-非侵入式接口" class="headerlink" title="12.7 侵入式&#x2F;非侵入式接口"></a>12.7 侵入式&#x2F;非侵入式接口</h2><ul>
+<li><p>侵入式接口：需要显式地创建一个类去实现一个接口。</p>
+</li>
+<li><p>非侵入式接口：不需要显式</p>
+<p>go接口属于非侵入式，更为灵活</p>
+</li>
+</ul>
+<h2 id="12-8-有趣的接口"><a href="#12-8-有趣的接口" class="headerlink" title="12.8 有趣的接口"></a>12.8 有趣的接口</h2><h3 id="fmt包的Stringer接口"><a href="#fmt包的Stringer接口" class="headerlink" title="fmt包的Stringer接口"></a>fmt包的Stringer接口</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Stringer <span class="keyword">interface</span> &#123;</span><br><span class="line">    String() <span class="type">string</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>A <code>Stringer</code> is a type that can describe itself as a string. The <code>fmt</code> package (and many others) look for this interface to print values.</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">&quot;fmt&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> Person <span class="keyword">struct</span> &#123;</span><br><span class="line">	Name <span class="type">string</span></span><br><span class="line">	Age  <span class="type">int</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 实现了string()方法，所以是fmt包里的Stringer()接口的实例</span></span><br><span class="line"><span class="comment">// 返回值是string，打印自己的内部变量</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(p Person)</span></span> String() <span class="type">string</span> &#123;</span><br><span class="line">	<span class="keyword">return</span> fmt.Sprintf(<span class="string">&quot;%v (%v years)&quot;</span>, p.Name, p.Age)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	a := Person&#123;<span class="string">&quot;Arthur Dent&quot;</span>, <span class="number">42</span>&#125;</span><br><span class="line">	z := Person&#123;<span class="string">&quot;Zaphod Beeblebrox&quot;</span>, <span class="number">9001</span>&#125;</span><br><span class="line">	fmt.Println(a, z) <span class="comment">// a和z都可以调用String()方法</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
       
     </div>
 
@@ -1902,198 +2094,6 @@ main函数终止，所有goroutine也会一并结束；终止goroutine的最好�
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://drinkwateronly.github.io/2023/11/17/Golang/Tutorial/ch12%20%E6%8E%A5%E5%8F%A3%E4%B8%8E%E7%B1%BB%E5%9E%8B/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="Wallnut">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Wallnut">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Wallnut">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2023/11/17/Golang/Tutorial/ch12%20%E6%8E%A5%E5%8F%A3%E4%B8%8E%E7%B1%BB%E5%9E%8B/" class="post-title-link" itemprop="url">ch12-接口类型</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-      
-
-      <time title="创建时间：2023-11-17 00:00:00 / 修改时间：19:48:38" itemprop="dateCreated datePublished" datetime="2023-11-17T00:00:00+08:00">2023-11-17</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Golang/" itemprop="url" rel="index"><span itemprop="name">Golang</span></a>
-        </span>
-          ，
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Golang/Go%E5%9F%BA%E7%A1%80/" itemprop="url" rel="index"><span itemprop="name">Go基础</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="第12章-接口与类型"><a href="#第12章-接口与类型" class="headerlink" title="第12章 接口与类型"></a>第12章 接口与类型</h1><p>接口是为了抽象，方便代码解耦。</p>
-<p>我对接口就是定义某些数据类型能够实现的方法集合，只要实现了这些方法集合的数据类型，就属于某个接口。</p>
-<p>比较常用的是对struct去实现，因为struct内部能同时维护多个不同类型的数据，相当于是C++类的成员变量。当实现接口时，接口里的方法相当于是C++类里的方法，方法是可以对struct里的数据进行操作的。</p>
-<p>虽然不同的struct可能实现方法的方式不同，但都属于一个接口。一个显而易见的好处就是，在函数传参的时候，参数定义为该interface类型，只要是实现了这个接口的实例，就能被当作参数传入，这样不用针对不同的数据类型定义参数不同但内部实现完全相同的函数。</p>
-<blockquote>
-<ul>
-<li>鸭子类型：动态类型的一种风格，一个对象的有效语义不是继承自特定的类 或 实现特定的接口来决定，而是由当前的<strong>方法和属性</strong>的集合所决定。</li>
-<li>鸭子测试：当一只鸟走起来像鸭子，游泳起来像鸭子，叫起来也像鸭子，那这只鸟就可以被称为鸭子。</li>
-</ul>
-</blockquote>
-<p>一个类型可以实现多个接口；多个类型可以实现同一个接口；任何一个接口必然实现了空接口。</p>
-<h2 id="12-1-接口的定义"><a href="#12-1-接口的定义" class="headerlink" title="12.1 接口的定义"></a>12.1 接口的定义</h2><p>接口是一个自定义<strong>类型</strong>，所以也需要type关键字，</p>
-<ul>
-<li><p>不会暴露内部属性结构，只会展示出方法，因此不能将接口实例化。</p>
-</li>
-<li><p>单个函数的接口名以”er”为后缀，接口的实现去掉“er”</p>
-</li>
-</ul>
-<h2 id="12-2-接口的创建和实现"><a href="#12-2-接口的创建和实现" class="headerlink" title="12.2 接口的创建和实现"></a>12.2 接口的创建和实现</h2><h3 id="12-2-1-接口创建"><a href="#12-2-1-接口创建" class="headerlink" title="12.2.1 接口创建"></a>12.2.1 接口创建</h3><p>接口创建时内部只需要声明存在什么方法，而不需要实现。这是由用户定义的类型去实现的，实现了这些方法的具体类型就叫这个接口类型的实例。</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> InterfaceName <span class="keyword">interface</span>&#123;</span><br><span class="line">    Method()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="12-2-2-demo"><a href="#12-2-2-demo" class="headerlink" title="12.2.2 demo"></a>12.2.2 demo</h3><p>创建一个数据库操作接口：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> IDatabaser <span class="keyword">interface</span>&#123;</span><br><span class="line">    Connect() <span class="type">error</span></span><br><span class="line">    Disconncet() <span class="type">error</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>以下是两个类型实现了数据库操作接口IDatabaser的方法，所以是IDatabaser接口的实例。</p>
-<p><img src="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/iimage/image-20230510111558257.png" alt="image-20230510111558257"></p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Mysql <span class="keyword">struct</span> &#123; </span><br><span class="line">    DBName    <span class="type">string</span></span><br><span class="line">    isConnect <span class="type">bool</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(mysql *Mysql)</span></span> Connect() <span class="type">error</span> &#123;  <span class="comment">// 指针类型，可以修改Mysql内部元素</span></span><br><span class="line">	fmt.Println(<span class="string">&quot;Mysql Connect DB =&gt;&quot;</span> + mysql.DBName)</span><br><span class="line">	mysql.isConnect = <span class="literal">true</span></span><br><span class="line">	fmt.Println(<span class="string">&quot;Mysql connect Success!&quot;</span>)</span><br><span class="line">	<span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(mysql *Mysql)</span></span> Disconnect() <span class="type">error</span> &#123;</span><br><span class="line">	fmt.Println(<span class="string">&quot;Mysql Disconnect Success!&quot;</span>)</span><br><span class="line">	<span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Redis <span class="keyword">struct</span> &#123;</span><br><span class="line">	DBName    <span class="type">string</span></span><br><span class="line">	isConnect <span class="type">bool</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(redis *Redis)</span></span> Connect() <span class="type">error</span> &#123;</span><br><span class="line">	fmt.Println(<span class="string">&quot;Redis Connect DB =&gt;&quot;</span> + redis.DBName)</span><br><span class="line">	redis.isConnect = <span class="literal">true</span></span><br><span class="line">	fmt.Println(<span class="string">&quot;Redis connect Success!&quot;</span>)</span><br><span class="line">	<span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(redis *Redis)</span></span> Disconnect() <span class="type">error</span> &#123;</span><br><span class="line">	fmt.Println(<span class="string">&quot;Redis Disconnect Success!&quot;</span>)</span><br><span class="line">	<span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> mysql1 = Mysql&#123;DBName: <span class="string">&quot;student&quot;</span>&#125;</span><br><span class="line">fmt.Println(<span class="string">&quot;开始连接&quot;</span>)</span><br><span class="line">mysql1.Connect()</span><br><span class="line">fmt.Println(<span class="string">&quot;断开连接&quot;</span>)</span><br><span class="line">mysql1.Disconnect()</span><br><span class="line"><span class="keyword">var</span> redis1 = Redis&#123;DBName: <span class="string">&quot;teacher&quot;</span>&#125;</span><br><span class="line">fmt.Println(<span class="string">&quot;开始连接&quot;</span>)</span><br><span class="line">redis1.Connect()</span><br><span class="line">fmt.Println(<span class="string">&quot;断开连接&quot;</span>)</span><br><span class="line">redis1.Disconnect()</span><br></pre></td></tr></table></figure>
-
-<p>可以看到，虽然定义了接口，但没有面向接口编程，很多地方有冗余。当面向接口编程时，如使用如下<code>HandleDB</code>，就可以处理多种不同的数据类型，称为go的多态：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">HandleDB</span><span class="params">(db IDatabser)</span></span> &#123;</span><br><span class="line">   fmt.Println(<span class="string">&quot;开始连接&quot;</span>)</span><br><span class="line">   db.Connect()</span><br><span class="line">   fmt.Println(<span class="string">&quot;断开连接&quot;</span>)</span><br><span class="line">   db.Disconnect()</span><br><span class="line">&#125;</span><br><span class="line">HandleDB(&amp;mysql1)</span><br><span class="line">HandleDB(&amp;redis1)</span><br></pre></td></tr></table></figure>
-
-<h3 id="12-2-3-接口赋值"><a href="#12-2-3-接口赋值" class="headerlink" title="12.2.3 接口赋值"></a>12.2.3 接口赋值</h3><p>如果用户自定义的类型实现了某个接口类型所声明的一组方法，那么这个用户定义的类型的 值 就可以赋值给这个接口。这个赋值会把用户定义的类型的值存入接口类型的值。个人认为，赋值后，这个接口实例就是类型实例。</p>
-<p>这里涉及接口变量：1、分配给接口变量的具体值 2、值的类型的描述器（接口实现者的类型）</p>
-<ul>
-<li>情况1：对象实例赋值给接口</li>
-<li>情况2：一个接口赋值给另一个接口<ul>
-<li>两个接口拥有同样的方法，他们就是相同，可以相互赋值。</li>
-<li>接口A方法集是接口B方法集的子集（B&gt;A），B可以赋值给A。反之不行</li>
-</ul>
-</li>
-</ul>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 接口IDatabser</span></span><br><span class="line"><span class="keyword">type</span> IDatabser <span class="keyword">interface</span> &#123;</span><br><span class="line">	Connect() <span class="type">error</span></span><br><span class="line">	Disconnect() <span class="type">error</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 接口IRedisr，是IDatabser的子集</span></span><br><span class="line"><span class="keyword">type</span> IRedisr <span class="keyword">interface</span> &#123;</span><br><span class="line">	Connect() <span class="type">error</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 自定义类型，用于实现接口</span></span><br><span class="line"><span class="comment">/* 来自12.2.2，实现了Connect()和Disconnect()方法</span></span><br><span class="line"><span class="comment">type Redis struct &#123;</span></span><br><span class="line"><span class="comment">	DBName    string</span></span><br><span class="line"><span class="comment">	isConnect bool</span></span><br><span class="line"><span class="comment">&#125;</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 情况1：类型的对象实例赋值给接口</span></span><br><span class="line"><span class="keyword">var</span> idb IDatabser = &amp;Redis&#123;DBName: <span class="string">&quot;teacher&quot;</span>&#125; <span class="comment">// IDatabser接口idb就是这个Redis实例</span></span><br><span class="line"><span class="comment">// 情况2：一个接口赋值给他的子集接口</span></span><br><span class="line"><span class="keyword">var</span> irds IRedisr = idb <span class="comment">// IRedisr接口irds被IDatabser接口idb赋值，并忽略了没有实现的方法</span></span><br><span class="line">irds.Connect()</span><br><span class="line"><span class="comment">// irds.Disconnect() 不可用</span></span><br><span class="line">fmt.Println(reflect.TypeOf(idb)) <span class="comment">// *main.Redis</span></span><br><span class="line">fmt.Println(reflect.TypeOf(irds)) <span class="comment">// *main.Redis</span></span><br></pre></td></tr></table></figure>
-
-<p><img src="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/iimage/image-20230510115437386.png" alt="image-20230510115437386"></p>
-<h2 id="12-3-接口嵌入-组合接口"><a href="#12-3-接口嵌入-组合接口" class="headerlink" title="12.3 接口嵌入&#x2F;组合接口"></a>12.3 接口嵌入&#x2F;组合接口</h2><p>类似于C++的继承。如果接口A作为接口B的嵌入字段，那么B隐式包含了A接口的所有方法。</p>
-<ul>
-<li><p>除了嵌入接口，接口不能嵌入其他类型。</p>
-</li>
-<li><p>不能嵌入自身，包括直接嵌入和间接嵌入。</p>
-<p>否则都会报<code>invalid recursive type</code>错误。</p>
-</li>
-</ul>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> interfaceA <span class="keyword">interface</span> &#123;</span><br><span class="line">    Method()</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">type</span> interfaceB <span class="keyword">interface</span> &#123;</span><br><span class="line">    interfaceA</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-
-<h2 id="12-4-空接口"><a href="#12-4-空接口" class="headerlink" title="12.4 空接口"></a>12.4 空接口</h2><p><code>interface&#123;&#125;</code>不包含任何方法的接口，所以空接口可以存储任意类型的数值。但空接口存的内容 不能 能赋值给其他明确的类型（当然使用<code>:=</code>是可用的，但并不是其他类型，编译器仍推断其为空接口）。</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> str <span class="type">string</span> = <span class="string">&quot;123&quot;</span> </span><br><span class="line"><span class="keyword">var</span> interfaceStr <span class="keyword">interface</span>&#123;&#125; = str <span class="comment">// 空接口</span></span><br><span class="line"><span class="keyword">var</span> str2 = interfaceStr <span class="comment">// 可以</span></span><br><span class="line"><span class="comment">// var str2 string = interfaceStr // 不可以</span></span><br><span class="line">fmt.Println(reflect.TypeOf(interfaceStr)) <span class="comment">// string</span></span><br><span class="line">fmt.Println(reflect.TypeOf(str2))  <span class="comment">// string</span></span><br></pre></td></tr></table></figure>
-
-<p>空接口常用在函数参数里，如下，用来传递多个不同类型的参数。</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Log</span><span class="params">(paras ...<span class="keyword">interface</span>&#123;&#125;)</span></span> &#123;</span><br><span class="line">   <span class="keyword">for</span> _, para := <span class="keyword">range</span> paras &#123;</span><br><span class="line">      fmt.Println(para)</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br><span class="line">interList := <span class="built_in">make</span>([]<span class="keyword">interface</span>&#123;&#125;, <span class="number">3</span>)</span><br><span class="line">interList[<span class="number">0</span>] = <span class="number">1</span></span><br><span class="line">interList[<span class="number">1</span>] = <span class="string">&quot;2&quot;</span></span><br><span class="line">interList[<span class="number">2</span>] = []<span class="type">string</span>&#123;<span class="string">&quot;str1&quot;</span>, <span class="string">&quot;str2&quot;</span>&#125;</span><br><span class="line">Log(interList...)  <span class="comment">// ...意思是将该切片拆散传入参数列表</span></span><br></pre></td></tr></table></figure>
-
-
-
-<h2 id="12-5-类型断言"><a href="#12-5-类型断言" class="headerlink" title="12.5 类型断言"></a>12.5 类型断言</h2><p>通过类型断言，我们可以将接口值转换为其底层的具体类型，并访问该类型特有的方法或属性。</p>
-<p><strong>类型断言是应用在接口变量上的操作</strong>，空接口不能赋值给其他类型，只能用类型断言。</p>
-<p>类型断言其实就是类型转换，但不是强制类型转换，存了int的空接口只能用类型断言赋值给int变量。</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">valT, ok := X.(T) </span><br></pre></td></tr></table></figure>
-<p>断言失败时会抛出panic，除非用两个变量接收检查的结果。<br>判断接口变量X，是否为T类型，</p>
-<ul>
-<li>如果断言成功，valT是接口变量X的动态值，</li>
-<li>如果断言失败，valT的类型为T，值为T的初始值</li>
-</ul>
-<h3 id="动态类型和静态类型"><a href="#动态类型和静态类型" class="headerlink" title="动态类型和静态类型"></a>动态类型和静态类型</h3><ul>
-<li>动态类型</li>
-<li>静态类型</li>
-</ul>
-<blockquote>
-<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/258617170">22. 图解：Go语言中的静态类型与动态类型 - 知乎 (zhihu.com)</a></p>
-</blockquote>
-<h3 id="情况1：TypeName是具体类型"><a href="#情况1：TypeName是具体类型" class="headerlink" title="情况1：TypeName是具体类型"></a>情况1：TypeName是具体类型</h3><p>如果断言的类型T是一个具体类型，X.(T)就检查X的<strong>动态类型</strong>是否和T的相同</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">checkType</span><span class="params">(valT <span class="keyword">interface</span>&#123;&#125;, ok <span class="type">bool</span>)</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> ok &#123;</span><br><span class="line">		fmt.Println(<span class="string">&quot;断言成功&quot;</span>)</span><br><span class="line">	&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">		fmt.Println(<span class="string">&quot;断言失败&quot;</span>)</span><br><span class="line">	&#125;</span><br><span class="line">	fmt.Printf(<span class="string">&quot;type =&gt; %T value =&gt; %v\n&quot;</span>, valT, valT)</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> interfaceX <span class="keyword">interface</span>&#123;&#125; = <span class="number">1</span> <span class="comment">// 空接口存int类型</span></span><br><span class="line">	valT0, OK := interfaceX.(<span class="type">string</span>) <span class="comment">// 断言为string，失败，valT0是string类型，初始值&quot;&quot;</span></span><br><span class="line">	checkType(valT0, OK)  </span><br><span class="line">    <span class="comment">//  断言失败</span></span><br><span class="line">    <span class="comment">// type =&gt; string value =&gt; </span></span><br><span class="line">	valT1, OK := interfaceX.(<span class="type">int</span>)  <span class="comment">// 断言为int，成功</span></span><br><span class="line">	checkType(valT1, OK) </span><br><span class="line">    <span class="comment">//  断言成功                </span></span><br><span class="line">    <span class="comment">// type =&gt; int value =&gt; 1</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="情况2：TypeName是接口类型"><a href="#情况2：TypeName是接口类型" class="headerlink" title="情况2：TypeName是接口类型"></a>情况2：TypeName是接口类型</h3><p>如果断言的类型TypeName是一个接口类型，就检查interfaceX的<strong>动态类型</strong>是否满足TypeName的接口</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 接口Person</span></span><br><span class="line"><span class="keyword">type</span> Person <span class="keyword">interface</span> &#123;</span><br><span class="line">	Speak()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Student结构体类型</span></span><br><span class="line"><span class="keyword">type</span> Student <span class="keyword">struct</span> &#123;</span><br><span class="line">	Nmae <span class="type">string</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 实现Person接口方法，所以Student是接口Person的实例</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(s Student)</span></span> Speak() &#123;</span><br><span class="line">	fmt.Println(s.Nmae)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">checkType</span><span class="params">(valT <span class="keyword">interface</span>&#123;&#125;, ok <span class="type">bool</span>)</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> ok &#123;</span><br><span class="line">		fmt.Println(<span class="string">&quot;断言成功&quot;</span>)</span><br><span class="line">	&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">		fmt.Println(<span class="string">&quot;断言失败&quot;</span>)</span><br><span class="line">	&#125;</span><br><span class="line">	fmt.Printf(<span class="string">&quot;type =&gt; %T value =&gt; %v\n&quot;</span>, valT, valT)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> student <span class="keyword">interface</span>&#123;&#125; = Student&#123;<span class="string">&quot;walle&quot;</span>&#125;</span><br><span class="line">	valT0, ok := student.(<span class="type">int</span>)  <span class="comment">// 检查student的动态类型是否与int相同</span></span><br><span class="line">	checkType(valT0, ok)</span><br><span class="line">	<span class="comment">// 断言失败</span></span><br><span class="line">	<span class="comment">// type =&gt; int value =&gt; 0</span></span><br><span class="line">    </span><br><span class="line">	valT1, ok := student.(Person) <span class="comment">// 检查student的动态类型是否与Person相同</span></span><br><span class="line">	checkType(valT1, ok)</span><br><span class="line">	<span class="comment">// 断言成功                             </span></span><br><span class="line">	<span class="comment">// type =&gt; main.Student value =&gt; &#123;walle&#125;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="12-5-1-ok-pattern和switch-type"><a href="#12-5-1-ok-pattern和switch-type" class="headerlink" title="12.5.1 ok-pattern和switch-type"></a>12.5.1 ok-pattern和switch-type</h3><p>接口类型断言的两种方式：ok-pattern和switch-type</p>
-<h4 id="ok-pattern"><a href="#ok-pattern" class="headerlink" title="ok-pattern"></a>ok-pattern</h4><p>适用于要断言的<strong>接口类型种类</strong>typeName较少</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> value, ok := 接口变量.(类型)； ok ==<span class="literal">true</span> &#123;</span><br><span class="line">    <span class="comment">// 是该类型时的处理</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h4 id="switch-pattern"><a href="#switch-pattern" class="headerlink" title="switch-pattern"></a>switch-pattern</h4><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">switch</span> value := 接口变量.(<span class="keyword">type</span>) &#123;</span><br><span class="line">    <span class="keyword">case</span> 类型<span class="number">1</span>:</span><br><span class="line">        <span class="comment">// 是该类型时的处理</span></span><br><span class="line">    <span class="keyword">case</span> 类型<span class="number">2</span>:</span><br><span class="line">        <span class="comment">//</span></span><br><span class="line">    <span class="keyword">default</span>:</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h4 id="例程"><a href="#例程" class="headerlink" title="例程"></a>例程</h4><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Person <span class="keyword">struct</span> &#123;</span><br><span class="line">	Name <span class="type">string</span></span><br><span class="line">	Age  <span class="type">int</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	s := <span class="built_in">make</span>([]<span class="keyword">interface</span>&#123;&#125;, <span class="number">3</span>)</span><br><span class="line">	s[<span class="number">0</span>] = <span class="number">1</span></span><br><span class="line">	s[<span class="number">1</span>] = <span class="string">&quot;abc&quot;</span></span><br><span class="line">	s[<span class="number">2</span>] = Person&#123;<span class="string">&quot;walle&quot;</span>, <span class="number">100</span>&#125;</span><br><span class="line">	<span class="comment">// ok-pattern</span></span><br><span class="line">	<span class="keyword">for</span> _, value := <span class="keyword">range</span> s &#123;</span><br><span class="line">		<span class="keyword">if</span> t, ok := value.(<span class="type">int</span>); ok &#123;</span><br><span class="line">			fmt.Printf(<span class="string">&quot;type =&gt; %T value =&gt; %v\n&quot;</span>, t, t)</span><br><span class="line">		&#125; <span class="keyword">else</span> <span class="keyword">if</span> t, ok := value.(<span class="type">string</span>); ok &#123;</span><br><span class="line">			fmt.Printf(<span class="string">&quot;type =&gt; %T value =&gt; %v\n&quot;</span>, t, t)</span><br><span class="line">		&#125; <span class="keyword">else</span> <span class="keyword">if</span> t, ok := value.(Person); ok &#123;</span><br><span class="line">			fmt.Printf(<span class="string">&quot;type =&gt; %T value =&gt; %v\n&quot;</span>, t, t)</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">// switch-pattern</span></span><br><span class="line">	<span class="keyword">for</span> _, value := <span class="keyword">range</span> s &#123;</span><br><span class="line">		<span class="keyword">switch</span> t := value.(<span class="keyword">type</span>) &#123;</span><br><span class="line">		<span class="keyword">case</span> <span class="type">int</span>:</span><br><span class="line">			fmt.Printf(<span class="string">&quot;type =&gt; %T value =&gt; %v\n&quot;</span>, t, t)</span><br><span class="line">		<span class="keyword">case</span> <span class="type">string</span>:</span><br><span class="line">			fmt.Printf(<span class="string">&quot;type =&gt; %T value =&gt; %v\n&quot;</span>, t, t)</span><br><span class="line">		<span class="keyword">case</span> Person:</span><br><span class="line">			fmt.Printf(<span class="string">&quot;type =&gt; %T value =&gt; %v\n&quot;</span>, t, t)</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-
-<h2 id="12-7-侵入式-非侵入式接口"><a href="#12-7-侵入式-非侵入式接口" class="headerlink" title="12.7 侵入式&#x2F;非侵入式接口"></a>12.7 侵入式&#x2F;非侵入式接口</h2><ul>
-<li><p>侵入式接口：需要显式地创建一个类去实现一个接口。</p>
-</li>
-<li><p>非侵入式接口：不需要显式</p>
-<p>go接口属于非侵入式，更为灵活</p>
-</li>
-</ul>
-<h2 id="12-8-有趣的接口"><a href="#12-8-有趣的接口" class="headerlink" title="12.8 有趣的接口"></a>12.8 有趣的接口</h2><h3 id="fmt包的Stringer接口"><a href="#fmt包的Stringer接口" class="headerlink" title="fmt包的Stringer接口"></a>fmt包的Stringer接口</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Stringer <span class="keyword">interface</span> &#123;</span><br><span class="line">    String() <span class="type">string</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>A <code>Stringer</code> is a type that can describe itself as a string. The <code>fmt</code> package (and many others) look for this interface to print values.</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">&quot;fmt&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> Person <span class="keyword">struct</span> &#123;</span><br><span class="line">	Name <span class="type">string</span></span><br><span class="line">	Age  <span class="type">int</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 实现了string()方法，所以是fmt包里的Stringer()接口的实例</span></span><br><span class="line"><span class="comment">// 返回值是string，打印自己的内部变量</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(p Person)</span></span> String() <span class="type">string</span> &#123;</span><br><span class="line">	<span class="keyword">return</span> fmt.Sprintf(<span class="string">&quot;%v (%v years)&quot;</span>, p.Name, p.Age)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	a := Person&#123;<span class="string">&quot;Arthur Dent&quot;</span>, <span class="number">42</span>&#125;</span><br><span class="line">	z := Person&#123;<span class="string">&quot;Zaphod Beeblebrox&quot;</span>, <span class="number">9001</span>&#125;</span><br><span class="line">	fmt.Println(a, z) <span class="comment">// a和z都可以调用String()方法</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
     <link itemprop="mainEntityOfPage" href="https://drinkwateronly.github.io/2023/11/17/Golang/Tutorial/ch14%20%E5%8F%8D%E5%B0%84/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -2253,7 +2253,7 @@ main函数终止，所有goroutine也会一并结束；终止goroutine的最好�
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://drinkwateronly.github.io/2023/11/17/Golang/Tutorial/ch3~5%20%E5%9F%BA%E7%A1%80/">
+    <link itemprop="mainEntityOfPage" href="https://drinkwateronly.github.io/2023/11/17/Golang/Tutorial/ch17%20HTTP%E7%BC%96%E7%A8%8B/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.png">
@@ -2271,7 +2271,7 @@ main函数终止，所有goroutine也会一并结束；终止goroutine的最好�
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2023/11/17/Golang/Tutorial/ch3~5%20%E5%9F%BA%E7%A1%80/" class="post-title-link" itemprop="url">ch3~5-基础</a>
+          <a href="/2023/11/17/Golang/Tutorial/ch17%20HTTP%E7%BC%96%E7%A8%8B/" class="post-title-link" itemprop="url">ch17-HTTP编程</a>
         </h2>
 
         <div class="post-meta-container">
@@ -2283,7 +2283,7 @@ main函数终止，所有goroutine也会一并结束；终止goroutine的最好�
       <span class="post-meta-item-text">发表于</span>
       
 
-      <time title="创建时间：2023-11-17 00:00:00 / 修改时间：19:47:50" itemprop="dateCreated datePublished" datetime="2023-11-17T00:00:00+08:00">2023-11-17</time>
+      <time title="创建时间：2023-11-17 00:00:00 / 修改时间：19:48:54" itemprop="dateCreated datePublished" datetime="2023-11-17T00:00:00+08:00">2023-11-17</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -2309,71 +2309,73 @@ main函数终止，所有goroutine也会一并结束；终止goroutine的最好�
     
     
     <div class="post-body" itemprop="articleBody">
-          <h1 id="ch3变量"><a href="#ch3变量" class="headerlink" title="ch3变量"></a>ch3变量</h1><p>声明后一定要使用</p>
-<h3 id="声明变量"><a href="#声明变量" class="headerlink" title="声明变量"></a>声明变量</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> num <span class="type">int</span></span><br><span class="line"><span class="keyword">var</span> &#123;</span><br><span class="line">    a <span class="type">int</span></span><br><span class="line">    b <span class="type">string</span></span><br><span class="line">    c <span class="type">bool</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+          <h1 id="17-HTTP编程"><a href="#17-HTTP编程" class="headerlink" title="17 HTTP编程"></a>17 HTTP编程</h1><ul>
+<li>HTTP基于TCP协议上建立</li>
+<li>当建立在TLS或SSL协议上时，协议变成了加密HTTPS协议</li>
+</ul>
+<h3 id="17-1-2-URL地址"><a href="#17-1-2-URL地址" class="headerlink" title="17.1.2 URL地址"></a>17.1.2 URL地址</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">协议://主机地址/路径?查询</span><br><span class="line">https://www.baidu.com/s?wd=Go语言</span><br><span class="line"></span><br><span class="line">协议://用户名:密码@子域名.域名.顶级域名:端口号/目录/文件名.文件后缀?参数=值#标志</span><br><span class="line">http://admin:password@ceshi.baidu.com:8080/dir/test.php?id=1#flag=1</span><br></pre></td></tr></table></figure>
 
-<h3 id="初始化"><a href="#初始化" class="headerlink" title="初始化"></a>初始化</h3><p>Go会对每个变量对应内存初始化，有默认初始化类型。</p>
+<h2 id="17-2-HTTP客户端"><a href="#17-2-HTTP客户端" class="headerlink" title="17.2 HTTP客户端"></a>17.2 HTTP客户端</h2><p>RESTful风格路由 Representational State Transfer </p>
 <ul>
-<li>数字默认为0，bool默认false，切片、映射、函数默认为nil，字符串默认空字符串。</li>
+<li>GET（READ）：从服务器取出资源（一项或多项）。</li>
+<li>POST（CREATE）：在服务器新建一个资源。</li>
+<li>PUT（UPDATE）：在服务器更新资源（客户端提供完整资源数据）。</li>
+<li>PATCH（UPDATE）：在服务器更新资源（客户端提供需要修改的资源数据）。</li>
+<li>DELETE（DELETE）：从服务器删除资源。</li>
 </ul>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> num <span class="type">int</span> = <span class="number">1</span> <span class="comment">// 标准初始化格式</span></span><br><span class="line"><span class="keyword">var</span> age = <span class="number">20</span> <span class="comment">// 编译器推导类型格式，会根据等号右边推导变量类型</span></span><br><span class="line">age := <span class="number">30</span> <span class="comment">// 短变量声明并初始化，使用较多，可同时给多个变量赋值</span></span><br><span class="line">age, sex := <span class="number">30</span>, <span class="literal">false</span> <span class="comment">// 但要保证左边至少有一个新变量，即未定义过的变量才能使用</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="变量交换"><a href="#变量交换" class="headerlink" title="变量交换"></a>变量交换</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">a, b = b, a <span class="comment">// 从左到右依次赋值</span></span><br><span class="line">a, b, c := <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span></span><br><span class="line">c, a, b = a, b, c</span><br><span class="line">fmt.Println(a, b, c)</span><br></pre></td></tr></table></figure>
-
-<h3 id="匿名变量"><a href="#匿名变量" class="headerlink" title="匿名变量"></a>匿名变量</h3><p>和python一样，是我比较喜欢的，经常用在函数返回。匿名变量不占用命名空间，<strong>无分配内存</strong>。</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">a, _ := function() <span class="comment">// 第二个返回值被匿名变量接收</span></span><br></pre></td></tr></table></figure>
-
-
-
-<h2 id="3-2-数据类型"><a href="#3-2-数据类型" class="headerlink" title="3.2 数据类型"></a>3.2 数据类型</h2><p><code>reflect.TypeOf()</code>输出变量类型的字符串</p>
-<h3 id="3-2-1-整型"><a href="#3-2-1-整型" class="headerlink" title="3.2.1 整型"></a>3.2.1 整型</h3><p><code>int8, int16, int32, int64</code></p>
-<p><code>uint8, uint16, uint32, uint64</code></p>
-<h3 id="3-2-2-浮点"><a href="#3-2-2-浮点" class="headerlink" title="3.2.2 浮点"></a>3.2.2 浮点</h3><p>仅支持两种浮点数：float32和float64。最大范围分别约为3.4e38 和 1.8e308</p>
-<h3 id="3-2-4-字符和转义字符"><a href="#3-2-4-字符和转义字符" class="headerlink" title="3.2.4 字符和转义字符"></a>3.2.4 字符和转义字符</h3><ul>
-<li>unit8：ASCII格式</li>
-<li>rune：UTF格式，本质是int32类型</li>
+<p>对客户端请求用得最多的两个：GET和POST</p>
+<ul>
+<li>GET 从指定的资源请求数据</li>
+<li>POST 向指定的资源提交要被处理的数据</li>
 </ul>
-<h3 id="3-2-7-数据类型转换"><a href="#3-2-7-数据类型转换" class="headerlink" title="3.2.7 数据类型转换"></a>3.2.7 数据类型转换</h3><p>通过类型前置加小括号进行类型转换。但要注意转换后值是否会改变。</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> a1 <span class="type">int32</span> = <span class="number">1234567891</span> <span class="comment">// 0x499602d3</span></span><br><span class="line">fmt.Println(a1) <span class="comment">// 1234567891 0x499602d3</span></span><br><span class="line">fmt.Println(<span class="type">int16</span>(a1)) <span class="comment">// 723 0x02d3</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-
-
-<h2 id="指针"><a href="#指针" class="headerlink" title="指针"></a>指针</h2><p>指针本身也是变量，所以也有地址</p>
-<h3 id="声明"><a href="#声明" class="headerlink" title="声明"></a>声明</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> p *<span class="type">int</span> <span class="comment">// 默认nil</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="取地址-与-解引用"><a href="#取地址-与-解引用" class="headerlink" title="取地址 与 解引用"></a>取地址 与 解引用</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">a := <span class="number">1</span></span><br><span class="line">p := &amp;a <span class="comment">//</span></span><br><span class="line">fmt.Println(*p) <span class="comment">// 1</span></span><br><span class="line">*p = <span class="number">2</span> <span class="comment">// 修改值</span></span><br></pre></td></tr></table></figure>
-
-
-
-<p>go指针和C语言指针的一些区别：</p>
-<blockquote>
-<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/127940853">Go语言才是学习指针的安全之地，关于指针的二三事 - 知乎 (zhihu.com)</a></p>
-</blockquote>
-<h1 id="ch4常量与运算符"><a href="#ch4常量与运算符" class="headerlink" title="ch4常量与运算符"></a>ch4常量与运算符</h1><h2 id="4-1-常量"><a href="#4-1-常量" class="headerlink" title="4.1 常量"></a>4.1 常量</h2><p>常量可以声明后不使用</p>
-<h3 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> a <span class="type">int</span> = <span class="number">1</span> <span class="comment">// </span></span><br><span class="line"><span class="keyword">const</span> b = <span class="number">2</span> <span class="comment">// 编译器推断</span></span><br><span class="line"><span class="keyword">const</span> &#123;</span><br><span class="line">    c = <span class="number">3.14</span></span><br><span class="line">    d		<span class="comment">// 3.14，沿用上一行</span></span><br><span class="line">    e = <span class="number">100</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="常量枚举"><a href="#常量枚举" class="headerlink" title="常量枚举"></a>常量枚举</h3><p>特殊常量<code>itoa</code>，其在const关键词出现时被重置为0，每新增一行常量声明，<code>itoa</code>进行一次计数</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> &#123;</span><br><span class="line">    a = itoa 	<span class="comment">// 0</span></span><br><span class="line">    b		    <span class="comment">// 0</span></span><br><span class="line">    c = <span class="string">&quot;hello&quot;</span>	<span class="comment">// &quot;hello&quot;</span></span><br><span class="line">    d  			<span class="comment">// &quot;hello&quot;</span></span><br><span class="line">    e = itoa 	<span class="comment">// 4</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-
-<h2 id="4-2-运算符"><a href="#4-2-运算符" class="headerlink" title="4.2 运算符"></a>4.2 运算符</h2><p>比较少用到，但感觉比较重要的</p>
-<p><img src="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/iimage/image-20230506193025531.png" alt="image-20230506193025531"></p>
-<h1 id="ch5-流程控制"><a href="#ch5-流程控制" class="headerlink" title="ch5 流程控制"></a>ch5 流程控制</h1><p>for和if和C一样，只是没有括号。但没有while循环，一个无条件的for即可。</p>
-<p>break和continue都可以跟标签，指定continue或break哪个循环</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">OuterLoop:</span><br><span class="line"><span class="keyword">for</span> i:=<span class="number">0</span>; i&lt;<span class="number">10</span>; i++ &#123;</span><br><span class="line">    <span class="keyword">for</span> j:=<span class="number">0</span>; j&lt;<span class="number">10</span>; j++ &#123;</span><br><span class="line">        fmt.Println(j)</span><br><span class="line">        <span class="keyword">if</span> j &gt; <span class="number">2</span> &#123;</span><br><span class="line">            <span class="keyword">continue</span> OuterLoop <span class="comment">// 或者 break OuterLoop</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="switch"><a href="#switch" class="headerlink" title="switch"></a>switch</h2><p><code>fallthrough</code>关键字：匹配成功，会强制执行后续的case。</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">switch</span> <span class="number">1</span> + <span class="number">1</span> &#123;</span><br><span class="line"><span class="keyword">case</span> <span class="number">1</span>:</span><br><span class="line">	fmt.Println(<span class="string">&quot;1&quot;</span>)</span><br><span class="line"><span class="keyword">case</span> <span class="number">2</span>:</span><br><span class="line">	fmt.Println(<span class="string">&quot;2&quot;</span>) <span class="comment">// 打印</span></span><br><span class="line">	<span class="keyword">fallthrough</span> </span><br><span class="line"><span class="keyword">case</span> <span class="number">3</span>:</span><br><span class="line">	fmt.Println(<span class="string">&quot;3&quot;</span>) <span class="comment">// 打印</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-<h2 id="goto跳转"><a href="#goto跳转" class="headerlink" title="goto跳转"></a>goto跳转</h2><p>不建议使用，会破坏程序可读性</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">fmt.Println(<span class="string">&quot;hello&quot;</span>)</span><br><span class="line"><span class="keyword">goto</span> mygotoflag</span><br><span class="line">fmt.Println(<span class="string">&quot;invalid line&quot;</span>)</span><br><span class="line">mygotoflag:</span><br><span class="line">	fmt.Println(<span class="string">&quot;world&quot;</span>)</span><br></pre></td></tr></table></figure>
+<p>1、GET用来从服务器获取数据，POST用来向服务器传输数据<br>2、GET不安全，请求会被放在URL，Header和data一起发出。而POST的操作对用户不可见，浏览器会先发送Header，服务器响应100后，再发送data。<br>3、GET传输数据量小，受URL长度限制，Form表单数据集的值必须是ASCII；POST可以传大量数据，且支持整个ISO 10646字符集。</p>
+<h1 id="三个重要的结构体"><a href="#三个重要的结构体" class="headerlink" title="三个重要的结构体"></a>三个重要的结构体</h1><h2 id="1、Client结构体"><a href="#1、Client结构体" class="headerlink" title="1、Client结构体"></a>1、Client结构体</h2><p>Client结构体类型主要充当浏览器角色，创建时结构体成员可以是默认值（无特殊需求基本是默认值）</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Client <span class="keyword">struct</span> &#123;</span><br><span class="line">    Transport RoundTripper</span><br><span class="line">    CheckRedirect <span class="function"><span class="keyword">func</span></span> &#123;req *Request, via []*Request) <span class="type">error</span></span><br><span class="line">    Jar CookieJar</span><br><span class="line">    Timeout time.Duration</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>Transport指定执行独立、单次HTTP请求机制。若为nil，则是DefaultTransport</li>
+<li>CheckRedirect指定重定向策略。如果为nil，采用默认策略连续10次请求后停止。</li>
+<li>Jar指定Cookie管理器。若为nil，请求和回复cookie都忽略。</li>
+<li>Timeout指定请求时间限制，包括连接时间、重定向、读取回复主体的时间。0表示不设置超时。</li>
+</ul>
+<p>拥有如下方法对资源增删改查，其中最重要的是<code>Do</code>方法，其他方法都是对do方法的封装。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *Clinet)</span></span> Do(req *Request) (resp *Response, err <span class="type">error</span>)</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *Clinet)</span></span> Head(url *<span class="type">string</span>) (resp *Response, err <span class="type">error</span>)</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *Clinet)</span></span> Get(url *<span class="type">string</span>) (resp *Response, err <span class="type">error</span>)</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *Clinet)</span></span> Post(url *<span class="type">string</span>, bodyType <span class="type">string</span>, body io.Reader) (resp *Response, err <span class="type">error</span>)</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *Clinet)</span></span> PostForm(url *<span class="type">string</span>, data url.Values) (resp *Response, err <span class="type">error</span>)</span><br></pre></td></tr></table></figure>
 
 
 
 
 
+<h2 id="2、Request结构体："><a href="#2、Request结构体：" class="headerlink" title="2、Request结构体："></a>2、Request结构体：</h2><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">NewRequest</span><span class="params">(method, urlStr <span class="type">string</span>, body io.Reader)</span></span> (*Request,<span class="type">error</span>)</span><br></pre></td></tr></table></figure>
+
+<p>返回Request结构体指针，指定方法、访问url以及io.Reader接口的body，当method为GET时，body&#x3D;nil即可。</p>
+<p>如果参数body实现了的io.ReadCloser接口</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Request <span class="keyword">struct</span> &#123;</span><br><span class="line">	Method           <span class="type">string</span>               <span class="comment">// 请求方法</span></span><br><span class="line">	URL              *url.URL             <span class="comment">// 请求地址</span></span><br><span class="line">	Proto            <span class="type">string</span>               <span class="comment">// 协议版本，&quot;HTTP/1.0&quot;</span></span><br><span class="line">	ProtoMajor       <span class="type">int</span>                  <span class="comment">// 协议主版本号，“1”</span></span><br><span class="line">	ProtoMinor       <span class="type">int</span>                  <span class="comment">// 协议主副版本号，“0”</span></span><br><span class="line">	Header           Header               <span class="comment">// 请求头</span></span><br><span class="line">	Body             io.ReadCloser        <span class="comment">// 请求的Body</span></span><br><span class="line">	ContentLength    <span class="type">int64</span>                <span class="comment">// ContentLength记录相关内容的长度</span></span><br><span class="line">	TransferEncoding []<span class="type">string</span>             <span class="comment">// TransferEncoding按从最外到最里的顺序列出传输编码</span></span><br><span class="line">	Close            <span class="type">bool</span>                 <span class="comment">// Close在服务端指定是否在回复请求后关闭连接，在客户端指定是否在发送请求后关闭连接</span></span><br><span class="line">	Host             <span class="type">string</span>               <span class="comment">// Host指定URL会在其上寻找资源的主机</span></span><br><span class="line">	Form             url.Values           <span class="comment">// Form是解析好的表单数据，包括URL字段的query参数和POST或PUT的表单数据</span></span><br><span class="line">	PostForm         url.Values           <span class="comment">// PostForm是解析好的POST或PUT的表单数据</span></span><br><span class="line">	MultipartForm    *multipart.Form      <span class="comment">// MultipartForm是解析好的多部件表单，包括上传的文件</span></span><br><span class="line">	Trailer          Header               <span class="comment">// Trailer指定了会在请求主体之后发送的额外的头域</span></span><br><span class="line">	RemoteAddr       <span class="type">string</span>               <span class="comment">// RemoteAddr允许HTTP服务器和其他软件记录该请求的来源地址，一般用于日志</span></span><br><span class="line">	RequestURI       <span class="type">string</span>               <span class="comment">// RequestURI是被客户端发送到服务端的请求中未修改的URI</span></span><br><span class="line">	TLS              *tls.ConnectionState <span class="comment">// TLS字段允许HTTP服务器和其他软件记录接收到该请求的TLS连接的信息</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="3、Response结构体"><a href="#3、Response结构体" class="headerlink" title="3、Response结构体"></a>3、Response结构体</h2><p>请求都会返回Response结构体</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Response <span class="keyword">struct</span> &#123;</span><br><span class="line">    Status           <span class="type">string</span>               <span class="comment">//表示HTTP响应的状态行中的状态码和原因短语，例如&quot;200 OK&quot;</span></span><br><span class="line">    StatusCode       <span class="type">int</span>                  <span class="comment">//表示HTTP响应的状态码，例如200</span></span><br><span class="line">    Proto            <span class="type">string</span>               <span class="comment">//表示使用的HTTP协议版本，例如&quot;HTTP/1.1&quot;</span></span><br><span class="line">    ProtoMajor       <span class="type">int</span>                  <span class="comment">//表示使用的HTTP协议版本的主版本号，例如1</span></span><br><span class="line">    ProtoMinor       <span class="type">int</span>                  <span class="comment">//表示使用的HTTP协议版本的副版本号，例如1</span></span><br><span class="line">    Header           Header               <span class="comment">//表示HTTP响应的头部信息，是一个Header类型的映射</span></span><br><span class="line">    Body             io.ReadCloser        <span class="comment">//表示HTTP响应的主体，是一个io.ReadCloser类型的接口，可以读取响应的数据</span></span><br><span class="line">    ContentLength    <span class="type">int64</span>                <span class="comment">//表示HTTP响应的主体的长度，如果长度未知则为-1</span></span><br><span class="line">    TransferEncoding []<span class="type">string</span>             <span class="comment">//表示HTTP响应的传输编码，例如&quot;chunked&quot;，如果未设置则为nil</span></span><br><span class="line">    Close            <span class="type">bool</span>                 <span class="comment">//表示HTTP响应是否需要关闭连接</span></span><br><span class="line">    Uncompressed     <span class="type">bool</span>                 <span class="comment">//表示HTTP响应是否已经解压缩</span></span><br><span class="line">    Trailer          Header               <span class="comment">//表示HTTP响应的头部信息中未确定的部分</span></span><br><span class="line">    Request          *Request             <span class="comment">//表示发送HTTP请求的Request结构体，如果未设置则为nil</span></span><br><span class="line">    TLS              *tls.ConnectionState <span class="comment">//表示HTTP响应的TLS连接信息，如果未使用TLS则为nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>需要注意的是，Request结构体和Response结构体中的Body都是io.ReadCloser类型，需要使用io.ReadAll读取，同时，需要主动去close()。</strong></p>
+<h2 id="发起请求的两种方式"><a href="#发起请求的两种方式" class="headerlink" title="发起请求的两种方式"></a>发起请求的两种方式</h2><h3 id="1、创建客户端结构体、请求结构体进行请求"><a href="#1、创建客户端结构体、请求结构体进行请求" class="headerlink" title="1、创建客户端结构体、请求结构体进行请求"></a>1、创建客户端结构体、请求结构体进行请求</h3><h4 id="优点：可以定制request的细节。"><a href="#优点：可以定制request的细节。" class="headerlink" title="优点：可以定制request的细节。"></a>优点：可以定制request的细节。</h4><h4 id="流程："><a href="#流程：" class="headerlink" title="流程："></a>流程：</h4><ol>
+<li>创建 客户端结构体 http.Client{} </li>
+<li>NewRequest生成 请求结构体</li>
+<li>设置请求结构体的内容，如header、cookie</li>
+<li>客户端结构体调用请求方法</li>
+</ol>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">NewRequest</span><span class="params">(method, urlStr <span class="type">string</span>, body io.Reader)</span></span> (*Request, <span class="type">error</span>)</span><br></pre></td></tr></table></figure>
+<p>NewRequest输入访问的类型、url 以及 body，返回一个<strong>Request结构体</strong>地址。</p>
+<p>POST请求需要用到body。</p>
+<h4 id="例程"><a href="#例程" class="headerlink" title="例程"></a>例程</h4><p>使用Request结构体的Do方法，所以要先用NewRequest创建请求结构体。GET方法不需要body字段，所以NewRequest中body为nil。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="comment">// 创建client</span></span><br><span class="line">	client := &amp;http.Client&#123;&#125;</span><br><span class="line">    <span class="comment">// 新建请求request结构体</span></span><br><span class="line">	request, err := http.NewRequest(<span class="string">&quot;GET&quot;</span>, <span class="string">&quot;http://www.baidu.com&quot;</span>, <span class="literal">nil</span>)</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 设置request结构体的Header模仿浏览器（非必要）</span></span><br><span class="line">	request.Header.Set(<span class="string">&quot;Accept&quot;</span>, <span class="string">&quot;text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8&quot;</span>)</span><br><span class="line">	request.Header.Set(<span class="string">&quot;Accept-Charset&quot;</span>, <span class="string">&quot;GBK,utf-8;q=0.7,*;q=0.3&quot;</span>)</span><br><span class="line">	request.Header.Set(<span class="string">&quot;Accept-Encoding&quot;</span>, <span class="string">&quot;gzip,deflate,sdch&quot;</span>)</span><br><span class="line">	request.Header.Set(<span class="string">&quot;Accept-Language&quot;</span>, <span class="string">&quot;zh-CN,zh;q=0.8&quot;</span>)</span><br><span class="line">	request.Header.Set(<span class="string">&quot;Cache-Control&quot;</span>, <span class="string">&quot;max-age=0&quot;</span>)</span><br><span class="line">	request.Header.Set(<span class="string">&quot;Connection&quot;</span>, <span class="string">&quot;keep-alive&quot;</span>)</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 添加cookie两种方式，模拟登录（非必要） [userId=12345 session=YWRtaW4=]</span></span><br><span class="line">	cookie := &amp;http.Cookie&#123;Name: <span class="string">&quot;userID&quot;</span>, Value: strconv.Itoa(<span class="number">12345</span>)&#125; <span class="comment">// 新建</span></span><br><span class="line">    <span class="comment">// 为request添加cookie</span></span><br><span class="line">	request.AddCookie(cookie)</span><br><span class="line">	request.AddCookie(&amp;http.Cookie&#123;Name: <span class="string">&quot;session&quot;</span>, Value: <span class="string">&quot;YWRtaW4=&quot;</span>&#125;) </span><br><span class="line"></span><br><span class="line">	<span class="comment">// 使用Do请求</span></span><br><span class="line">	response, err := client.Do(request)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Println(err)</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	fmt.Println(response.StatusCode) <span class="comment">// 打印响应状态码</span></span><br><span class="line">	fmt.Println(response.Request.Header) <span class="comment">// 打印请求头</span></span><br><span class="line">	fmt.Println(response.Request.Cookies()) <span class="comment">// 打印cookie</span></span><br><span class="line">	</span><br><span class="line">	<span class="comment">// 打印响应体</span></span><br><span class="line">	responseBody, err := io.ReadAll(response.Body)</span><br><span class="line">	fmt.Println(<span class="type">string</span>(responseBody))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<h3 id="2、http包直接请求"><a href="#2、http包直接请求" class="headerlink" title="2、http包直接请求"></a>2、http包直接请求</h3><p>例如使用http包的<code>GET()</code>，可以快速发起一个GET请求。底层就是调用Client结构体的GET方法，底层的GET方法是对DO方法的封装。不需要NewRequest创建结构体，直接请求url。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">response, err := http.Get(<span class="string">&quot;http://www.baidu.com&quot;</span>)</span><br><span class="line"><span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">    fmt.Println(err)</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">defer</span> response.Body.Close()  </span><br><span class="line">body, _ := ioutil.ReadAll(response.Body)</span><br><span class="line">fmt.Println(<span class="type">string</span>(body))</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="17-2-3-发起POST请求"><a href="#17-2-3-发起POST请求" class="headerlink" title="17.2.3 发起POST请求"></a>17.2.3 发起POST请求</h2><p>POST要用到Body字段，所以使用NewRequest时需要设置。io.Closer接口若被实现，会被Client类型的Do、Post和PostForm方法以及Transport.RoundTrip方法关闭。</p>
 
       
     </div>
@@ -2446,6 +2448,8 @@ main函数终止，所有goroutine也会一并结束；终止goroutine的最好�
 
 
 
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"drinkwateronly/comments","issue_term":"pathname","theme":"github-light"}</script>
+<script src="/js/third-party/comments/utterances.js"></script>
 
 </body>
 </html>
