@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.0.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/icon32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/icon16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha256-CTSx/A06dm1B063156EVh15m6Y67pAjZZaQc89LLSrU=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.18.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="第六章 Go语言内置容器数组array、切片slice、映射map 引用类型是一种特殊类型，它们包括切片（slice）、映射（map）和通道（channel）等。与基本类型（如整数、浮点数和布尔值）不同，引用类型具有更灵活的内存分配和操作方式 6.1 数组数组大小固定，不能通过数组本身增加删除元素 12345&#x2F;&#x2F; 数组声明var array1 [3]int &#x2F;&#x2F; 初始化数组var array2 &#x3D;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ch6-内置容器">
+<meta property="og:url" content="http://example.com/2023/11/17/Golang/Tutorial/ch6%20%E5%86%85%E7%BD%AE%E5%AE%B9%E5%99%A8/index.html">
+<meta property="og:site_name" content="Wallnut">
+<meta property="og:description" content="第六章 Go语言内置容器数组array、切片slice、映射map 引用类型是一种特殊类型，它们包括切片（slice）、映射（map）和通道（channel）等。与基本类型（如整数、浮点数和布尔值）不同，引用类型具有更灵活的内存分配和操作方式 6.1 数组数组大小固定，不能通过数组本身增加删除元素 12345&#x2F;&#x2F; 数组声明var array1 [3]int &#x2F;&#x2F; 初始化数组var array2 &#x3D;">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/iimage/image-20230506195133868.png">
+<meta property="article:published_time" content="2023-11-16T16:00:00.000Z">
+<meta property="article:modified_time" content="2023-11-17T11:48:14.371Z">
+<meta property="article:author" content="Wallnut">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/iimage/image-20230506195133868.png">
+
+
+<link rel="canonical" href="http://example.com/2023/11/17/Golang/Tutorial/ch6%20%E5%86%85%E7%BD%AE%E5%AE%B9%E5%99%A8/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://example.com/2023/11/17/Golang/Tutorial/ch6%20%E5%86%85%E7%BD%AE%E5%AE%B9%E5%99%A8/","path":"2023/11/17/Golang/Tutorial/ch6 内置容器/","title":"ch6-内置容器"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>ch6-内置容器 | Wallnut</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Wallnut</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC%E5%85%AD%E7%AB%A0-Go%E8%AF%AD%E8%A8%80%E5%86%85%E7%BD%AE%E5%AE%B9%E5%99%A8"><span class="nav-number">1.</span> <span class="nav-text">第六章 Go语言内置容器</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#6-1-%E6%95%B0%E7%BB%84"><span class="nav-number">1.1.</span> <span class="nav-text">6.1 数组</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-1-%E5%88%87%E7%89%87slice"><span class="nav-number">1.2.</span> <span class="nav-text">6.1 切片slice</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#6-2-1-%E5%88%87%E7%89%87%E7%94%9F%E6%88%90%E6%96%B9%E5%BC%8F"><span class="nav-number">1.2.1.</span> <span class="nav-text">6.2.1 切片生成方式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-2-4-%E5%88%87%E7%89%87%E6%B7%BB%E5%8A%A0%E5%85%83%E7%B4%A0"><span class="nav-number">1.2.2.</span> <span class="nav-text">6.2.4 切片添加元素</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-2-5-%E5%88%87%E7%89%87%E5%88%A0%E9%99%A4%E5%85%83%E7%B4%A0"><span class="nav-number">1.2.3.</span> <span class="nav-text">6.2.5 切片删除元素</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-2-%E6%98%A0%E5%B0%84map"><span class="nav-number">1.3.</span> <span class="nav-text">6.2 映射map</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#6-2-1-%E5%A3%B0%E6%98%8E"><span class="nav-number">1.3.1.</span> <span class="nav-text">6.2.1 声明</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-2-2-%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="nav-number">1.3.2.</span> <span class="nav-text">6.2.2 初始化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-3-3-%E9%81%8D%E5%8E%86"><span class="nav-number">1.3.3.</span> <span class="nav-text">6.3.3 遍历</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-3-4-%E5%88%A0%E9%99%A4%E9%94%AE%E5%80%BC%E5%AF%B9"><span class="nav-number">1.3.4.</span> <span class="nav-text">6.3.4 删除键值对</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#range%E8%A1%A8%E8%BE%BE%E5%BC%8F"><span class="nav-number">1.4.</span> <span class="nav-text">range表达式</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Wallnut"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">Wallnut</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">24</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/drinkwateronly" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;drinkwateronly" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/11/17/Golang/Tutorial/ch6%20%E5%86%85%E7%BD%AE%E5%AE%B9%E5%99%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Wallnut">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Wallnut">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="ch6-内置容器 | Wallnut">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          ch6-内置容器
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2023-11-17 00:00:00 / 修改时间：19:48:14" itemprop="dateCreated datePublished" datetime="2023-11-17T00:00:00+08:00">2023-11-17</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Golang/" itemprop="url" rel="index"><span itemprop="name">Golang</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Golang/Go%E5%9F%BA%E7%A1%80/" itemprop="url" rel="index"><span itemprop="name">Go基础</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="第六章-Go语言内置容器"><a href="#第六章-Go语言内置容器" class="headerlink" title="第六章 Go语言内置容器"></a>第六章 Go语言内置容器</h1><p>数组array、切片slice、映射map</p>
+<p>引用类型是一种特殊类型，它们包括切片（slice）、映射（map）和通道（channel）等。与基本类型（如整数、浮点数和布尔值）不同，引用类型具有更灵活的内存分配和操作方式</p>
+<h2 id="6-1-数组"><a href="#6-1-数组" class="headerlink" title="6.1 数组"></a>6.1 数组</h2><p><strong>数组大小固定，不能通过数组本身增加删除元素</strong></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 数组声明</span></span><br><span class="line"><span class="keyword">var</span> array1 [<span class="number">3</span>]<span class="type">int</span> </span><br><span class="line"><span class="comment">// 初始化数组</span></span><br><span class="line"><span class="keyword">var</span> array2 = [<span class="number">3</span>]<span class="type">int</span>&#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>&#125;  <span class="comment">// 指定大小</span></span><br><span class="line"><span class="keyword">var</span> array2 = [...]<span class="type">int</span>&#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>&#125;  <span class="comment">// 编译器根据初始化元素个数指定大小</span></span><br></pre></td></tr></table></figure>
+
+
+<h2 id="6-1-切片slice"><a href="#6-1-切片slice" class="headerlink" title="6.1 切片slice"></a>6.1 切片slice</h2><ul>
+<li><strong>切片并不存储任何元素，是对现有数组的引用</strong></li>
+<li>切片结构：地址、长度、容量。<ul>
+<li>长度指当前切片所含有的元素个数，</li>
+<li>容量指切片所能容纳的元素个数，</li>
+<li>如果是在数组&#x2F;切片截取生成的切片，新切片地址是在数组&#x2F;切片<strong>截取位置的地址</strong>。</li>
+</ul>
+</li>
+</ul>
+<h3 id="6-2-1-切片生成方式"><a href="#6-2-1-切片生成方式" class="headerlink" title="6.2.1 切片生成方式"></a>6.2.1 切片生成方式</h3><ul>
+<li><p>从数组&#x2F;切片上截取生成</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> slice1 = 数组或切片[<span class="number">1</span>:<span class="number">4</span>]  <span class="comment">// 切片元素来自数组或切片的第1~3个元素。</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>直接生成</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> slice1 = []<span class="keyword">type</span> &#123;item1,itme2,itme3&#125; <span class="comment">// 注意，[]内放数字或`...`时为数组，什么都不放是切片。</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>make生成</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">make</span>([]<span class="keyword">type</span>, <span class="type">int</span> <span class="built_in">len</span>, <span class="type">int</span> <span class="built_in">cap</span>)  <span class="comment">// 指定切片类型，长度和容量，默认初始化。</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment">// 数组</span></span><br><span class="line"><span class="keyword">var</span> fruit = [<span class="number">4</span>]<span class="type">string</span>&#123;<span class="string">&quot;apple&quot;</span>, <span class="string">&quot;banana&quot;</span>, <span class="string">&quot;orange&quot;</span>, <span class="string">&quot;pineapple&quot;</span>&#125;</span><br><span class="line"><span class="comment">// 切片生成方式1：从数组上生成</span></span><br><span class="line">fSlice1 := fruit[<span class="number">1</span>:]</span><br><span class="line"><span class="comment">// 切片生成方式2：从切片上生成</span></span><br><span class="line">fSlice2 := fSlice1[:<span class="number">2</span>]</span><br><span class="line"><span class="comment">// 切片生成方式3：直接生成</span></span><br><span class="line">fSlice3 := []<span class="type">string</span>&#123;<span class="string">&quot;apple&quot;</span>, <span class="string">&quot;banana&quot;</span>, <span class="string">&quot;orange&quot;</span>, <span class="string">&quot;pineapple&quot;</span>&#125;</span><br><span class="line"><span class="comment">// 切片生成方式4：make生成</span></span><br><span class="line">slice4 := <span class="built_in">make</span>([]<span class="type">int</span>, <span class="number">3</span>, <span class="number">4</span>)</span><br><span class="line"></span><br><span class="line">fmt.Println(<span class="string">&quot;fruit:&quot;</span>, fruit)  <span class="comment">// fruit: [apple banana orange pineapple]</span></span><br><span class="line">fmt.Println(<span class="string">&quot;fSlice1:&quot;</span>, fSlice1) <span class="comment">//  [banana orange pineapple]</span></span><br><span class="line">fmt.Println(<span class="string">&quot;fSlice2:&quot;</span>, fSlice2) <span class="comment">//  [banana orange]</span></span><br><span class="line">fmt.Println(<span class="string">&quot;fSlice3:&quot;</span>, fSlice3) <span class="comment">// [apple banana orange pineapple]</span></span><br><span class="line">fmt.Println(<span class="string">&quot;slice3:&quot;</span>, slice4) <span class="comment">// [0 0 0]</span></span><br><span class="line">fmt.Println()</span><br><span class="line">fmt.Printf(<span class="string">&quot;fruit type: %T \n&quot;</span>, fruit) <span class="comment">// fruit type: [4]string</span></span><br><span class="line">fmt.Printf(<span class="string">&quot;fSlice1 type: %T \n&quot;</span>, fSlice1) <span class="comment">// fSlice1 type: []string</span></span><br><span class="line">fmt.Println()</span><br><span class="line">fmt.Println(<span class="string">&quot;fruit addr:&quot;</span>, &amp;fruit[<span class="number">0</span>]) <span class="comment">// 0xc000024080</span></span><br><span class="line">fmt.Println(<span class="string">&quot;fSlice1 addr:&quot;</span>, &amp;fSlice1[<span class="number">0</span>]) <span class="comment">// 0xc000024090</span></span><br><span class="line">fmt.Println(<span class="string">&quot;fSlice2 addr:&quot;</span>, &amp;fSlice2[<span class="number">0</span>]) <span class="comment">// 0xc000024090</span></span><br><span class="line">fmt.Println(<span class="string">&quot;fSlice3 addr:&quot;</span>, &amp;fSlice3[<span class="number">0</span>]) <span class="comment">// 0xc0000240c0</span></span><br><span class="line">fmt.Println()</span><br><span class="line">fmt.Println(<span class="string">&quot;fruit len:&quot;</span>, <span class="built_in">len</span>(fruit), <span class="string">&quot;;capacity:&quot;</span>, <span class="built_in">cap</span>(fruit)) <span class="comment">// fruit len: 4 ;capacity: 4</span></span><br><span class="line">fmt.Println(<span class="string">&quot;fSlice1 len:&quot;</span>, <span class="built_in">len</span>(fSlice1), <span class="string">&quot;;capacity:&quot;</span>, <span class="built_in">cap</span>(fSlice1)) <span class="comment">// fSlice1 len: 3 ;capacity: 3</span></span><br><span class="line">fmt.Println(<span class="string">&quot;fSlice2 len:&quot;</span>, <span class="built_in">len</span>(fSlice2), <span class="string">&quot;;capacity:&quot;</span>, <span class="built_in">cap</span>(fSlice2)) <span class="comment">// fSlice2 len: 2 ;capacity: 3</span></span><br><span class="line">fmt.Println(<span class="string">&quot;fSlice3 len:&quot;</span>, <span class="built_in">len</span>(fSlice3), <span class="string">&quot;;capacity:&quot;</span>, <span class="built_in">cap</span>(fSlice3)) <span class="comment">// fSlice3 len: 4 ;capacity: 4</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="6-2-4-切片添加元素"><a href="#6-2-4-切片添加元素" class="headerlink" title="6.2.4 切片添加元素"></a>6.2.4 切片添加元素</h3><ul>
+<li><p>添加方式</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">slice1 = <span class="built_in">append</span>(slice1, <span class="number">1</span>)</span><br><span class="line">slice1 = <span class="built_in">append</span>(slice1, <span class="number">1</span>, <span class="number">2</span>) <span class="comment">// 2个元素</span></span><br><span class="line">slice1 = <span class="built_in">append</span>(slice1, slice2...) <span class="comment">// 另一个slice时要加...，不能是数组。</span></span><br></pre></td></tr></table></figure></li>
+<li><p>当添加元素的时候，如果当前len&#x3D;&#x3D;cap，即长度将超过容量，切片会按2倍扩容。<strong>多次扩容会造成性能损耗</strong></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">list4Append := <span class="built_in">make</span>([]<span class="type">int</span>, <span class="number">1</span>, <span class="number">1</span>)</span><br><span class="line"><span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="number">10</span>; i++ &#123;</span><br><span class="line">    list4Append = <span class="built_in">append</span>(list4Append, i)</span><br><span class="line">    fmt.Println(<span class="string">&quot;len:&quot;</span>, <span class="built_in">len</span>(list4Append),<span class="string">&quot;cap:&quot;</span>, <span class="built_in">cap</span>(list4Append))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>结果</p>
+<blockquote>
+<p>len: 2 cap: 2<br>len: 3 cap: 4<br>len: 4 cap: 4<br>len: 5 cap: 8<br>len: 6 cap: 8<br>len: 7 cap: 8<br>len: 8 cap: 8<br>len: 9 cap: 16<br>len: 10 cap: 16<br>len: 11 cap: 16</p>
+</blockquote>
+</li>
+<li><p><strong>如果切片生成自其他切片或数组，由于切片只是引用，对切片的修改可能会影响先前的切片&#x2F;数组。</strong></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> numList = [...]<span class="type">int</span>&#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>&#125; <span class="comment">// [1,2,3,4]</span></span><br><span class="line"><span class="keyword">var</span> numSlice = numList[<span class="number">0</span>:<span class="number">1</span>]  <span class="comment">// [1]</span></span><br><span class="line">numSlice = <span class="built_in">append</span>(numSlice, <span class="number">5</span>)  <span class="comment">// 往切片[1]后插入一个元素5</span></span><br><span class="line">fmt.Println(numList, numSlice) <span class="comment">// [1,5,3,4] [1,5] 原数组发生了变化</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> numSlice2 = numList[:]</span><br><span class="line">numSlice2 = <span class="built_in">append</span>(numSlice2, <span class="number">6</span>)</span><br><span class="line">fmt.Println(numList, numSlice, numSlice2) <span class="comment">//  [1 5 3 4] [1 5] [1 5 3 4 6]</span></span><br></pre></td></tr></table></figure>
+<p>numSlice是numLis的t引用，容量4，长度1。当append时，numSlice后面填充一个元素，实际上是修改了numList对应位置的内容。<br>numSlice2也是numList引用，容量4，长度4。当append时，容量变为8，但由于numList不能再添加元素，所以numList不变，而numList1元素只覆盖了前两个，也没有变化。</p>
+</li>
+</ul>
+<h3 id="6-2-5-切片删除元素"><a href="#6-2-5-切片删除元素" class="headerlink" title="6.2.5 切片删除元素"></a>6.2.5 切片删除元素</h3><p>go并没有提供删除的方法，可以利用append实现删除，将删除点前后的slice连接，代码接6.2.4，<br>值得注意是的，当append后面接的是另一个slice时，参数后要加<code>...</code></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">numSlice2 = <span class="built_in">append</span>(numSlice2[:<span class="number">1</span>], numSlice2[<span class="number">2</span>:]...) <span class="comment">// [1 5 3 4 6]</span></span><br><span class="line">fmt.Println(numSlice2) <span class="comment">//[1,3,4,6]</span></span><br></pre></td></tr></table></figure>
+
+<p>numSlice2的地址应该没变。</p>
+<h2 id="6-2-映射map"><a href="#6-2-映射map" class="headerlink" title="6.2 映射map"></a>6.2 映射map</h2><p>map并非协程安全的，同一时刻只能有一个协程对map操作，可用sync包的 对map加锁 或 线程安全map ，但有性能损失。</p>
+<h3 id="6-2-1-声明"><a href="#6-2-1-声明" class="headerlink" title="6.2.1 声明"></a>6.2.1 声明</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">map1 := <span class="keyword">map</span>[keyType] valueType</span><br></pre></td></tr></table></figure>
+<h3 id="6-2-2-初始化"><a href="#6-2-2-初始化" class="headerlink" title="6.2.2 初始化"></a>6.2.2 初始化</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 初始化方式1</span></span><br><span class="line"><span class="keyword">var</span> map1 = <span class="keyword">map</span>[keyType] valueType &#123;</span><br><span class="line">    key1:value1,</span><br><span class="line">    key2:value2,</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 初始化方式2，根据长度执行默认初始化</span></span><br><span class="line"><span class="keyword">var</span> map1 = <span class="built_in">make</span>(<span class="keyword">map</span>[keyType]valueType, mapCapacity)</span><br></pre></td></tr></table></figure>
+<ul>
+<li>初始化方式2中，make可以指定map容量，map的多次扩充会低效，</li>
+<li>cap()并不能获取map的容量，而len()可以获取map当前长度。</li>
+</ul>
+<h3 id="6-3-3-遍历"><a href="#6-3-3-遍历" class="headerlink" title="6.3.3 遍历"></a>6.3.3 遍历</h3><ul>
+<li>单纯地range遍历map，每次遍历的结果可能不同，若想每次遍历出一样的结果，可以先取出所有键，再根据键遍历。<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> score = <span class="built_in">make</span>(<span class="keyword">map</span>[<span class="type">string</span>]<span class="type">int</span>, <span class="number">5</span>)</span><br><span class="line">score[<span class="string">&quot;he&quot;</span>] = <span class="number">20</span></span><br><span class="line">score[<span class="string">&quot;she&quot;</span>] = <span class="number">30</span></span><br><span class="line">score[<span class="string">&quot;they&quot;</span>] = <span class="number">40</span></span><br><span class="line">score[<span class="string">&quot;it&quot;</span>] = <span class="number">50</span></span><br><span class="line">fmt.Println(score)</span><br><span class="line">fmt.Println(<span class="built_in">len</span>(score))</span><br><span class="line"><span class="keyword">for</span> i, v := <span class="keyword">range</span> score &#123;  <span class="comment">// 每次结果不同</span></span><br><span class="line">    fmt.Println(i, v)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h3 id="6-3-4-删除键值对"><a href="#6-3-4-删除键值对" class="headerlink" title="6.3.4 删除键值对"></a>6.3.4 删除键值对</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">delete</span>(map1, key)</span><br></pre></td></tr></table></figure>
+<p>Go语言没有为map提供清空所有元素的方法。并且delete内置函数置只用于map元素删除。</p>
+<h2 id="range表达式"><a href="#range表达式" class="headerlink" title="range表达式"></a>range表达式</h2><p>用于容器的迭代</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> first, second := range map1 &#123;  </span><br><span class="line">    fmt.<span class="built_in">Println</span>(i, v)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/iimage/image-20230506195133868.png" alt="image-20230506195133868"></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2023/11/17/Golang/Tutorial/ch8%20%E7%BB%93%E6%9E%84%E4%BD%93/" rel="prev" title="ch8-结构体">
+                  <i class="fa fa-angle-left"></i> ch8-结构体
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2023/11/17/Golang/Tutorial/ch7%20%E5%87%BD%E6%95%B0/" rel="next" title="ch7-函数">
+                  ch7-函数 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2023</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Wallnut</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  <script src="/js/third-party/pace.js"></script>
+
+
+  
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.0.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/icon32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/icon16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha256-CTSx/A06dm1B063156EVh15m6Y67pAjZZaQc89LLSrU=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.18.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="几种并发服务器端的实现方式  多进程服务器：通过创建多个进程提供服务（创建进程代价极大，且进程间通信提高编程难度） 多路复用服务器：通过捆绑并统一管理I&#x2F;O对象提供服务（本章内容） 多线程服务器：通过生成与客户端等量的线程提供服务  一、理解复用技术 相较于多进程服务器端，IO复用服务器端只需要父进程，复用多个IO即可。 简单理解就是：监听多个套接字文件描述符，当有哪些需要文件描述符发生">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ch7-并发服务器实现——IO复用服务器端">
+<meta property="og:url" content="http://example.com/2023/04/20/network_programming/ch7-%E5%B9%B6%E5%8F%91%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%AE%9E%E7%8E%B0%E2%80%94%E2%80%94IO%E5%A4%8D%E7%94%A8%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%AB%AF/index.html">
+<meta property="og:site_name" content="Wallnut">
+<meta property="og:description" content="几种并发服务器端的实现方式  多进程服务器：通过创建多个进程提供服务（创建进程代价极大，且进程间通信提高编程难度） 多路复用服务器：通过捆绑并统一管理I&#x2F;O对象提供服务（本章内容） 多线程服务器：通过生成与客户端等量的线程提供服务  一、理解复用技术 相较于多进程服务器端，IO复用服务器端只需要父进程，复用多个IO即可。 简单理解就是：监听多个套接字文件描述符，当有哪些需要文件描述符发生">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/iimage/image-20230417121700203.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/iimage/image-20230417123505515.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/iimage/image-20230410095134055.png">
+<meta property="article:published_time" content="2023-04-19T16:00:00.000Z">
+<meta property="article:modified_time" content="2023-11-17T12:06:40.688Z">
+<meta property="article:author" content="Wallnut">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/iimage/image-20230417121700203.png">
+
+
+<link rel="canonical" href="http://example.com/2023/04/20/network_programming/ch7-%E5%B9%B6%E5%8F%91%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%AE%9E%E7%8E%B0%E2%80%94%E2%80%94IO%E5%A4%8D%E7%94%A8%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%AB%AF/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://example.com/2023/04/20/network_programming/ch7-%E5%B9%B6%E5%8F%91%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%AE%9E%E7%8E%B0%E2%80%94%E2%80%94IO%E5%A4%8D%E7%94%A8%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%AB%AF/","path":"2023/04/20/network_programming/ch7-并发服务器实现——IO复用服务器端/","title":"ch7-并发服务器实现——IO复用服务器端"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>ch7-并发服务器实现——IO复用服务器端 | Wallnut</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Wallnut</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E7%90%86%E8%A7%A3%E5%A4%8D%E7%94%A8%E6%8A%80%E6%9C%AF"><span class="nav-number">1.</span> <span class="nav-text">一、理解复用技术</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BA%8C%E3%80%81select"><span class="nav-number">2.</span> <span class="nav-text">二、select</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#2-1-select%E6%B5%81%E7%A8%8B"><span class="nav-number">2.1.</span> <span class="nav-text">2.1 select流程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-1-%E6%AD%A5%E9%AA%A4%E4%B8%80%EF%BC%9A%E8%AE%BE%E7%BD%AE%E6%96%87%E4%BB%B6%E6%8F%8F%E8%BF%B0%E7%AC%A6"><span class="nav-number">2.1.1.</span> <span class="nav-text">2.1.1 步骤一：设置文件描述符</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-2-%E6%AD%A5%E9%AA%A4%E4%B8%80%EF%BC%9A%E6%8C%87%E5%AE%9A%E7%9B%91%E8%A7%86%E8%8C%83%E5%9B%B4%E4%B8%8E%E8%B6%85%E6%97%B6"><span class="nav-number">2.1.2.</span> <span class="nav-text">2.1.2 步骤一：指定监视范围与超时</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-3-%E6%AD%A5%E9%AA%A4%E4%BA%8C%E3%80%81%E4%B8%89%EF%BC%9A%E8%B0%83%E7%94%A8select%E5%87%BD%E6%95%B0%E5%B9%B6%E6%9F%A5%E7%9C%8B%E7%BB%93%E6%9E%9C"><span class="nav-number">2.1.3.</span> <span class="nav-text">2.1.3 步骤二、三：调用select函数并查看结果</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-4-select%E4%BE%8B%E7%A8%8B"><span class="nav-number">2.1.4.</span> <span class="nav-text">2.1.4 select例程</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-2-select%E6%9C%8D%E5%8A%A1%E5%99%A8%E4%BE%8B%E7%A8%8B"><span class="nav-number">2.2.</span> <span class="nav-text">2.2 select服务器例程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-1-%E4%BB%A3%E7%A0%81"><span class="nav-number">2.2.1.</span> <span class="nav-text">2.2.1 代码</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-3-select%E4%BC%98%E7%BC%BA%E7%82%B9"><span class="nav-number">2.3.</span> <span class="nav-text">2.3 select优缺点</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Wallnut"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">Wallnut</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">24</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/drinkwateronly" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;drinkwateronly" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/04/20/network_programming/ch7-%E5%B9%B6%E5%8F%91%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%AE%9E%E7%8E%B0%E2%80%94%E2%80%94IO%E5%A4%8D%E7%94%A8%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%AB%AF/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Wallnut">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Wallnut">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="ch7-并发服务器实现——IO复用服务器端 | Wallnut">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          ch7-并发服务器实现——IO复用服务器端
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2023-04-20 00:00:00" itemprop="dateCreated datePublished" datetime="2023-04-20T00:00:00+08:00">2023-04-20</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-11-17 20:06:40" itemprop="dateModified" datetime="2023-11-17T20:06:40+08:00">2023-11-17</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/C/" itemprop="url" rel="index"><span itemprop="name">C++</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/C/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">网络编程</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>几种并发服务器端的实现方式</p>
+<ul>
+<li>多进程服务器：通过创建多个进程提供服务（创建进程代价极大，且进程间通信提高编程难度）</li>
+<li><strong>多路复用服务器：通过捆绑并统一管理I&#x2F;O对象提供服务（本章内容）</strong></li>
+<li>多线程服务器：通过生成与客户端等量的线程提供服务</li>
+</ul>
+<h1 id="一、理解复用技术"><a href="#一、理解复用技术" class="headerlink" title="一、理解复用技术"></a>一、理解复用技术</h1><p><img src="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/iimage/image-20230417121700203.png" alt="image-20230417121700203"></p>
+<p>相较于多进程服务器端，IO复用服务器端只需要父进程，复用多个IO即可。</p>
+<p>简单理解就是：<strong>监听多个套接字文件描述符，当有哪些需要文件描述符发生了事件，如传输数据，处理即可。</strong></p>
+<h1 id="二、select"><a href="#二、select" class="headerlink" title="二、select"></a>二、select</h1><p>是IO多路复用的函数，允许程序监控多个文件描述符是否准备好，即不再阻塞可以用于IO了，包括可读可写或发生异常。可以使我们同时等待多个文件缓冲区，减少IO等待时间，</p>
+<h2 id="2-1-select流程"><a href="#2-1-select流程" class="headerlink" title="2.1 select流程"></a>2.1 select流程</h2><img src="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/iimage/image-20230417123505515.png" alt="image-20230417123505515" style="zoom:67%;" />
+
+<h3 id="2-1-1-步骤一：设置文件描述符"><a href="#2-1-1-步骤一：设置文件描述符" class="headerlink" title="2.1.1 步骤一：设置文件描述符"></a>2.1.1 步骤一：设置文件描述符</h3><p>将要监控的文件描述符放到fd_set中。其本质是一个位图，一个位表示一个文件描述符，最多1024位对应1024个文件描述符。对<strong>fd_set</strong>的操作有：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">FD_ZERO(fd_set *fdset); <span class="comment">// 清空fdset</span></span><br><span class="line">FD_SET(<span class="type">int</span> fd,fd_set *fdset); <span class="comment">// 将给定文件描述符加入到fdset中（监控）</span></span><br><span class="line">FD_CLR(<span class="type">int</span> fd,fd_set *fdset); <span class="comment">// 将给定文件描述符从fdset中删除（不再监控）</span></span><br><span class="line"><span class="type">bool</span> <span class="title function_">FD_ISSET</span><span class="params">(<span class="type">int</span> fd, fd_set *fdset)</span>; <span class="comment">// 检测fd在fdset中状态是否发生变化</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="2-1-2-步骤一：指定监视范围与超时"><a href="#2-1-2-步骤一：指定监视范围与超时" class="headerlink" title="2.1.2 步骤一：指定监视范围与超时"></a>2.1.2 步骤一：指定监视范围与超时</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;select.h&gt;</span></span></span><br><span class="line"><span class="type">int</span> <span class="title function_">select</span><span class="params">(<span class="type">int</span> nfds, fd_set *readfds, fd_set *writefds,</span></span><br><span class="line"><span class="params">          	fd_set *exceptfds, <span class="keyword">struct</span> timeval *timeout)</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>参数</p>
+<ul>
+<li><p>nfds：所等待的文件描述符最大值+1，比如进程监控1、3、5，那么nfds&#x3D;5+1。</p>
+</li>
+<li><p><strong>fd_set</strong>：</p>
+<ul>
+<li>readfds：等待读事件的文件描述符集合。</li>
+<li>writefds：等待写事件的文件描述符集合。</li>
+<li>exceptfds：等待异常事件的文件描述符集合。</li>
+</ul>
+</li>
+<li><p>timeout：select在内核中阻塞时间，<strong>设置NULL时非阻塞</strong>。</p>
+</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// struct timeval time =&#123;5,0&#125; 阻塞5秒</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">timeval</span> &#123;</span></span><br><span class="line">    <span class="type">long</span>    tv_sec;         <span class="comment">/* seconds */</span></span><br><span class="line">    <span class="type">long</span>    tv_usec;        <span class="comment">/* microseconds */</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>返回值</p>
+<ul>
+<li>没用文件描述符就绪返回0，调用失败返回-1，&gt;0表示被监控的文件描述符有变化。</li>
+</ul>
+</li>
+</ul>
+<h3 id="2-1-3-步骤二、三：调用select函数并查看结果"><a href="#2-1-3-步骤二、三：调用select函数并查看结果" class="headerlink" title="2.1.3 步骤二、三：调用select函数并查看结果"></a>2.1.3 步骤二、三：调用select函数并查看结果</h3><ul>
+<li><p>调用select时，进程设置fd_set是让内核等待fs_set文件描述符发送的事件；</p>
+</li>
+<li><p>调用select后，内核设置fd_set是为了告诉进程哪些应用程序事件生效。</p>
+</li>
+</ul>
+<p>调用后，没有事件发生的文件描述符在fd_set中所有位变为0，发生事件文件描述符对应位为1。</p>
+<p><strong>所以<code>fd_set</code>每次调用后都可能变化，如果需要多次调用<code>select</code>监控同一些文件描述符，则每次调用<code>select</code>都要重新设置<code>fd_set</code>。</strong></p>
+<h3 id="2-1-4-select例程"><a href="#2-1-4-select例程" class="headerlink" title="2.1.4 select例程"></a>2.1.4 select例程</h3><p>只向fd_set注册一个文件描述符0，即标准输入，只要标准输入有值输入，select就会返回。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/time.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/select.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> BUF_SIZE 30</span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span>* argv[])</span></span><br><span class="line">&#123;</span><br><span class="line">    fd_set reads, tmps;</span><br><span class="line">    <span class="type">int</span> result, str_len;</span><br><span class="line">    <span class="type">char</span> buf[BUF_SIZE];</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">timeval</span> <span class="title">timeout</span>;</span></span><br><span class="line"></span><br><span class="line">    FD_ZERO(&amp;reads);</span><br><span class="line">    FD_SET(<span class="number">0</span>, &amp;reads); <span class="comment">// 标准输入文件描述符0，注册到fd_set中</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span>(<span class="number">1</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        tmps = reads;</span><br><span class="line">        timeout.tv_sec = <span class="number">5</span>;</span><br><span class="line">        timeout.tv_usec = <span class="number">0</span>;</span><br><span class="line">		<span class="comment">// 调用select并阻塞5秒，且每次都要重新设置fd_set</span></span><br><span class="line">        result = select(<span class="number">1</span>, &amp;tmps, <span class="number">0</span>, <span class="number">0</span>, &amp;timeout);</span><br><span class="line">        <span class="keyword">if</span>(result == <span class="number">-1</span>) <span class="comment">// select出错</span></span><br><span class="line">        &#123;</span><br><span class="line">            <span class="built_in">puts</span>(<span class="string">&quot;select() error&quot;</span>);</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span> <span class="keyword">if</span>(result == <span class="number">0</span>) <span class="comment">// 超时，标准输入没有事件发生</span></span><br><span class="line">        &#123;</span><br><span class="line">            <span class="built_in">puts</span>(<span class="string">&quot;time-out!&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span>  <span class="comment">// 标准输入有事件发生</span></span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">if</span>(FD_ISSET(<span class="number">0</span>, &amp;tmps)) <span class="comment">// 0位置的文件描述符是否有事件发生</span></span><br><span class="line">            &#123;</span><br><span class="line">                str_len = read(<span class="number">0</span>, buf, BUF_SIZE); <span class="comment">// 从标准输入读取</span></span><br><span class="line">                buf[str_len] = <span class="number">0</span>;</span><br><span class="line">                <span class="built_in">printf</span>(<span class="string">&quot;message from console: %s&quot;</span>,buf); <span class="comment">// 打印</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="2-2-select服务器例程"><a href="#2-2-select服务器例程" class="headerlink" title="2.2 select服务器例程"></a>2.2 select服务器例程</h2><p><img src="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/iimage/image-20230410095134055.png" alt="image-20230410095134055"></p>
+<h3 id="2-2-1-代码"><a href="#2-2-1-代码" class="headerlink" title="2.2.1 代码"></a>2.2.1 代码</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;arpa/inet.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/socket.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/time.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/select.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> BUF_SIZE 30</span></span><br><span class="line"><span class="type">void</span> <span class="title function_">error_handling</span><span class="params">(<span class="type">char</span> *message)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">fputs</span>(message, <span class="built_in">stderr</span>);</span><br><span class="line">    fputc(<span class="string">&#x27;\n&#x27;</span>, <span class="built_in">stderr</span>);</span><br><span class="line">    <span class="built_in">exit</span>(<span class="number">1</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> *argv[])</span></span><br><span class="line">&#123;</span><br><span class="line"></span><br><span class="line">    <span class="type">int</span> serv_sock, clnt_sock;</span><br><span class="line">    <span class="type">char</span> buf[BUF_SIZE];</span><br><span class="line">    <span class="type">int</span> fd_max, fd_num, str_len, i;</span><br><span class="line"></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">sockaddr_in</span> <span class="title">serv_adr</span>, <span class="title">clnt_adr</span>;</span></span><br><span class="line">    <span class="type">socklen_t</span> clnt_adr_sz;</span><br><span class="line">    <span class="keyword">if</span> (argc != <span class="number">2</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;Usage : %s &lt;port&gt;\n&quot;</span>, argv[<span class="number">0</span>]);</span><br><span class="line">        <span class="built_in">exit</span>(<span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    serv_sock = socket(PF_INET, SOCK_STREAM, <span class="number">0</span>);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;serv_sock: %d&quot;</span>, serv_sock);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (serv_sock == <span class="number">-1</span>)</span><br><span class="line">        error_handling(<span class="string">&quot;socket() error&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="built_in">memset</span>(&amp;serv_adr, <span class="number">0</span>, <span class="keyword">sizeof</span>(serv_adr));</span><br><span class="line">    serv_adr.sin_family = AF_INET;</span><br><span class="line">    serv_adr.sin_addr.s_addr = htonl(INADDR_ANY);</span><br><span class="line">    serv_adr.sin_port = htons(atoi(argv[<span class="number">1</span>]));</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (bind(serv_sock, (<span class="keyword">struct</span> sockaddr *)&amp;serv_adr, <span class="keyword">sizeof</span>(serv_adr)) == <span class="number">-1</span>)</span><br><span class="line">        error_handling(<span class="string">&quot;bind() error&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (listen(serv_sock, <span class="number">5</span>) == <span class="number">-1</span>)</span><br><span class="line">        error_handling(<span class="string">&quot;listen() error&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">timeval</span> <span class="title">timeout</span>;</span></span><br><span class="line">    <span class="comment">// 每次调用select，操作系统都会对fd_set修改，所以要一个cpy_reads作为reads的复制，</span></span><br><span class="line">    <span class="comment">// 而reads只有新增加/删除文件描述符才会被修改</span></span><br><span class="line">    fd_set reads, cpy_reads;</span><br><span class="line">    FD_ZERO(&amp;reads);</span><br><span class="line">    FD_SET(serv_sock, &amp;reads);</span><br><span class="line"></span><br><span class="line">    fd_max = serv_sock; <span class="comment">// 所监控的最大文件描述符（整数）</span></span><br><span class="line">    fd_num;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span> (<span class="number">1</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">// 循环一次后，fd_set可能被修改或更新，若仍要监听这些文件描述符，就要重新赋值。</span></span><br><span class="line">        cpy_reads = reads; </span><br><span class="line">        <span class="comment">// 超时设置</span></span><br><span class="line">        timeout.tv_sec = <span class="number">5</span>;</span><br><span class="line">        timeout.tv_usec = <span class="number">0</span>;</span><br><span class="line">        <span class="comment">// 调用select，阻塞5秒</span></span><br><span class="line">        <span class="keyword">if</span> ((fd_num = select(fd_max + <span class="number">1</span>, &amp;cpy_reads, <span class="number">0</span>, <span class="number">0</span>, &amp;timeout)) == <span class="number">-1</span>) </span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        <span class="comment">// 没有文件描述符发生事件</span></span><br><span class="line">        <span class="keyword">if</span> (fd_num == <span class="number">0</span>)</span><br><span class="line">            <span class="keyword">continue</span>;</span><br><span class="line">        <span class="comment">// 有文件描述符发生事件</span></span><br><span class="line">        <span class="comment">// 循环所有注册的文件描述符</span></span><br><span class="line">        <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; fd_max + <span class="number">1</span>; i++)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="comment">// 找到发生事件的文件描述符</span></span><br><span class="line">            <span class="keyword">if</span> (FD_ISSET(i, &amp;cpy_reads))</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="comment">// 若是serv_sock发生事件，表明有新客户端接入</span></span><br><span class="line">                <span class="keyword">if</span> (i == serv_sock)</span><br><span class="line">                &#123;</span><br><span class="line">                    clnt_adr_sz = <span class="keyword">sizeof</span>(clnt_adr);</span><br><span class="line">                    clnt_sock = accept(serv_sock, (<span class="keyword">struct</span> sockaddr *)&amp;clnt_adr, &amp;clnt_adr_sz);</span><br><span class="line">                    <span class="comment">// 新客户端套接字注册到fd_set中，fd_max是所监控的最大的文件描述符+1</span></span><br><span class="line">                    FD_SET(clnt_sock, &amp;reads);</span><br><span class="line">                    <span class="keyword">if</span> (fd_max &lt; clnt_sock)</span><br><span class="line">                        fd_max = clnt_sock;</span><br><span class="line">                    <span class="built_in">printf</span>(<span class="string">&quot;new client %d connected...\n&quot;</span>, clnt_sock);</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">else</span> <span class="comment">// 若不是serv_sock，表明有客户端想写东西</span></span><br><span class="line">                &#123;</span><br><span class="line">                    str_len = read(i, buf, BUF_SIZE);</span><br><span class="line">                    <span class="keyword">if</span> (str_len == <span class="number">0</span>)</span><br><span class="line">                    &#123;</span><br><span class="line">                        FD_CLR(i, &amp;reads);</span><br><span class="line">                        close(i);</span><br><span class="line">                        <span class="built_in">printf</span>(<span class="string">&quot;client %d disconnected...\n&quot;</span>, i);</span><br><span class="line">                    &#125;</span><br><span class="line">                    <span class="keyword">else</span></span><br><span class="line">                    &#123;</span><br><span class="line">                        write(i, buf, str_len);</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    close(serv_sock);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="2-3-select优缺点"><a href="#2-3-select优缺点" class="headerlink" title="2.3 select优缺点"></a>2.3 select优缺点</h2><ul>
+<li><p>每次调用select都要向函数传递监控对象的信息。</p>
+</li>
+<li><p>每次调用select函数后，需要循环所有文件描述符找到所监控的对象。</p>
+</li>
+<li><p>大部分OS都支持select，在服务器端接入者少时也适用。</p>
+</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2023/04/20/network_programming/ch8-%E7%BB%84%E6%92%AD%E5%92%8C%E5%A4%9A%E6%92%AD/" rel="prev" title="ch8-组播和多播">
+                  <i class="fa fa-angle-left"></i> ch8-组播和多播
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2023/04/20/network_programming/ch6-%E5%B9%B6%E5%8F%91%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%AE%9E%E7%8E%B0%E2%80%94%E2%80%94%E5%A4%9A%E8%BF%9B%E7%A8%8B%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%AB%AF/" rel="next" title="ch6-并发服务器实现——多进程服务器端">
+                  ch6-并发服务器实现——多进程服务器端 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2023</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Wallnut</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  <script src="/js/third-party/pace.js"></script>
+
+
+  
+
+
+
+
+
+</body>
+</html>
