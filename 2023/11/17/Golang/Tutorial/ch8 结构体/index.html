@@ -19,12 +19,12 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/themes/blue/pace-theme-minimal.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
 
-<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.18.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+<script class="next-config" data-name="main" type="application/json">{"hostname":"drinkwateronly.github.io","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.18.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
 
     <meta name="description" content="第九章：结构体go中没有类，但提供结构体，结构体和接口实现了面向对象的编程特征。 目前所理解的结构体，就是一种数据类型，因此可以创建多个实例。而匿名结构体是没有类型的，即不会用匿名结构体创建很多实例，只会有一个实例。 9.2 定义结构体关键词type自定义类型，而结构体本身是类型 1234type 结构体名 struct&#123;    成员变量1 类型1    成员变量2, 成员变量3 类型2">
 <meta property="og:type" content="article">
 <meta property="og:title" content="ch8-结构体">
-<meta property="og:url" content="http://example.com/2023/11/17/Golang/Tutorial/ch8%20%E7%BB%93%E6%9E%84%E4%BD%93/index.html">
+<meta property="og:url" content="https://drinkwateronly.github.io/2023/11/17/Golang/Tutorial/ch8%20%E7%BB%93%E6%9E%84%E4%BD%93/index.html">
 <meta property="og:site_name" content="Wallnut">
 <meta property="og:description" content="第九章：结构体go中没有类，但提供结构体，结构体和接口实现了面向对象的编程特征。 目前所理解的结构体，就是一种数据类型，因此可以创建多个实例。而匿名结构体是没有类型的，即不会用匿名结构体创建很多实例，只会有一个实例。 9.2 定义结构体关键词type自定义类型，而结构体本身是类型 1234type 结构体名 struct&#123;    成员变量1 类型1    成员变量2, 成员变量3 类型2">
 <meta property="og:locale" content="zh_CN">
@@ -34,11 +34,11 @@
 <meta name="twitter:card" content="summary">
 
 
-<link rel="canonical" href="http://example.com/2023/11/17/Golang/Tutorial/ch8%20%E7%BB%93%E6%9E%84%E4%BD%93/">
+<link rel="canonical" href="https://drinkwateronly.github.io/2023/11/17/Golang/Tutorial/ch8%20%E7%BB%93%E6%9E%84%E4%BD%93/">
 
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://example.com/2023/11/17/Golang/Tutorial/ch8%20%E7%BB%93%E6%9E%84%E4%BD%93/","path":"2023/11/17/Golang/Tutorial/ch8 结构体/","title":"ch8-结构体"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://drinkwateronly.github.io/2023/11/17/Golang/Tutorial/ch8%20%E7%BB%93%E6%9E%84%E4%BD%93/","path":"2023/11/17/Golang/Tutorial/ch8 结构体/","title":"ch8-结构体"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
 <title>ch8-结构体 | Wallnut</title>
@@ -193,7 +193,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2023/11/17/Golang/Tutorial/ch8%20%E7%BB%93%E6%9E%84%E4%BD%93/">
+    <link itemprop="mainEntityOfPage" href="https://drinkwateronly.github.io/2023/11/17/Golang/Tutorial/ch8%20%E7%BB%93%E6%9E%84%E4%BD%93/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.png">
@@ -311,8 +311,8 @@
                 </a>
             </div>
             <div class="post-nav-item">
-                <a href="/2023/11/17/Golang/Tutorial/ch6%20%E5%86%85%E7%BD%AE%E5%AE%B9%E5%99%A8/" rel="next" title="ch6-内置容器">
-                  ch6-内置容器 <i class="fa fa-angle-right"></i>
+                <a href="/2023/11/17/Golang/Tutorial/ch7%20%E5%87%BD%E6%95%B0/" rel="next" title="ch7-函数">
+                  ch7-函数 <i class="fa fa-angle-right"></i>
                 </a>
             </div>
           </div>

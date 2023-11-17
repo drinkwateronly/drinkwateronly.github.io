@@ -19,12 +19,12 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/themes/blue/pace-theme-minimal.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
 
-<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.18.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+<script class="next-config" data-name="main" type="application/json">{"hostname":"drinkwateronly.github.io","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.18.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
 
     <meta name="description" content="第六章 Go语言内置容器数组array、切片slice、映射map 引用类型是一种特殊类型，它们包括切片（slice）、映射（map）和通道（channel）等。与基本类型（如整数、浮点数和布尔值）不同，引用类型具有更灵活的内存分配和操作方式 6.1 数组数组大小固定，不能通过数组本身增加删除元素 12345&#x2F;&#x2F; 数组声明var array1 [3]int &#x2F;&#x2F; 初始化数组var array2 &#x3D;">
 <meta property="og:type" content="article">
 <meta property="og:title" content="ch6-内置容器">
-<meta property="og:url" content="http://example.com/2023/11/17/Golang/Tutorial/ch6%20%E5%86%85%E7%BD%AE%E5%AE%B9%E5%99%A8/index.html">
+<meta property="og:url" content="https://drinkwateronly.github.io/2023/11/17/Golang/Tutorial/ch6%20%E5%86%85%E7%BD%AE%E5%AE%B9%E5%99%A8/index.html">
 <meta property="og:site_name" content="Wallnut">
 <meta property="og:description" content="第六章 Go语言内置容器数组array、切片slice、映射map 引用类型是一种特殊类型，它们包括切片（slice）、映射（map）和通道（channel）等。与基本类型（如整数、浮点数和布尔值）不同，引用类型具有更灵活的内存分配和操作方式 6.1 数组数组大小固定，不能通过数组本身增加删除元素 12345&#x2F;&#x2F; 数组声明var array1 [3]int &#x2F;&#x2F; 初始化数组var array2 &#x3D;">
 <meta property="og:locale" content="zh_CN">
@@ -36,11 +36,11 @@
 <meta name="twitter:image" content="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/iimage/image-20230506195133868.png">
 
 
-<link rel="canonical" href="http://example.com/2023/11/17/Golang/Tutorial/ch6%20%E5%86%85%E7%BD%AE%E5%AE%B9%E5%99%A8/">
+<link rel="canonical" href="https://drinkwateronly.github.io/2023/11/17/Golang/Tutorial/ch6%20%E5%86%85%E7%BD%AE%E5%AE%B9%E5%99%A8/">
 
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://example.com/2023/11/17/Golang/Tutorial/ch6%20%E5%86%85%E7%BD%AE%E5%AE%B9%E5%99%A8/","path":"2023/11/17/Golang/Tutorial/ch6 内置容器/","title":"ch6-内置容器"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://drinkwateronly.github.io/2023/11/17/Golang/Tutorial/ch6%20%E5%86%85%E7%BD%AE%E5%AE%B9%E5%99%A8/","path":"2023/11/17/Golang/Tutorial/ch6 内置容器/","title":"ch6-内置容器"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
 <title>ch6-内置容器 | Wallnut</title>
@@ -195,7 +195,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2023/11/17/Golang/Tutorial/ch6%20%E5%86%85%E7%BD%AE%E5%AE%B9%E5%99%A8/">
+    <link itemprop="mainEntityOfPage" href="https://drinkwateronly.github.io/2023/11/17/Golang/Tutorial/ch6%20%E5%86%85%E7%BD%AE%E5%AE%B9%E5%99%A8/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.png">
@@ -325,13 +325,13 @@
 
           <div class="post-nav">
             <div class="post-nav-item">
-                <a href="/2023/11/17/Golang/Tutorial/ch8%20%E7%BB%93%E6%9E%84%E4%BD%93/" rel="prev" title="ch8-结构体">
-                  <i class="fa fa-angle-left"></i> ch8-结构体
+                <a href="/2023/11/17/Golang/Tutorial/ch7%20%E5%87%BD%E6%95%B0/" rel="prev" title="ch7-函数">
+                  <i class="fa fa-angle-left"></i> ch7-函数
                 </a>
             </div>
             <div class="post-nav-item">
-                <a href="/2023/11/17/Golang/Tutorial/ch7%20%E5%87%BD%E6%95%B0/" rel="next" title="ch7-函数">
-                  ch7-函数 <i class="fa fa-angle-right"></i>
+                <a href="/2023/11/17/Golang/Tutorial/ch17%20HTTP%E7%BC%96%E7%A8%8B/" rel="next" title="ch17-HTTP编程">
+                  ch17-HTTP编程 <i class="fa fa-angle-right"></i>
                 </a>
             </div>
           </div>

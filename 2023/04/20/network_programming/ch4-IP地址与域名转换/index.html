@@ -19,12 +19,12 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/themes/blue/pace-theme-minimal.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
 
-<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.18.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+<script class="next-config" data-name="main" type="application/json">{"hostname":"drinkwateronly.github.io","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.18.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
 
     <meta name="description" content="1 DNSDNS（Domain Name System），即IP和域名相互转换的系统，核心是DNS服务器。 ISP服务提供者维护IP地址时可能会变更IP地址，而域名一旦注册通常不会变化，因此利用域名编写程序就不会依赖某个服务器IP地址。 查看本机的DNS服务器地址 1&gt; nslookup  2 通过域名获取IP地址gethostbyname()2.1 使用方法12#include &lt;n">
 <meta property="og:type" content="article">
 <meta property="og:title" content="ch4-IP地址与域名转换">
-<meta property="og:url" content="http://example.com/2023/04/20/network_programming/ch4-IP%E5%9C%B0%E5%9D%80%E4%B8%8E%E5%9F%9F%E5%90%8D%E8%BD%AC%E6%8D%A2/index.html">
+<meta property="og:url" content="https://drinkwateronly.github.io/2023/04/20/network_programming/ch4-IP%E5%9C%B0%E5%9D%80%E4%B8%8E%E5%9F%9F%E5%90%8D%E8%BD%AC%E6%8D%A2/index.html">
 <meta property="og:site_name" content="Wallnut">
 <meta property="og:description" content="1 DNSDNS（Domain Name System），即IP和域名相互转换的系统，核心是DNS服务器。 ISP服务提供者维护IP地址时可能会变更IP地址，而域名一旦注册通常不会变化，因此利用域名编写程序就不会依赖某个服务器IP地址。 查看本机的DNS服务器地址 1&gt; nslookup  2 通过域名获取IP地址gethostbyname()2.1 使用方法12#include &lt;n">
 <meta property="og:locale" content="zh_CN">
@@ -39,11 +39,11 @@
 <meta name="twitter:image" content="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/iimage/image-20230415154631974.png">
 
 
-<link rel="canonical" href="http://example.com/2023/04/20/network_programming/ch4-IP%E5%9C%B0%E5%9D%80%E4%B8%8E%E5%9F%9F%E5%90%8D%E8%BD%AC%E6%8D%A2/">
+<link rel="canonical" href="https://drinkwateronly.github.io/2023/04/20/network_programming/ch4-IP%E5%9C%B0%E5%9D%80%E4%B8%8E%E5%9F%9F%E5%90%8D%E8%BD%AC%E6%8D%A2/">
 
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://example.com/2023/04/20/network_programming/ch4-IP%E5%9C%B0%E5%9D%80%E4%B8%8E%E5%9F%9F%E5%90%8D%E8%BD%AC%E6%8D%A2/","path":"2023/04/20/network_programming/ch4-IP地址与域名转换/","title":"ch4-IP地址与域名转换"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://drinkwateronly.github.io/2023/04/20/network_programming/ch4-IP%E5%9C%B0%E5%9D%80%E4%B8%8E%E5%9F%9F%E5%90%8D%E8%BD%AC%E6%8D%A2/","path":"2023/04/20/network_programming/ch4-IP地址与域名转换/","title":"ch4-IP地址与域名转换"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
 <title>ch4-IP地址与域名转换 | Wallnut</title>
@@ -198,7 +198,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2023/04/20/network_programming/ch4-IP%E5%9C%B0%E5%9D%80%E4%B8%8E%E5%9F%9F%E5%90%8D%E8%BD%AC%E6%8D%A2/">
+    <link itemprop="mainEntityOfPage" href="https://drinkwateronly.github.io/2023/04/20/network_programming/ch4-IP%E5%9C%B0%E5%9D%80%E4%B8%8E%E5%9F%9F%E5%90%8D%E8%BD%AC%E6%8D%A2/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.png">
@@ -370,8 +370,8 @@
 
           <div class="post-nav">
             <div class="post-nav-item">
-                <a href="/2023/04/20/network_programming/ch5-socket%E5%8F%AF%E9%80%89%E9%A1%B9/" rel="prev" title="ch5-Socket可选项">
-                  <i class="fa fa-angle-left"></i> ch5-Socket可选项
+                <a href="/2023/04/20/network_programming/ch6-%E5%B9%B6%E5%8F%91%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%AE%9E%E7%8E%B0%E2%80%94%E2%80%94%E5%A4%9A%E8%BF%9B%E7%A8%8B%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%AB%AF/" rel="prev" title="ch6-并发服务器实现——多进程服务器端">
+                  <i class="fa fa-angle-left"></i> ch6-并发服务器实现——多进程服务器端
                 </a>
             </div>
             <div class="post-nav-item">
