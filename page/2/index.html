@@ -346,153 +346,6 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://drinkwateronly.github.io/2023/11/f541b5c0766a/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="Wallnut">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Wallnut">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Wallnut">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2023/11/f541b5c0766a/" class="post-title-link" itemprop="url">ch3~5-基础</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-      
-
-      <time title="创建时间：2023-11-17 00:00:00 / 修改时间：19:47:50" itemprop="dateCreated datePublished" datetime="2023-11-17T00:00:00+08:00">2023-11-17</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Golang/" itemprop="url" rel="index"><span itemprop="name">Golang</span></a>
-        </span>
-          ，
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Golang/Go%E5%9F%BA%E7%A1%80/" itemprop="url" rel="index"><span itemprop="name">Go基础</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="ch3变量"><a href="#ch3变量" class="headerlink" title="ch3变量"></a>ch3变量</h1><p>声明后一定要使用</p>
-<h3 id="声明变量"><a href="#声明变量" class="headerlink" title="声明变量"></a>声明变量</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> num <span class="type">int</span></span><br><span class="line"><span class="keyword">var</span> &#123;</span><br><span class="line">    a <span class="type">int</span></span><br><span class="line">    b <span class="type">string</span></span><br><span class="line">    c <span class="type">bool</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="初始化"><a href="#初始化" class="headerlink" title="初始化"></a>初始化</h3><p>Go会对每个变量对应内存初始化，有默认初始化类型。</p>
-<ul>
-<li>数字默认为0，bool默认false，切片、映射、函数默认为nil，字符串默认空字符串。</li>
-</ul>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> num <span class="type">int</span> = <span class="number">1</span> <span class="comment">// 标准初始化格式</span></span><br><span class="line"><span class="keyword">var</span> age = <span class="number">20</span> <span class="comment">// 编译器推导类型格式，会根据等号右边推导变量类型</span></span><br><span class="line">age := <span class="number">30</span> <span class="comment">// 短变量声明并初始化，使用较多，可同时给多个变量赋值</span></span><br><span class="line">age, sex := <span class="number">30</span>, <span class="literal">false</span> <span class="comment">// 但要保证左边至少有一个新变量，即未定义过的变量才能使用</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="变量交换"><a href="#变量交换" class="headerlink" title="变量交换"></a>变量交换</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">a, b = b, a <span class="comment">// 从左到右依次赋值</span></span><br><span class="line">a, b, c := <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span></span><br><span class="line">c, a, b = a, b, c</span><br><span class="line">fmt.Println(a, b, c)</span><br></pre></td></tr></table></figure>
-
-<h3 id="匿名变量"><a href="#匿名变量" class="headerlink" title="匿名变量"></a>匿名变量</h3><p>和python一样，是我比较喜欢的，经常用在函数返回。匿名变量不占用命名空间，<strong>无分配内存</strong>。</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">a, _ := function() <span class="comment">// 第二个返回值被匿名变量接收</span></span><br></pre></td></tr></table></figure>
-
-
-
-<h2 id="3-2-数据类型"><a href="#3-2-数据类型" class="headerlink" title="3.2 数据类型"></a>3.2 数据类型</h2><p><code>reflect.TypeOf()</code>输出变量类型的字符串</p>
-<h3 id="3-2-1-整型"><a href="#3-2-1-整型" class="headerlink" title="3.2.1 整型"></a>3.2.1 整型</h3><p><code>int8, int16, int32, int64</code></p>
-<p><code>uint8, uint16, uint32, uint64</code></p>
-<h3 id="3-2-2-浮点"><a href="#3-2-2-浮点" class="headerlink" title="3.2.2 浮点"></a>3.2.2 浮点</h3><p>仅支持两种浮点数：float32和float64。最大范围分别约为3.4e38 和 1.8e308</p>
-<h3 id="3-2-4-字符和转义字符"><a href="#3-2-4-字符和转义字符" class="headerlink" title="3.2.4 字符和转义字符"></a>3.2.4 字符和转义字符</h3><ul>
-<li>unit8：ASCII格式</li>
-<li>rune：UTF格式，本质是int32类型</li>
-</ul>
-<h3 id="3-2-7-数据类型转换"><a href="#3-2-7-数据类型转换" class="headerlink" title="3.2.7 数据类型转换"></a>3.2.7 数据类型转换</h3><p>通过类型前置加小括号进行类型转换。但要注意转换后值是否会改变。</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> a1 <span class="type">int32</span> = <span class="number">1234567891</span> <span class="comment">// 0x499602d3</span></span><br><span class="line">fmt.Println(a1) <span class="comment">// 1234567891 0x499602d3</span></span><br><span class="line">fmt.Println(<span class="type">int16</span>(a1)) <span class="comment">// 723 0x02d3</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-
-
-<h2 id="指针"><a href="#指针" class="headerlink" title="指针"></a>指针</h2><p>指针本身也是变量，所以也有地址</p>
-<h3 id="声明"><a href="#声明" class="headerlink" title="声明"></a>声明</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> p *<span class="type">int</span> <span class="comment">// 默认nil</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="取地址-与-解引用"><a href="#取地址-与-解引用" class="headerlink" title="取地址 与 解引用"></a>取地址 与 解引用</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">a := <span class="number">1</span></span><br><span class="line">p := &amp;a <span class="comment">//</span></span><br><span class="line">fmt.Println(*p) <span class="comment">// 1</span></span><br><span class="line">*p = <span class="number">2</span> <span class="comment">// 修改值</span></span><br></pre></td></tr></table></figure>
-
-
-
-<p>go指针和C语言指针的一些区别：</p>
-<blockquote>
-<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/127940853">Go语言才是学习指针的安全之地，关于指针的二三事 - 知乎 (zhihu.com)</a></p>
-</blockquote>
-<h1 id="ch4常量与运算符"><a href="#ch4常量与运算符" class="headerlink" title="ch4常量与运算符"></a>ch4常量与运算符</h1><h2 id="4-1-常量"><a href="#4-1-常量" class="headerlink" title="4.1 常量"></a>4.1 常量</h2><p>常量可以声明后不使用</p>
-<h3 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> a <span class="type">int</span> = <span class="number">1</span> <span class="comment">// </span></span><br><span class="line"><span class="keyword">const</span> b = <span class="number">2</span> <span class="comment">// 编译器推断</span></span><br><span class="line"><span class="keyword">const</span> &#123;</span><br><span class="line">    c = <span class="number">3.14</span></span><br><span class="line">    d		<span class="comment">// 3.14，沿用上一行</span></span><br><span class="line">    e = <span class="number">100</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="常量枚举"><a href="#常量枚举" class="headerlink" title="常量枚举"></a>常量枚举</h3><p>特殊常量<code>itoa</code>，其在const关键词出现时被重置为0，每新增一行常量声明，<code>itoa</code>进行一次计数</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> &#123;</span><br><span class="line">    a = itoa 	<span class="comment">// 0</span></span><br><span class="line">    b		    <span class="comment">// 0</span></span><br><span class="line">    c = <span class="string">&quot;hello&quot;</span>	<span class="comment">// &quot;hello&quot;</span></span><br><span class="line">    d  			<span class="comment">// &quot;hello&quot;</span></span><br><span class="line">    e = itoa 	<span class="comment">// 4</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-
-<h2 id="4-2-运算符"><a href="#4-2-运算符" class="headerlink" title="4.2 运算符"></a>4.2 运算符</h2><p>比较少用到，但感觉比较重要的</p>
-<p><img src="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/iimage/image-20230506193025531.png" alt="image-20230506193025531"></p>
-<h1 id="ch5-流程控制"><a href="#ch5-流程控制" class="headerlink" title="ch5 流程控制"></a>ch5 流程控制</h1><p>for和if和C一样，只是没有括号。但没有while循环，一个无条件的for即可。</p>
-<p>break和continue都可以跟标签，指定continue或break哪个循环</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">OuterLoop:</span><br><span class="line"><span class="keyword">for</span> i:=<span class="number">0</span>; i&lt;<span class="number">10</span>; i++ &#123;</span><br><span class="line">    <span class="keyword">for</span> j:=<span class="number">0</span>; j&lt;<span class="number">10</span>; j++ &#123;</span><br><span class="line">        fmt.Println(j)</span><br><span class="line">        <span class="keyword">if</span> j &gt; <span class="number">2</span> &#123;</span><br><span class="line">            <span class="keyword">continue</span> OuterLoop <span class="comment">// 或者 break OuterLoop</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="switch"><a href="#switch" class="headerlink" title="switch"></a>switch</h2><p><code>fallthrough</code>关键字：匹配成功，会强制执行后续的case。</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">switch</span> <span class="number">1</span> + <span class="number">1</span> &#123;</span><br><span class="line"><span class="keyword">case</span> <span class="number">1</span>:</span><br><span class="line">	fmt.Println(<span class="string">&quot;1&quot;</span>)</span><br><span class="line"><span class="keyword">case</span> <span class="number">2</span>:</span><br><span class="line">	fmt.Println(<span class="string">&quot;2&quot;</span>) <span class="comment">// 打印</span></span><br><span class="line">	<span class="keyword">fallthrough</span> </span><br><span class="line"><span class="keyword">case</span> <span class="number">3</span>:</span><br><span class="line">	fmt.Println(<span class="string">&quot;3&quot;</span>) <span class="comment">// 打印</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-<h2 id="goto跳转"><a href="#goto跳转" class="headerlink" title="goto跳转"></a>goto跳转</h2><p>不建议使用，会破坏程序可读性</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">fmt.Println(<span class="string">&quot;hello&quot;</span>)</span><br><span class="line"><span class="keyword">goto</span> mygotoflag</span><br><span class="line">fmt.Println(<span class="string">&quot;invalid line&quot;</span>)</span><br><span class="line">mygotoflag:</span><br><span class="line">	fmt.Println(<span class="string">&quot;world&quot;</span>)</span><br></pre></td></tr></table></figure>
-
-
-
-
-
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
     <link itemprop="mainEntityOfPage" href="https://drinkwateronly.github.io/2023/11/861a8f3c4257/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -616,6 +469,153 @@
 
 
 <h2 id="17-2-3-发起POST请求"><a href="#17-2-3-发起POST请求" class="headerlink" title="17.2.3 发起POST请求"></a>17.2.3 发起POST请求</h2><p>POST要用到Body字段，所以使用NewRequest时需要设置。io.Closer接口若被实现，会被Client类型的Do、Post和PostForm方法以及Transport.RoundTrip方法关闭。</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://drinkwateronly.github.io/2023/11/f541b5c0766a/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Wallnut">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Wallnut">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Wallnut">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2023/11/f541b5c0766a/" class="post-title-link" itemprop="url">ch3~5-基础</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2023-11-17 00:00:00 / 修改时间：19:47:50" itemprop="dateCreated datePublished" datetime="2023-11-17T00:00:00+08:00">2023-11-17</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Golang/" itemprop="url" rel="index"><span itemprop="name">Golang</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Golang/Go%E5%9F%BA%E7%A1%80/" itemprop="url" rel="index"><span itemprop="name">Go基础</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="ch3变量"><a href="#ch3变量" class="headerlink" title="ch3变量"></a>ch3变量</h1><p>声明后一定要使用</p>
+<h3 id="声明变量"><a href="#声明变量" class="headerlink" title="声明变量"></a>声明变量</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> num <span class="type">int</span></span><br><span class="line"><span class="keyword">var</span> &#123;</span><br><span class="line">    a <span class="type">int</span></span><br><span class="line">    b <span class="type">string</span></span><br><span class="line">    c <span class="type">bool</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="初始化"><a href="#初始化" class="headerlink" title="初始化"></a>初始化</h3><p>Go会对每个变量对应内存初始化，有默认初始化类型。</p>
+<ul>
+<li>数字默认为0，bool默认false，切片、映射、函数默认为nil，字符串默认空字符串。</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> num <span class="type">int</span> = <span class="number">1</span> <span class="comment">// 标准初始化格式</span></span><br><span class="line"><span class="keyword">var</span> age = <span class="number">20</span> <span class="comment">// 编译器推导类型格式，会根据等号右边推导变量类型</span></span><br><span class="line">age := <span class="number">30</span> <span class="comment">// 短变量声明并初始化，使用较多，可同时给多个变量赋值</span></span><br><span class="line">age, sex := <span class="number">30</span>, <span class="literal">false</span> <span class="comment">// 但要保证左边至少有一个新变量，即未定义过的变量才能使用</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="变量交换"><a href="#变量交换" class="headerlink" title="变量交换"></a>变量交换</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">a, b = b, a <span class="comment">// 从左到右依次赋值</span></span><br><span class="line">a, b, c := <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span></span><br><span class="line">c, a, b = a, b, c</span><br><span class="line">fmt.Println(a, b, c)</span><br></pre></td></tr></table></figure>
+
+<h3 id="匿名变量"><a href="#匿名变量" class="headerlink" title="匿名变量"></a>匿名变量</h3><p>和python一样，是我比较喜欢的，经常用在函数返回。匿名变量不占用命名空间，<strong>无分配内存</strong>。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">a, _ := function() <span class="comment">// 第二个返回值被匿名变量接收</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="3-2-数据类型"><a href="#3-2-数据类型" class="headerlink" title="3.2 数据类型"></a>3.2 数据类型</h2><p><code>reflect.TypeOf()</code>输出变量类型的字符串</p>
+<h3 id="3-2-1-整型"><a href="#3-2-1-整型" class="headerlink" title="3.2.1 整型"></a>3.2.1 整型</h3><p><code>int8, int16, int32, int64</code></p>
+<p><code>uint8, uint16, uint32, uint64</code></p>
+<h3 id="3-2-2-浮点"><a href="#3-2-2-浮点" class="headerlink" title="3.2.2 浮点"></a>3.2.2 浮点</h3><p>仅支持两种浮点数：float32和float64。最大范围分别约为3.4e38 和 1.8e308</p>
+<h3 id="3-2-4-字符和转义字符"><a href="#3-2-4-字符和转义字符" class="headerlink" title="3.2.4 字符和转义字符"></a>3.2.4 字符和转义字符</h3><ul>
+<li>unit8：ASCII格式</li>
+<li>rune：UTF格式，本质是int32类型</li>
+</ul>
+<h3 id="3-2-7-数据类型转换"><a href="#3-2-7-数据类型转换" class="headerlink" title="3.2.7 数据类型转换"></a>3.2.7 数据类型转换</h3><p>通过类型前置加小括号进行类型转换。但要注意转换后值是否会改变。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> a1 <span class="type">int32</span> = <span class="number">1234567891</span> <span class="comment">// 0x499602d3</span></span><br><span class="line">fmt.Println(a1) <span class="comment">// 1234567891 0x499602d3</span></span><br><span class="line">fmt.Println(<span class="type">int16</span>(a1)) <span class="comment">// 723 0x02d3</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="指针"><a href="#指针" class="headerlink" title="指针"></a>指针</h2><p>指针本身也是变量，所以也有地址</p>
+<h3 id="声明"><a href="#声明" class="headerlink" title="声明"></a>声明</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> p *<span class="type">int</span> <span class="comment">// 默认nil</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="取地址-与-解引用"><a href="#取地址-与-解引用" class="headerlink" title="取地址 与 解引用"></a>取地址 与 解引用</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">a := <span class="number">1</span></span><br><span class="line">p := &amp;a <span class="comment">//</span></span><br><span class="line">fmt.Println(*p) <span class="comment">// 1</span></span><br><span class="line">*p = <span class="number">2</span> <span class="comment">// 修改值</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p>go指针和C语言指针的一些区别：</p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/127940853">Go语言才是学习指针的安全之地，关于指针的二三事 - 知乎 (zhihu.com)</a></p>
+</blockquote>
+<h1 id="ch4常量与运算符"><a href="#ch4常量与运算符" class="headerlink" title="ch4常量与运算符"></a>ch4常量与运算符</h1><h2 id="4-1-常量"><a href="#4-1-常量" class="headerlink" title="4.1 常量"></a>4.1 常量</h2><p>常量可以声明后不使用</p>
+<h3 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> a <span class="type">int</span> = <span class="number">1</span> <span class="comment">// </span></span><br><span class="line"><span class="keyword">const</span> b = <span class="number">2</span> <span class="comment">// 编译器推断</span></span><br><span class="line"><span class="keyword">const</span> &#123;</span><br><span class="line">    c = <span class="number">3.14</span></span><br><span class="line">    d		<span class="comment">// 3.14，沿用上一行</span></span><br><span class="line">    e = <span class="number">100</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="常量枚举"><a href="#常量枚举" class="headerlink" title="常量枚举"></a>常量枚举</h3><p>特殊常量<code>itoa</code>，其在const关键词出现时被重置为0，每新增一行常量声明，<code>itoa</code>进行一次计数</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> &#123;</span><br><span class="line">    a = itoa 	<span class="comment">// 0</span></span><br><span class="line">    b		    <span class="comment">// 0</span></span><br><span class="line">    c = <span class="string">&quot;hello&quot;</span>	<span class="comment">// &quot;hello&quot;</span></span><br><span class="line">    d  			<span class="comment">// &quot;hello&quot;</span></span><br><span class="line">    e = itoa 	<span class="comment">// 4</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="4-2-运算符"><a href="#4-2-运算符" class="headerlink" title="4.2 运算符"></a>4.2 运算符</h2><p>比较少用到，但感觉比较重要的</p>
+<p><img src="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/iimage/image-20230506193025531.png" alt="image-20230506193025531"></p>
+<h1 id="ch5-流程控制"><a href="#ch5-流程控制" class="headerlink" title="ch5 流程控制"></a>ch5 流程控制</h1><p>for和if和C一样，只是没有括号。但没有while循环，一个无条件的for即可。</p>
+<p>break和continue都可以跟标签，指定continue或break哪个循环</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">OuterLoop:</span><br><span class="line"><span class="keyword">for</span> i:=<span class="number">0</span>; i&lt;<span class="number">10</span>; i++ &#123;</span><br><span class="line">    <span class="keyword">for</span> j:=<span class="number">0</span>; j&lt;<span class="number">10</span>; j++ &#123;</span><br><span class="line">        fmt.Println(j)</span><br><span class="line">        <span class="keyword">if</span> j &gt; <span class="number">2</span> &#123;</span><br><span class="line">            <span class="keyword">continue</span> OuterLoop <span class="comment">// 或者 break OuterLoop</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="switch"><a href="#switch" class="headerlink" title="switch"></a>switch</h2><p><code>fallthrough</code>关键字：匹配成功，会强制执行后续的case。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">switch</span> <span class="number">1</span> + <span class="number">1</span> &#123;</span><br><span class="line"><span class="keyword">case</span> <span class="number">1</span>:</span><br><span class="line">	fmt.Println(<span class="string">&quot;1&quot;</span>)</span><br><span class="line"><span class="keyword">case</span> <span class="number">2</span>:</span><br><span class="line">	fmt.Println(<span class="string">&quot;2&quot;</span>) <span class="comment">// 打印</span></span><br><span class="line">	<span class="keyword">fallthrough</span> </span><br><span class="line"><span class="keyword">case</span> <span class="number">3</span>:</span><br><span class="line">	fmt.Println(<span class="string">&quot;3&quot;</span>) <span class="comment">// 打印</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="goto跳转"><a href="#goto跳转" class="headerlink" title="goto跳转"></a>goto跳转</h2><p>不建议使用，会破坏程序可读性</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">fmt.Println(<span class="string">&quot;hello&quot;</span>)</span><br><span class="line"><span class="keyword">goto</span> mygotoflag</span><br><span class="line">fmt.Println(<span class="string">&quot;invalid line&quot;</span>)</span><br><span class="line">mygotoflag:</span><br><span class="line">	fmt.Println(<span class="string">&quot;world&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+
+
+
+
 
       
     </div>
@@ -1939,8 +1939,6 @@
   <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
   </div>
 
-
-    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
 
 
     </div>
