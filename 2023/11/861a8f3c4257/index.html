@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.0.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/icon32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/icon16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha256-CTSx/A06dm1B063156EVh15m6Y67pAjZZaQc89LLSrU=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"drinkwateronly.github.io","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.18.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="17 HTTP编程 HTTP基于TCP协议上建立 当建立在TLS或SSL协议上时，协议变成了加密HTTPS协议  17.1.2 URL地址12345协议:&#x2F;&#x2F;主机地址&#x2F;路径?查询https:&#x2F;&#x2F;www.baidu.com&#x2F;s?wd&#x3D;Go语言协议:&#x2F;&#x2F;用户名:密码@子域名.域名.顶级域名:端口号&#x2F;目录&#x2F;文件名.文件后缀?参数&#x3D;值#标志http:&#x2F;&#x2F;admin:password@ceshi.baidu">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ch17-HTTP编程">
+<meta property="og:url" content="https://drinkwateronly.github.io/2023/11/861a8f3c4257/index.html">
+<meta property="og:site_name" content="Wallnut">
+<meta property="og:description" content="17 HTTP编程 HTTP基于TCP协议上建立 当建立在TLS或SSL协议上时，协议变成了加密HTTPS协议  17.1.2 URL地址12345协议:&#x2F;&#x2F;主机地址&#x2F;路径?查询https:&#x2F;&#x2F;www.baidu.com&#x2F;s?wd&#x3D;Go语言协议:&#x2F;&#x2F;用户名:密码@子域名.域名.顶级域名:端口号&#x2F;目录&#x2F;文件名.文件后缀?参数&#x3D;值#标志http:&#x2F;&#x2F;admin:password@ceshi.baidu">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-11-16T16:00:00.000Z">
+<meta property="article:modified_time" content="2023-11-17T11:48:54.630Z">
+<meta property="article:author" content="Wallnut">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://drinkwateronly.github.io/2023/11/861a8f3c4257/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://drinkwateronly.github.io/2023/11/861a8f3c4257/","path":"2023/11/861a8f3c4257/","title":"ch17-HTTP编程"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>ch17-HTTP编程 | Wallnut</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Wallnut</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#17-HTTP%E7%BC%96%E7%A8%8B"><span class="nav-number">1.</span> <span class="nav-text">17 HTTP编程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#17-1-2-URL%E5%9C%B0%E5%9D%80"><span class="nav-number">1.0.1.</span> <span class="nav-text">17.1.2 URL地址</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#17-2-HTTP%E5%AE%A2%E6%88%B7%E7%AB%AF"><span class="nav-number">1.1.</span> <span class="nav-text">17.2 HTTP客户端</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%89%E4%B8%AA%E9%87%8D%E8%A6%81%E7%9A%84%E7%BB%93%E6%9E%84%E4%BD%93"><span class="nav-number">2.</span> <span class="nav-text">三个重要的结构体</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1%E3%80%81Client%E7%BB%93%E6%9E%84%E4%BD%93"><span class="nav-number">2.1.</span> <span class="nav-text">1、Client结构体</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2%E3%80%81Request%E7%BB%93%E6%9E%84%E4%BD%93%EF%BC%9A"><span class="nav-number">2.2.</span> <span class="nav-text">2、Request结构体：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3%E3%80%81Response%E7%BB%93%E6%9E%84%E4%BD%93"><span class="nav-number">2.3.</span> <span class="nav-text">3、Response结构体</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%91%E8%B5%B7%E8%AF%B7%E6%B1%82%E7%9A%84%E4%B8%A4%E7%A7%8D%E6%96%B9%E5%BC%8F"><span class="nav-number">2.4.</span> <span class="nav-text">发起请求的两种方式</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1%E3%80%81%E5%88%9B%E5%BB%BA%E5%AE%A2%E6%88%B7%E7%AB%AF%E7%BB%93%E6%9E%84%E4%BD%93%E3%80%81%E8%AF%B7%E6%B1%82%E7%BB%93%E6%9E%84%E4%BD%93%E8%BF%9B%E8%A1%8C%E8%AF%B7%E6%B1%82"><span class="nav-number">2.4.1.</span> <span class="nav-text">1、创建客户端结构体、请求结构体进行请求</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BC%98%E7%82%B9%EF%BC%9A%E5%8F%AF%E4%BB%A5%E5%AE%9A%E5%88%B6request%E7%9A%84%E7%BB%86%E8%8A%82%E3%80%82"><span class="nav-number">2.4.1.1.</span> <span class="nav-text">优点：可以定制request的细节。</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B5%81%E7%A8%8B%EF%BC%9A"><span class="nav-number">2.4.1.2.</span> <span class="nav-text">流程：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BE%8B%E7%A8%8B"><span class="nav-number">2.4.1.3.</span> <span class="nav-text">例程</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2%E3%80%81http%E5%8C%85%E7%9B%B4%E6%8E%A5%E8%AF%B7%E6%B1%82"><span class="nav-number">2.4.2.</span> <span class="nav-text">2、http包直接请求</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#17-2-3-%E5%8F%91%E8%B5%B7POST%E8%AF%B7%E6%B1%82"><span class="nav-number">2.5.</span> <span class="nav-text">17.2.3 发起POST请求</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Wallnut"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">Wallnut</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">25</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/drinkwateronly" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;drinkwateronly" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://drinkwateronly.github.io/2023/11/861a8f3c4257/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Wallnut">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Wallnut">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="ch17-HTTP编程 | Wallnut">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          ch17-HTTP编程
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2023-11-17 00:00:00 / 修改时间：19:48:54" itemprop="dateCreated datePublished" datetime="2023-11-17T00:00:00+08:00">2023-11-17</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Golang/" itemprop="url" rel="index"><span itemprop="name">Golang</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Golang/Go%E5%9F%BA%E7%A1%80/" itemprop="url" rel="index"><span itemprop="name">Go基础</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="17-HTTP编程"><a href="#17-HTTP编程" class="headerlink" title="17 HTTP编程"></a>17 HTTP编程</h1><ul>
+<li>HTTP基于TCP协议上建立</li>
+<li>当建立在TLS或SSL协议上时，协议变成了加密HTTPS协议</li>
+</ul>
+<h3 id="17-1-2-URL地址"><a href="#17-1-2-URL地址" class="headerlink" title="17.1.2 URL地址"></a>17.1.2 URL地址</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">协议://主机地址/路径?查询</span><br><span class="line">https://www.baidu.com/s?wd=Go语言</span><br><span class="line"></span><br><span class="line">协议://用户名:密码@子域名.域名.顶级域名:端口号/目录/文件名.文件后缀?参数=值#标志</span><br><span class="line">http://admin:password@ceshi.baidu.com:8080/dir/test.php?id=1#flag=1</span><br></pre></td></tr></table></figure>
+
+<h2 id="17-2-HTTP客户端"><a href="#17-2-HTTP客户端" class="headerlink" title="17.2 HTTP客户端"></a>17.2 HTTP客户端</h2><p>RESTful风格路由 Representational State Transfer </p>
+<ul>
+<li>GET（READ）：从服务器取出资源（一项或多项）。</li>
+<li>POST（CREATE）：在服务器新建一个资源。</li>
+<li>PUT（UPDATE）：在服务器更新资源（客户端提供完整资源数据）。</li>
+<li>PATCH（UPDATE）：在服务器更新资源（客户端提供需要修改的资源数据）。</li>
+<li>DELETE（DELETE）：从服务器删除资源。</li>
+</ul>
+<p>对客户端请求用得最多的两个：GET和POST</p>
+<ul>
+<li>GET 从指定的资源请求数据</li>
+<li>POST 向指定的资源提交要被处理的数据</li>
+</ul>
+<p>1、GET用来从服务器获取数据，POST用来向服务器传输数据<br>2、GET不安全，请求会被放在URL，Header和data一起发出。而POST的操作对用户不可见，浏览器会先发送Header，服务器响应100后，再发送data。<br>3、GET传输数据量小，受URL长度限制，Form表单数据集的值必须是ASCII；POST可以传大量数据，且支持整个ISO 10646字符集。</p>
+<h1 id="三个重要的结构体"><a href="#三个重要的结构体" class="headerlink" title="三个重要的结构体"></a>三个重要的结构体</h1><h2 id="1、Client结构体"><a href="#1、Client结构体" class="headerlink" title="1、Client结构体"></a>1、Client结构体</h2><p>Client结构体类型主要充当浏览器角色，创建时结构体成员可以是默认值（无特殊需求基本是默认值）</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Client <span class="keyword">struct</span> &#123;</span><br><span class="line">    Transport RoundTripper</span><br><span class="line">    CheckRedirect <span class="function"><span class="keyword">func</span></span> &#123;req *Request, via []*Request) <span class="type">error</span></span><br><span class="line">    Jar CookieJar</span><br><span class="line">    Timeout time.Duration</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>Transport指定执行独立、单次HTTP请求机制。若为nil，则是DefaultTransport</li>
+<li>CheckRedirect指定重定向策略。如果为nil，采用默认策略连续10次请求后停止。</li>
+<li>Jar指定Cookie管理器。若为nil，请求和回复cookie都忽略。</li>
+<li>Timeout指定请求时间限制，包括连接时间、重定向、读取回复主体的时间。0表示不设置超时。</li>
+</ul>
+<p>拥有如下方法对资源增删改查，其中最重要的是<code>Do</code>方法，其他方法都是对do方法的封装。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *Clinet)</span></span> Do(req *Request) (resp *Response, err <span class="type">error</span>)</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *Clinet)</span></span> Head(url *<span class="type">string</span>) (resp *Response, err <span class="type">error</span>)</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *Clinet)</span></span> Get(url *<span class="type">string</span>) (resp *Response, err <span class="type">error</span>)</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *Clinet)</span></span> Post(url *<span class="type">string</span>, bodyType <span class="type">string</span>, body io.Reader) (resp *Response, err <span class="type">error</span>)</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *Clinet)</span></span> PostForm(url *<span class="type">string</span>, data url.Values) (resp *Response, err <span class="type">error</span>)</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h2 id="2、Request结构体："><a href="#2、Request结构体：" class="headerlink" title="2、Request结构体："></a>2、Request结构体：</h2><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">NewRequest</span><span class="params">(method, urlStr <span class="type">string</span>, body io.Reader)</span></span> (*Request,<span class="type">error</span>)</span><br></pre></td></tr></table></figure>
+
+<p>返回Request结构体指针，指定方法、访问url以及io.Reader接口的body，当method为GET时，body&#x3D;nil即可。</p>
+<p>如果参数body实现了的io.ReadCloser接口</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Request <span class="keyword">struct</span> &#123;</span><br><span class="line">	Method           <span class="type">string</span>               <span class="comment">// 请求方法</span></span><br><span class="line">	URL              *url.URL             <span class="comment">// 请求地址</span></span><br><span class="line">	Proto            <span class="type">string</span>               <span class="comment">// 协议版本，&quot;HTTP/1.0&quot;</span></span><br><span class="line">	ProtoMajor       <span class="type">int</span>                  <span class="comment">// 协议主版本号，“1”</span></span><br><span class="line">	ProtoMinor       <span class="type">int</span>                  <span class="comment">// 协议主副版本号，“0”</span></span><br><span class="line">	Header           Header               <span class="comment">// 请求头</span></span><br><span class="line">	Body             io.ReadCloser        <span class="comment">// 请求的Body</span></span><br><span class="line">	ContentLength    <span class="type">int64</span>                <span class="comment">// ContentLength记录相关内容的长度</span></span><br><span class="line">	TransferEncoding []<span class="type">string</span>             <span class="comment">// TransferEncoding按从最外到最里的顺序列出传输编码</span></span><br><span class="line">	Close            <span class="type">bool</span>                 <span class="comment">// Close在服务端指定是否在回复请求后关闭连接，在客户端指定是否在发送请求后关闭连接</span></span><br><span class="line">	Host             <span class="type">string</span>               <span class="comment">// Host指定URL会在其上寻找资源的主机</span></span><br><span class="line">	Form             url.Values           <span class="comment">// Form是解析好的表单数据，包括URL字段的query参数和POST或PUT的表单数据</span></span><br><span class="line">	PostForm         url.Values           <span class="comment">// PostForm是解析好的POST或PUT的表单数据</span></span><br><span class="line">	MultipartForm    *multipart.Form      <span class="comment">// MultipartForm是解析好的多部件表单，包括上传的文件</span></span><br><span class="line">	Trailer          Header               <span class="comment">// Trailer指定了会在请求主体之后发送的额外的头域</span></span><br><span class="line">	RemoteAddr       <span class="type">string</span>               <span class="comment">// RemoteAddr允许HTTP服务器和其他软件记录该请求的来源地址，一般用于日志</span></span><br><span class="line">	RequestURI       <span class="type">string</span>               <span class="comment">// RequestURI是被客户端发送到服务端的请求中未修改的URI</span></span><br><span class="line">	TLS              *tls.ConnectionState <span class="comment">// TLS字段允许HTTP服务器和其他软件记录接收到该请求的TLS连接的信息</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="3、Response结构体"><a href="#3、Response结构体" class="headerlink" title="3、Response结构体"></a>3、Response结构体</h2><p>请求都会返回Response结构体</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Response <span class="keyword">struct</span> &#123;</span><br><span class="line">    Status           <span class="type">string</span>               <span class="comment">//表示HTTP响应的状态行中的状态码和原因短语，例如&quot;200 OK&quot;</span></span><br><span class="line">    StatusCode       <span class="type">int</span>                  <span class="comment">//表示HTTP响应的状态码，例如200</span></span><br><span class="line">    Proto            <span class="type">string</span>               <span class="comment">//表示使用的HTTP协议版本，例如&quot;HTTP/1.1&quot;</span></span><br><span class="line">    ProtoMajor       <span class="type">int</span>                  <span class="comment">//表示使用的HTTP协议版本的主版本号，例如1</span></span><br><span class="line">    ProtoMinor       <span class="type">int</span>                  <span class="comment">//表示使用的HTTP协议版本的副版本号，例如1</span></span><br><span class="line">    Header           Header               <span class="comment">//表示HTTP响应的头部信息，是一个Header类型的映射</span></span><br><span class="line">    Body             io.ReadCloser        <span class="comment">//表示HTTP响应的主体，是一个io.ReadCloser类型的接口，可以读取响应的数据</span></span><br><span class="line">    ContentLength    <span class="type">int64</span>                <span class="comment">//表示HTTP响应的主体的长度，如果长度未知则为-1</span></span><br><span class="line">    TransferEncoding []<span class="type">string</span>             <span class="comment">//表示HTTP响应的传输编码，例如&quot;chunked&quot;，如果未设置则为nil</span></span><br><span class="line">    Close            <span class="type">bool</span>                 <span class="comment">//表示HTTP响应是否需要关闭连接</span></span><br><span class="line">    Uncompressed     <span class="type">bool</span>                 <span class="comment">//表示HTTP响应是否已经解压缩</span></span><br><span class="line">    Trailer          Header               <span class="comment">//表示HTTP响应的头部信息中未确定的部分</span></span><br><span class="line">    Request          *Request             <span class="comment">//表示发送HTTP请求的Request结构体，如果未设置则为nil</span></span><br><span class="line">    TLS              *tls.ConnectionState <span class="comment">//表示HTTP响应的TLS连接信息，如果未使用TLS则为nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>需要注意的是，Request结构体和Response结构体中的Body都是io.ReadCloser类型，需要使用io.ReadAll读取，同时，需要主动去close()。</strong></p>
+<h2 id="发起请求的两种方式"><a href="#发起请求的两种方式" class="headerlink" title="发起请求的两种方式"></a>发起请求的两种方式</h2><h3 id="1、创建客户端结构体、请求结构体进行请求"><a href="#1、创建客户端结构体、请求结构体进行请求" class="headerlink" title="1、创建客户端结构体、请求结构体进行请求"></a>1、创建客户端结构体、请求结构体进行请求</h3><h4 id="优点：可以定制request的细节。"><a href="#优点：可以定制request的细节。" class="headerlink" title="优点：可以定制request的细节。"></a>优点：可以定制request的细节。</h4><h4 id="流程："><a href="#流程：" class="headerlink" title="流程："></a>流程：</h4><ol>
+<li>创建 客户端结构体 http.Client{} </li>
+<li>NewRequest生成 请求结构体</li>
+<li>设置请求结构体的内容，如header、cookie</li>
+<li>客户端结构体调用请求方法</li>
+</ol>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">NewRequest</span><span class="params">(method, urlStr <span class="type">string</span>, body io.Reader)</span></span> (*Request, <span class="type">error</span>)</span><br></pre></td></tr></table></figure>
+<p>NewRequest输入访问的类型、url 以及 body，返回一个<strong>Request结构体</strong>地址。</p>
+<p>POST请求需要用到body。</p>
+<h4 id="例程"><a href="#例程" class="headerlink" title="例程"></a>例程</h4><p>使用Request结构体的Do方法，所以要先用NewRequest创建请求结构体。GET方法不需要body字段，所以NewRequest中body为nil。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="comment">// 创建client</span></span><br><span class="line">	client := &amp;http.Client&#123;&#125;</span><br><span class="line">    <span class="comment">// 新建请求request结构体</span></span><br><span class="line">	request, err := http.NewRequest(<span class="string">&quot;GET&quot;</span>, <span class="string">&quot;http://www.baidu.com&quot;</span>, <span class="literal">nil</span>)</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 设置request结构体的Header模仿浏览器（非必要）</span></span><br><span class="line">	request.Header.Set(<span class="string">&quot;Accept&quot;</span>, <span class="string">&quot;text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8&quot;</span>)</span><br><span class="line">	request.Header.Set(<span class="string">&quot;Accept-Charset&quot;</span>, <span class="string">&quot;GBK,utf-8;q=0.7,*;q=0.3&quot;</span>)</span><br><span class="line">	request.Header.Set(<span class="string">&quot;Accept-Encoding&quot;</span>, <span class="string">&quot;gzip,deflate,sdch&quot;</span>)</span><br><span class="line">	request.Header.Set(<span class="string">&quot;Accept-Language&quot;</span>, <span class="string">&quot;zh-CN,zh;q=0.8&quot;</span>)</span><br><span class="line">	request.Header.Set(<span class="string">&quot;Cache-Control&quot;</span>, <span class="string">&quot;max-age=0&quot;</span>)</span><br><span class="line">	request.Header.Set(<span class="string">&quot;Connection&quot;</span>, <span class="string">&quot;keep-alive&quot;</span>)</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 添加cookie两种方式，模拟登录（非必要） [userId=12345 session=YWRtaW4=]</span></span><br><span class="line">	cookie := &amp;http.Cookie&#123;Name: <span class="string">&quot;userID&quot;</span>, Value: strconv.Itoa(<span class="number">12345</span>)&#125; <span class="comment">// 新建</span></span><br><span class="line">    <span class="comment">// 为request添加cookie</span></span><br><span class="line">	request.AddCookie(cookie)</span><br><span class="line">	request.AddCookie(&amp;http.Cookie&#123;Name: <span class="string">&quot;session&quot;</span>, Value: <span class="string">&quot;YWRtaW4=&quot;</span>&#125;) </span><br><span class="line"></span><br><span class="line">	<span class="comment">// 使用Do请求</span></span><br><span class="line">	response, err := client.Do(request)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Println(err)</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	fmt.Println(response.StatusCode) <span class="comment">// 打印响应状态码</span></span><br><span class="line">	fmt.Println(response.Request.Header) <span class="comment">// 打印请求头</span></span><br><span class="line">	fmt.Println(response.Request.Cookies()) <span class="comment">// 打印cookie</span></span><br><span class="line">	</span><br><span class="line">	<span class="comment">// 打印响应体</span></span><br><span class="line">	responseBody, err := io.ReadAll(response.Body)</span><br><span class="line">	fmt.Println(<span class="type">string</span>(responseBody))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<h3 id="2、http包直接请求"><a href="#2、http包直接请求" class="headerlink" title="2、http包直接请求"></a>2、http包直接请求</h3><p>例如使用http包的<code>GET()</code>，可以快速发起一个GET请求。底层就是调用Client结构体的GET方法，底层的GET方法是对DO方法的封装。不需要NewRequest创建结构体，直接请求url。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">response, err := http.Get(<span class="string">&quot;http://www.baidu.com&quot;</span>)</span><br><span class="line"><span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">    fmt.Println(err)</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">defer</span> response.Body.Close()  </span><br><span class="line">body, _ := ioutil.ReadAll(response.Body)</span><br><span class="line">fmt.Println(<span class="type">string</span>(body))</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="17-2-3-发起POST请求"><a href="#17-2-3-发起POST请求" class="headerlink" title="17.2.3 发起POST请求"></a>17.2.3 发起POST请求</h2><p>POST要用到Body字段，所以使用NewRequest时需要设置。io.Closer接口若被实现，会被Client类型的Do、Post和PostForm方法以及Transport.RoundTrip方法关闭。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2023/11/19d9e2ad9d4e/" rel="prev" title="ch6-内置容器">
+                  <i class="fa fa-angle-left"></i> ch6-内置容器
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2023/11/f541b5c0766a/" rel="next" title="ch3~5-基础">
+                  ch3~5-基础 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2023</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Wallnut</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  <script src="/js/third-party/pace.js"></script>
+
+
+  
+
+
+
+
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"drinkwateronly/comments","issue_term":"pathname","theme":"github-light"}</script>
+<script src="/js/third-party/comments/utterances.js"></script>
+
+</body>
+</html>

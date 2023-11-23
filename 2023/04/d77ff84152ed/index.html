@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.0.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/icon32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/icon16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha256-CTSx/A06dm1B063156EVh15m6Y67pAjZZaQc89LLSrU=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"drinkwateronly.github.io","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.18.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="0、只有UDP才有多播&#x2F;组播和广播1 组播&#x2F;多播（multicast） 多播服务器只发送一次数据，加入了多播组的所有客户端都能接收到，即便客户端跨越不同网络。  多播组是D类ip地址：224:0.0.0 ~ 239.255.255.255  一个问题：加入同一个组播的用户的IP地址需要是同网段吗？ - 知乎三层组播是指基于IP层协议（即网络层）的组播通信方式。在IP层，使用特定">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ch8-组播和多播">
+<meta property="og:url" content="https://drinkwateronly.github.io/2023/04/d77ff84152ed/index.html">
+<meta property="og:site_name" content="Wallnut">
+<meta property="og:description" content="0、只有UDP才有多播&#x2F;组播和广播1 组播&#x2F;多播（multicast） 多播服务器只发送一次数据，加入了多播组的所有客户端都能接收到，即便客户端跨越不同网络。  多播组是D类ip地址：224:0.0.0 ~ 239.255.255.255  一个问题：加入同一个组播的用户的IP地址需要是同网段吗？ - 知乎三层组播是指基于IP层协议（即网络层）的组播通信方式。在IP层，使用特定">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-04-19T16:00:00.000Z">
+<meta property="article:modified_time" content="2023-11-17T12:07:09.720Z">
+<meta property="article:author" content="Wallnut">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://drinkwateronly.github.io/2023/04/d77ff84152ed/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://drinkwateronly.github.io/2023/04/d77ff84152ed/","path":"2023/04/d77ff84152ed/","title":"ch8-组播和多播"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>ch8-组播和多播 | Wallnut</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Wallnut</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#0%E3%80%81%E5%8F%AA%E6%9C%89UDP%E6%89%8D%E6%9C%89%E5%A4%9A%E6%92%AD-%E7%BB%84%E6%92%AD%E5%92%8C%E5%B9%BF%E6%92%AD"><span class="nav-number">1.</span> <span class="nav-text">0、只有UDP才有多播&#x2F;组播和广播</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#1-%E7%BB%84%E6%92%AD-%E5%A4%9A%E6%92%AD%EF%BC%88multicast%EF%BC%89"><span class="nav-number">2.</span> <span class="nav-text">1 组播&#x2F;多播（multicast）</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-1-TTL%EF%BC%88%E5%8F%91%E9%80%81%E6%96%B9%E8%80%83%E8%99%91%EF%BC%89"><span class="nav-number">2.1.</span> <span class="nav-text">1.1 TTL（发送方考虑）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-2-%E5%8A%A0%E5%85%A5%E7%BB%84%EF%BC%88%E6%8E%A5%E6%94%B6%E6%96%B9%E8%80%83%E8%99%91%EF%BC%89"><span class="nav-number">2.2.</span> <span class="nav-text">1.2 加入组（接收方考虑）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-3-%E4%BE%8B%E7%A8%8B%EF%BC%9A%E5%A4%9A%E6%92%AD"><span class="nav-number">2.3.</span> <span class="nav-text">1.3 例程：多播</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-1-news-sender-c"><span class="nav-number">2.3.1.</span> <span class="nav-text">1.3.1 news_sender.c</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-2-news-receiver-c"><span class="nav-number">2.3.2.</span> <span class="nav-text">1.3.2 news_receiver.c</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-3-%E8%BF%90%E8%A1%8C%E7%BB%93%E6%9E%9C%EF%BC%9A"><span class="nav-number">2.3.3.</span> <span class="nav-text">1.3.3 运行结果：</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#2-%E5%B9%BF%E6%92%AD%EF%BC%88boardcast%EF%BC%89"><span class="nav-number">3.</span> <span class="nav-text">2 广播（boardcast）</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#2-1-%E5%B9%BF%E6%92%AD%E5%AE%9E%E7%8E%B0"><span class="nav-number">3.1.</span> <span class="nav-text">2.1 广播实现</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-2-%E4%BE%8B%E7%A8%8B"><span class="nav-number">3.2.</span> <span class="nav-text">2.2 例程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-1-news-receiver-board-c"><span class="nav-number">3.2.1.</span> <span class="nav-text">2.2.1 news_receiver_board.c</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-2-news-sender-board-c"><span class="nav-number">3.2.2.</span> <span class="nav-text">2.2.2 news_sender_board.c</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-3-%E7%BB%93%E6%9E%9C"><span class="nav-number">3.2.3.</span> <span class="nav-text">2.2.3 结果</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Wallnut"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">Wallnut</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">25</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/drinkwateronly" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;drinkwateronly" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://drinkwateronly.github.io/2023/04/d77ff84152ed/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Wallnut">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Wallnut">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="ch8-组播和多播 | Wallnut">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          ch8-组播和多播
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2023-04-20 00:00:00" itemprop="dateCreated datePublished" datetime="2023-04-20T00:00:00+08:00">2023-04-20</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-11-17 20:07:09" itemprop="dateModified" datetime="2023-11-17T20:07:09+08:00">2023-11-17</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/C/" itemprop="url" rel="index"><span itemprop="name">C++</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/C/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">网络编程</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="0、只有UDP才有多播-组播和广播"><a href="#0、只有UDP才有多播-组播和广播" class="headerlink" title="0、只有UDP才有多播&#x2F;组播和广播"></a>0、只有UDP才有多播&#x2F;组播和广播</h1><h1 id="1-组播-多播（multicast）"><a href="#1-组播-多播（multicast）" class="headerlink" title="1 组播&#x2F;多播（multicast）"></a>1 组播&#x2F;多播（multicast）</h1><ul>
+<li><p>多播服务器只发送一次数据，加入了多播组的所有客户端都能接收到，<strong>即便客户端跨越不同网络</strong>。</p>
+</li>
+<li><p>多播组是D类ip地址：224:0.0.0 ~ 239.255.255.255</p>
+<blockquote>
+<p>一个问题：<br><a target="_blank" rel="noopener" href="https://www.zhihu.com/question/287731623">加入同一个组播的用户的IP地址需要是同网段吗？ - 知乎</a><br>三层组播是指基于IP层协议（即网络层）的组播通信方式。在IP层，使用特定的组播地址范围（224.0.0.0 ~ 239.255.255.255）来进行组播通信，其中224.0.0.0 ~ 224.0.0.255是预留的本地网络控制组播地址，用于局域网内的组播控制消息，其余地址则用于全球范围内的组播通信。在三层组播中，路由器负责组播数据包的转发和复制。当一个主机要发送一个组播数据包时，它会将数据包发送到一个组播IP地址，这个地址是由多个主机共享的。当路由器接收到一个组播数据包时，它会将该数据包复制到所有与该组播地址相关的子网上，并继续向下一级路由器转发。这样，组播数据包就可以被分发到所有加入该组播地址的主机上。三层组播的优点是可以实现跨越不同的网络，从而实现全球范围内的组播通信。同时，由于只有需要接收组播数据的主机才会加入组播，所以可以有效地减少网络带宽的占用。但同时，三层组播也需要依赖复杂的路由协议和设备配置，因此对网络设备和管理的要求也比较高。</p>
+</blockquote>
+</li>
+<li><p>多播由路由器完成，即路由器复制数据包发送，但不少路由器不支持，即便支持也因为网络拥塞故意切断多播</p>
+</li>
+</ul>
+<h2 id="1-1-TTL（发送方考虑）"><a href="#1-1-TTL（发送方考虑）" class="headerlink" title="1.1 TTL（发送方考虑）"></a>1.1 TTL（发送方考虑）</h2><p>组播必须设置TTL（Time to Live），每经过一个路由器，TTL–；当TTL&#x3D;&#x3D;0，数据包被销毁；TTL过大，网络拥塞严重；TTL过小，无法传达到目标。</p>
+<p>TTL设置方式：setsockopt() </p>
+<ul>
+<li><p>level： <code>IPPROTO_IP</code></p>
+</li>
+<li><p>optname： <code>IP_MULTICAST_TTL</code></p>
+</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// setsockopt()设置TTL，</span></span><br><span class="line"><span class="type">int</span> send_sock;</span><br><span class="line"><span class="type">int</span> TTL = <span class="number">64</span>;</span><br><span class="line"></span><br><span class="line">send_sock=socket(PF_INET, SOCK_DGRAM, <span class="number">0</span>);</span><br><span class="line">setsockopt(send_sock, IPPROTO_IP, IP_MULTICAST_TTL, (<span class="type">void</span> *) &amp;TTL, <span class="keyword">sizeof</span>(TTL));</span><br></pre></td></tr></table></figure>
+
+<h2 id="1-2-加入组（接收方考虑）"><a href="#1-2-加入组（接收方考虑）" class="headerlink" title="1.2 加入组（接收方考虑）"></a>1.2 加入组（接收方考虑）</h2><p>哪个IP的主机，加入哪个组</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// ip_mreq结构体</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">ip_mreq</span>&#123;</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">in_addr</span> <span class="title">imr_multiaddr</span>;</span> <span class="comment">// 加入的组的IP地址</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">in_addr</span> <span class="title">imr_interface</span>;</span> <span class="comment">// 加入该组的主机IP地址 可以用INADDR_ANY</span></span><br><span class="line">&#125;;</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">in_addr</span> &#123;</span></span><br><span class="line">    <span class="type">in_addr_t</span> s_addr;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>level： <code>IPPROTO_IP</code></p>
+</li>
+<li><p>optname： <code>IP_ADD_MEMBERSHIP</code></p>
+</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// setsockopt()设置加入组信息</span></span><br><span class="line"><span class="comment">// 在IPPROTO_IP层 的 IP_ADD_MEMBERSHIP选项</span></span><br><span class="line"><span class="type">int</span> recv_sock;</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">ip_mreq</span> <span class="title">join_adr</span>;</span></span><br><span class="line"></span><br><span class="line">recv_sock = socket(PF_INET, SOCK_DGRAM, <span class="number">0</span>);</span><br><span class="line"></span><br><span class="line">join_adr.imr_multiaddr.s_addr = <span class="string">&quot;多播组地址信息&quot;</span>;</span><br><span class="line">join_adr.imr_interface.s_addr = <span class="string">&quot;加入多播组的主机地址信息&quot;</span></span><br><span class="line"></span><br><span class="line">setsockopt(recv_sock, IPPROTO_IP, </span><br><span class="line">    IP_ADD_MEMBERSHIP, (<span class="type">void</span> *)join_adr, <span class="keyword">sizeof</span>(join_adr))</span><br></pre></td></tr></table></figure>
+<h2 id="1-3-例程：多播"><a href="#1-3-例程：多播" class="headerlink" title="1.3 例程：多播"></a>1.3 例程：多播</h2><p>news_sender以多播形式发送news.txt的内容到目标多播组；<br>news_receiver加入多播组，接收news.txt内容</p>
+<h3 id="1-3-1-news-sender-c"><a href="#1-3-1-news-sender-c" class="headerlink" title="1.3.1 news_sender.c"></a>1.3.1 news_sender.c</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;arpa/inet.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/socket.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> TTL 64</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> BUF_SIZE 30</span></span><br><span class="line"><span class="type">void</span> <span class="title function_">error_handling</span><span class="params">(<span class="type">char</span> *message)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">fputs</span>(message,<span class="built_in">stderr</span>);</span><br><span class="line">    fputc(<span class="string">&#x27;\n&#x27;</span>,<span class="built_in">stderr</span>);</span><br><span class="line">    <span class="built_in">exit</span>(<span class="number">1</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> *argv[])</span></span><br><span class="line">&#123;  </span><br><span class="line">    <span class="keyword">if</span>(argc != <span class="number">3</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;usage: %s &lt;GroupIP&gt; &lt;PORT&gt;\n&quot;</span>, argv[<span class="number">0</span>]);</span><br><span class="line">        <span class="built_in">exit</span>(<span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="type">char</span> buf[BUF_SIZE];</span><br><span class="line">    <span class="comment">// 创建socket，设置TTL</span></span><br><span class="line">    <span class="type">int</span> time_live = TTL;</span><br><span class="line">    <span class="type">int</span> send_sock;</span><br><span class="line">    send_sock = socket(PF_INET, SOCK_DGRAM, <span class="number">0</span>);</span><br><span class="line">    setsockopt(send_sock, IPPROTO_IP, IP_MULTICAST_TTL, (<span class="type">void</span> *)&amp;time_live, <span class="keyword">sizeof</span>(time_live));</span><br><span class="line">    <span class="comment">// 创建sockaddr结构体</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">sockaddr_in</span> <span class="title">mul_adr</span>;</span></span><br><span class="line">    <span class="built_in">memset</span>(&amp;mul_adr, <span class="number">0</span>, <span class="keyword">sizeof</span>(mul_adr));</span><br><span class="line">    mul_adr.sin_family = AF_INET;</span><br><span class="line">    <span class="comment">// 向哪个多播地址发送</span></span><br><span class="line">    mul_adr.sin_addr.s_addr = inet_addr(argv[<span class="number">1</span>]);</span><br><span class="line">    <span class="comment">// 端口号</span></span><br><span class="line">    mul_adr.sin_port = htons(atoi(argv[<span class="number">2</span>]));</span><br><span class="line">    <span class="comment">// 发送的内容在文件中</span></span><br><span class="line">    FILE *fp;</span><br><span class="line">    <span class="keyword">if</span>((fp=fopen(<span class="string">&quot;news.txt&quot;</span>, <span class="string">&quot;r&quot;</span>))==<span class="literal">NULL</span>)</span><br><span class="line">        error_handling(<span class="string">&quot;fopen() error&quot;</span>);</span><br><span class="line">   </span><br><span class="line">    <span class="comment">// 数据发送</span></span><br><span class="line">    <span class="keyword">while</span>(!feof(fp))</span><br><span class="line">    &#123;</span><br><span class="line">        fgets(buf, BUF_SIZE, fp);</span><br><span class="line">        sendto(send_sock, buf, <span class="built_in">strlen</span>(buf), <span class="number">0</span>, (<span class="keyword">struct</span> sockaddr*) &amp;mul_adr, <span class="keyword">sizeof</span>(mul_adr));</span><br><span class="line">        sleep(<span class="number">2</span>); <span class="comment">// 每两秒发一行</span></span><br><span class="line">    &#125;</span><br><span class="line">    close(send_sock);</span><br><span class="line">    fclose(fp);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="1-3-2-news-receiver-c"><a href="#1-3-2-news-receiver-c" class="headerlink" title="1.3.2 news_receiver.c"></a>1.3.2 news_receiver.c</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;arpa/inet.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/socket.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> BUF_SIZE 30</span></span><br><span class="line"><span class="type">void</span> <span class="title function_">error_handling</span><span class="params">(<span class="type">char</span> *message)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">fputs</span>(message,<span class="built_in">stderr</span>);</span><br><span class="line">    fputc(<span class="string">&#x27;\n&#x27;</span>,<span class="built_in">stderr</span>);</span><br><span class="line">    <span class="built_in">exit</span>(<span class="number">1</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> *argv[])</span></span><br><span class="line">&#123;  </span><br><span class="line">    <span class="keyword">if</span>(argc != <span class="number">3</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;usage: %s &lt;GroupIP&gt; &lt;PORT&gt;\n&quot;</span>, argv[<span class="number">0</span>]);</span><br><span class="line">        <span class="built_in">exit</span>(<span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="type">int</span> str_len;</span><br><span class="line">    <span class="type">char</span> buf[BUF_SIZE];</span><br><span class="line">   </span><br><span class="line">    <span class="comment">// sockaddr地址信息</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">sockaddr_in</span> <span class="title">recv_adr</span>;</span></span><br><span class="line">    <span class="built_in">memset</span>(&amp;recv_adr, <span class="number">0</span>, <span class="keyword">sizeof</span>(recv_adr));</span><br><span class="line">    recv_adr.sin_family = AF_INET;</span><br><span class="line">    <span class="comment">// 加入的组</span></span><br><span class="line">    recv_adr.sin_addr.s_addr = inet_addr(argv[<span class="number">1</span>]);</span><br><span class="line">    <span class="comment">// 端口号</span></span><br><span class="line">    recv_adr.sin_port = htons(atoi(argv[<span class="number">2</span>]));</span><br><span class="line">    <span class="type">int</span> recv_sock;</span><br><span class="line">    recv_sock = socket(PF_INET, SOCK_DGRAM, <span class="number">0</span>);</span><br><span class="line">    <span class="comment">// 加入组信息</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">ip_mreq</span> <span class="title">join_adr</span>;</span></span><br><span class="line">    join_adr.imr_multiaddr.s_addr=inet_addr(argv[<span class="number">1</span>]);</span><br><span class="line">    join_adr.imr_interface.s_addr=htonl(INADDR_ANY);</span><br><span class="line">    setsockopt(recv_sock, IPPROTO_IP,</span><br><span class="line">        IP_ADD_MEMBERSHIP, (<span class="type">void</span> *)&amp;join_adr, <span class="keyword">sizeof</span>(join_adr));</span><br><span class="line">    <span class="keyword">if</span>(bind(recv_sock, (<span class="keyword">struct</span> sockaddr*)&amp;recv_adr, <span class="keyword">sizeof</span>(recv_adr))==<span class="number">-1</span>)</span><br><span class="line">        error_handling(<span class="string">&quot;bind() error&quot;</span>);</span><br><span class="line">    <span class="comment">// 数据接收</span></span><br><span class="line">    <span class="keyword">while</span>(<span class="number">1</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        str_len = recvfrom(recv_sock, buf, BUF_SIZE<span class="number">-1</span>, <span class="number">0</span>, <span class="literal">NULL</span>, <span class="number">0</span>);</span><br><span class="line">        <span class="keyword">if</span>(str_len&lt;=<span class="number">0</span>)</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        buf[str_len]=<span class="number">0</span>;</span><br><span class="line">        <span class="built_in">fputs</span>(buf, <span class="built_in">stdout</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    close(recv_sock);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="1-3-3-运行结果："><a href="#1-3-3-运行结果：" class="headerlink" title="1.3.3 运行结果："></a>1.3.3 运行结果：</h3><p>在服务器上运行两段代码，接收方和放送方启动顺序不重要，都能正常接受信息（接收方比发送方晚启动，收到信息会确实）。</p>
+<p>服务器地址信息<code>inet 172.31.226.233  netmask 255.255.255.0</code><br>然后想在不同网段的一台另一台电脑上的虚拟机上接收服务器发来的组播地址。虚拟机地址<code>inet addr:172.30.98.110   Mask:255.255.255.0</code><br>但虚拟机无法接收到数据包。<br>可能原因是网络配置、路由器设置、网络拓扑等方面的问题，暂时没有深入探究。</p>
+<h1 id="2-广播（boardcast）"><a href="#2-广播（boardcast）" class="headerlink" title="2 广播（boardcast）"></a>2 广播（boardcast）</h1><p>广播和多播类似，也是一次性向多个主机发送数据。<strong>不同的是，多播中的主机可以不属于同一网段，广播只能向同一网络的主机传输数据。</strong></p>
+<p><strong>两种广播方式的ip地址设置：</strong></p>
+<ul>
+<li>直接广播：除网络地址外，主机地址全1，如<code>inet 172.31.226.233  netmask 255.255.255.0</code>，网络地址<code>172.31.226.0</code>，那么广播地址为<code>172.31.226.255</code>。</li>
+<li>本地广播：<code>255.255.255.255</code></li>
+</ul>
+<h2 id="2-1-广播实现"><a href="#2-1-广播实现" class="headerlink" title="2.1 广播实现"></a>2.1 广播实现</h2><p>setsockopt()设置套接字可选项</p>
+<ul>
+<li><p>level： <code>SOL_SOCKET</code></p>
+</li>
+<li><p>optname： <code>SO_BROADCAST</code></p>
+</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> send_sock;</span><br><span class="line"><span class="type">int</span> bcast;</span><br><span class="line">send_sock = socket(PF_INET, SOCK_DGRAM, <span class="number">0</span>);</span><br><span class="line">setsockopt(sendsock, SOL_SOCKET, SO_BROADCAST, (<span class="type">void</span>*)&amp;bcast, <span class="keyword">sizeof</span>(bcast));</span><br></pre></td></tr></table></figure>
+
+<h2 id="2-2-例程"><a href="#2-2-例程" class="headerlink" title="2.2 例程"></a>2.2 例程</h2><p>注意事项</p>
+<ul>
+<li>sender需要绑定目标广播地址</li>
+<li>receiver的sockadd信息绑定端口号和<code>INADDR_ANY</code>即可</li>
+</ul>
+<h3 id="2-2-1-news-receiver-board-c"><a href="#2-2-1-news-receiver-board-c" class="headerlink" title="2.2.1 news_receiver_board.c"></a>2.2.1 news_receiver_board.c</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;arpa/inet.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/socket.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> BUF_SIZE 30</span></span><br><span class="line"><span class="type">void</span> <span class="title function_">error_handling</span><span class="params">(<span class="type">char</span> *message)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">fputs</span>(message,<span class="built_in">stderr</span>);</span><br><span class="line">    fputc(<span class="string">&#x27;\n&#x27;</span>,<span class="built_in">stderr</span>);</span><br><span class="line">    <span class="built_in">exit</span>(<span class="number">1</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> *argv[])</span></span><br><span class="line">&#123;  </span><br><span class="line">    <span class="keyword">if</span>(argc != <span class="number">2</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;usage: %s &lt;PORT&gt;\n&quot;</span>, argv[<span class="number">0</span>]);</span><br><span class="line">        <span class="built_in">exit</span>(<span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="type">int</span> str_len;</span><br><span class="line">    <span class="type">char</span> buf[BUF_SIZE];</span><br><span class="line">   </span><br><span class="line">    <span class="comment">// sockaddr结构体</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">sockaddr_in</span> <span class="title">recv_adr</span>;</span></span><br><span class="line">    <span class="built_in">memset</span>(&amp;recv_adr, <span class="number">0</span>, <span class="keyword">sizeof</span>(recv_adr));</span><br><span class="line">    recv_adr.sin_family = AF_INET;</span><br><span class="line">    recv_adr.sin_addr.s_addr = htonl(INADDR_ANY); <span class="comment">// INADDR_ANY</span></span><br><span class="line">    recv_adr.sin_port = htons(atoi(argv[<span class="number">1</span>]));</span><br><span class="line">    <span class="comment">// socket</span></span><br><span class="line">    <span class="type">int</span> recv_sock;</span><br><span class="line">    recv_sock = socket(PF_INET, SOCK_DGRAM, <span class="number">0</span>);</span><br><span class="line">    <span class="keyword">if</span>(bind(recv_sock, (<span class="keyword">struct</span> sockaddr*)&amp;recv_adr, <span class="keyword">sizeof</span>(recv_adr))==<span class="number">-1</span>)</span><br><span class="line">        error_handling(<span class="string">&quot;bind() error&quot;</span>);</span><br><span class="line">   </span><br><span class="line">    <span class="comment">// 数据传输</span></span><br><span class="line">    <span class="keyword">while</span>(<span class="number">1</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        str_len = recvfrom(recv_sock, buf, BUF_SIZE<span class="number">-1</span>, <span class="number">0</span>, <span class="literal">NULL</span>, <span class="number">0</span>);</span><br><span class="line">        <span class="keyword">if</span>(str_len&lt;=<span class="number">0</span>)</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        buf[str_len]=<span class="number">0</span>;</span><br><span class="line">        <span class="built_in">fputs</span>(buf, <span class="built_in">stdout</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    close(recv_sock);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="2-2-2-news-sender-board-c"><a href="#2-2-2-news-sender-board-c" class="headerlink" title="2.2.2 news_sender_board.c"></a>2.2.2 news_sender_board.c</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;arpa/inet.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/socket.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> BUF_SIZE 30</span></span><br><span class="line"><span class="type">void</span> <span class="title function_">error_handling</span><span class="params">(<span class="type">char</span> *message)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">fputs</span>(message,<span class="built_in">stderr</span>);</span><br><span class="line">    fputc(<span class="string">&#x27;\n&#x27;</span>,<span class="built_in">stderr</span>);</span><br><span class="line">    <span class="built_in">exit</span>(<span class="number">1</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> *argv[])</span></span><br><span class="line">&#123;  </span><br><span class="line">    <span class="keyword">if</span>(argc != <span class="number">3</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;usage: %s &lt;BroadcastIP&gt; &lt;PORT&gt;\n&quot;</span>, argv[<span class="number">0</span>]);</span><br><span class="line">        <span class="built_in">exit</span>(<span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="type">int</span> so_brd = <span class="number">1</span>;</span><br><span class="line">    <span class="type">char</span> buf[BUF_SIZE];</span><br><span class="line">   </span><br><span class="line">    <span class="comment">// 目标广播地址信息</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">sockaddr_in</span> <span class="title">brd_adr</span>;</span></span><br><span class="line">    <span class="built_in">memset</span>(&amp;brd_adr, <span class="number">0</span>, <span class="keyword">sizeof</span>(brd_adr));</span><br><span class="line">    brd_adr.sin_family = AF_INET;</span><br><span class="line">    brd_adr.sin_addr.s_addr = inet_addr(argv[<span class="number">1</span>]);</span><br><span class="line">    brd_adr.sin_port = htons(atoi(argv[<span class="number">2</span>]));</span><br><span class="line">    <span class="comment">// socket，并设置SO_BROADCAST</span></span><br><span class="line">    <span class="type">int</span> send_sock;</span><br><span class="line">    send_sock = socket(PF_INET, SOCK_DGRAM, <span class="number">0</span>);</span><br><span class="line">    setsockopt(send_sock, SOL_SOCKET, SO_BROADCAST, (<span class="type">void</span> *)&amp;so_brd, <span class="keyword">sizeof</span>(so_brd));</span><br><span class="line">    <span class="comment">// 数据传输</span></span><br><span class="line">    FILE *fp;</span><br><span class="line">    <span class="keyword">if</span>((fp=fopen(<span class="string">&quot;news.txt&quot;</span>, <span class="string">&quot;r&quot;</span>))==<span class="literal">NULL</span>)</span><br><span class="line">        error_handling(<span class="string">&quot;fopen() error&quot;</span>);</span><br><span class="line">    <span class="keyword">while</span>(!feof(fp))</span><br><span class="line">    &#123;</span><br><span class="line">        fgets(buf, BUF_SIZE, fp);</span><br><span class="line">        sendto(send_sock, buf, <span class="built_in">strlen</span>(buf), <span class="number">0</span>,</span><br><span class="line">            (<span class="keyword">struct</span> sockaddr*) &amp;brd_adr, <span class="keyword">sizeof</span>(brd_adr));</span><br><span class="line">        sleep(<span class="number">2</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    close(send_sock);</span><br><span class="line">    fclose(fp);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="2-2-3-结果"><a href="#2-2-3-结果" class="headerlink" title="2.2.3 结果"></a>2.2.3 结果</h3><p>在服务器上运行两段代码，能正常接受信息。服务器地址信息<code>inet 172.31.226.233  netmask 255.255.255.0</code><br>然后想在不同网段的一台虚拟机上接收服务器发来的广播地址。虚拟机地址<code>inet addr:172.30.98.110 Mask:255.255.255.0</code><br>服务器：<code>./news_sender_board 172.30.98.255 8100</code><br>虚拟机：<code>./news_receiver_board 8100</code><br>和多播一样，无法收到数据。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2023/04/90b99e55cdaa/" rel="prev" title="ch6-并发服务器实现——多进程服务器端">
+                  <i class="fa fa-angle-left"></i> ch6-并发服务器实现——多进程服务器端
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2023/04/1a00876ed5a5/" rel="next" title="ch7-并发服务器实现——IO复用服务器端">
+                  ch7-并发服务器实现——IO复用服务器端 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2023</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Wallnut</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  <script src="/js/third-party/pace.js"></script>
+
+
+  
+
+
+
+
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"drinkwateronly/comments","issue_term":"pathname","theme":"github-light"}</script>
+<script src="/js/third-party/comments/utterances.js"></script>
+
+</body>
+</html>
