@@ -2910,4 +2910,70 @@ main函数终止，所有goroutine也会一并结束；终止goroutine的最好�
         <category>Go基础</category>
       </categories>
   </entry>
+  <entry>
+    <title>合成大西瓜基础版本魔改+4everland部署</title>
+    <url>/2023/11/b8c525c7aadb/</url>
+    <content><![CDATA[<h1 id="合成大西瓜基础版本魔改-4everland部署"><a href="#合成大西瓜基础版本魔改-4everland部署" class="headerlink" title="合成大西瓜基础版本魔改+4everland部署"></a>合成大西瓜基础版本魔改+4everland部署</h1><p>仓库：<a href="https://github.com/drinkwateronly/watermelon">https://github.com/drinkwateronly/watermelon</a></p>
+<p>使用本仓库的代码魔改合成大西瓜的要求</p>
+<ul>
+<li>会运行python代码</li>
+<li>会上传代码到github仓库。</li>
+</ul>
+<h2 id="文件概览"><a href="#文件概览" class="headerlink" title="文件概览"></a>文件概览</h2><p>下载本仓库文件后，文件如下：</p>
+<p><img src="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/iimage/image-20231125134155347.png" alt="image-20231125134155347"></p>
+<h2 id="魔改"><a href="#魔改" class="headerlink" title="魔改"></a>魔改</h2><p><code>src/extraSetting.js</code>中按需修改，要强调的是可以修改网页标题。</p>
+<h2 id="图片处理"><a href="#图片处理" class="headerlink" title="图片处理"></a>图片处理</h2><p>两种处理方式，本文提供python脚本自动处理。手动处理较为繁琐，请查询网络教程，或使用他人提供的在线大西瓜图片处理工具。</p>
+<h3 id="自动处理"><a href="#自动处理" class="headerlink" title="自动处理"></a>自动处理</h3><p>原本水果图片文件在<code>res/raw-assets</code>的位置、图片文件名等信息已按水果尺寸从小到大记录到<code>image_process/info.xlsx</code>中，具体如下。例如樱桃图片文件为<code>res/raw-assets/0c/0cbb3dbb-2a85-42a5-be21-9839611e5af7.png</code>。</p>
+<p><img src="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/iimage/image-20231125104727166.png" alt="image-20231125104727166"></p>
+<p>定制水果图片为想要的图片，则需要将要定制的11张图片（对应11种水果）放到<code>image_process/original</code>，并按水果尺寸从小到大的顺序命名为<code>1.jpg</code>, <code>2.jpg</code>…, <code>11.jpg</code>。</p>
+<p><strong>注意，这些定制图片的尺寸最好是近似正方形，以免在后续图片处理中的缩放操作导致图片被拉伸，效果变差。</strong></p>
+<p>随后运行<code>image_process/demo.py</code>即可自动将这些图片修改到原本水果图片的位置。其中该python脚本将图片先缩放到对应的正方形尺寸，并裁剪成圆形。</p>
+<h3 id="手动"><a href="#手动" class="headerlink" title="手动"></a>手动</h3><p>略</p>
+<h2 id="本地预览"><a href="#本地预览" class="headerlink" title="本地预览"></a>本地预览</h2><ul>
+<li><p>下载并安装Node</p>
+<p><a href="http://nodejs.cn/download/">http://nodejs.cn/download/</a></p>
+</li>
+<li><p>进入命令行，检查npm是否安装成功</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">npm -v</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>命令行安装serve工具</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">npm i -g serve</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>从合成大西瓜文件夹进入命令行，启动serve</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">serve</span><br></pre></td></tr></table></figure></li>
+</ul>
+<p>成功后浏览器输访问<code>localhost:5000</code>即可</p>
+<h2 id="部署"><a href="#部署" class="headerlink" title="部署"></a>部署</h2><p>预览没问题后，可以开始部署上线。</p>
+<ul>
+<li><p><strong>首先代码要上传到github仓库</strong>。</p>
+</li>
+<li><p>随后使用<a href="https://dashboard.4everland.org/?invite=49TRKU2D">4everland</a>进行静态网页托管，并使用github注册即可。</p>
+</li>
+<li><p>注册成功后，点击<code>new project</code>，创建一个新项目</p>
+<p><img src="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/iimage/image-20231125111433974.png" alt="image-20231125111433974"></p>
+</li>
+<li><p>然后在step 1，import保存了合成大西瓜代码的github的仓库</p>
+<p><img src="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/iimage/image-20231125112002423.png" alt="image-20231125112002423"></p>
+</li>
+<li><p>step2，可选仓库的branch，意味着可以定制不同的合成大西瓜，上传到同一个仓库的不同branch管理。此处使用默认的branch，直接deploy即可。</p>
+<img src="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/iimage/image-20231125112423795.png" alt="image-20231125112423795" style="zoom:67%;" />
+</li>
+<li><p>step3，耐心等待部署。完成后点击visit访问，并记录下url。首次加载该游戏可能比较慢。</p>
+</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/iimage/image-20231125112509144.png" alt="image-20231125112509144"></p>
+<ul>
+<li><p>拓展：</p>
+<p><a href="https://dashboard.4everland.org/?invite=49TRKU2D">4everland</a>注册就送了1G的静态网页托管空间，一个合成大西瓜也就十几m，所以合理地管理好仓库的branch，可以上线很多个合成大西瓜游戏。</p>
+</li>
+</ul>
+<h2 id="Ref"><a href="#Ref" class="headerlink" title="Ref"></a>Ref</h2><p><a href="https://docs.qq.com/sheet/DS0d2VVVJYmpvZ0pZ?tab=BB08J2">魔改大西瓜可替换的素材 (qq.com)</a></p>
+<p><a href="https://mp.weixin.qq.com/s/H9VR1MWn-9bKSC_1l_MkJw">魔改和上线你的合成大西瓜，最全教程！ (qq.com)</a></p>
+<p><a href="https://www.bilibili.com/video/BV1Vy4y1n7KW/?vd_source=9883419bb9939eb61834a63a38921b19">全网最贴心的魔改合成大西瓜教程，从修改到发布！_哔哩哔哩_bilibili</a></p>
+]]></content>
+      <categories>
+        <category>折腾</category>
+        <category>计算机组成原理</category>
+      </categories>
+  </entry>
 </search>

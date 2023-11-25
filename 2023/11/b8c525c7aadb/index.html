@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.0.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/icon32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/icon16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha256-CTSx/A06dm1B063156EVh15m6Y67pAjZZaQc89LLSrU=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"drinkwateronly.github.io","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.18.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="合成大西瓜基础版本魔改+4everland部署仓库：https:&#x2F;&#x2F;github.com&#x2F;drinkwateronly&#x2F;watermelon 使用本仓库的代码魔改合成大西瓜的要求  会运行python代码 会上传代码到github仓库。  文件概览下载本仓库文件后，文件如下：  魔改src&#x2F;extraSetting.js中按需修改，要强调的是可以修改网页标题。 图片处理两种处理方式，本文提供pyt">
+<meta property="og:type" content="article">
+<meta property="og:title" content="合成大西瓜基础版本魔改+4everland部署">
+<meta property="og:url" content="https://drinkwateronly.github.io/2023/11/b8c525c7aadb/index.html">
+<meta property="og:site_name" content="Wallnut">
+<meta property="og:description" content="合成大西瓜基础版本魔改+4everland部署仓库：https:&#x2F;&#x2F;github.com&#x2F;drinkwateronly&#x2F;watermelon 使用本仓库的代码魔改合成大西瓜的要求  会运行python代码 会上传代码到github仓库。  文件概览下载本仓库文件后，文件如下：  魔改src&#x2F;extraSetting.js中按需修改，要强调的是可以修改网页标题。 图片处理两种处理方式，本文提供pyt">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/iimage/image-20231125134155347.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/iimage/image-20231125104727166.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/iimage/image-20231125111433974.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/iimage/image-20231125112002423.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/iimage/image-20231125112423795.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/iimage/image-20231125112509144.png">
+<meta property="article:published_time" content="2023-11-25T06:47:14.000Z">
+<meta property="article:modified_time" content="2023-11-25T06:47:18.685Z">
+<meta property="article:author" content="Wallnut">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/iimage/image-20231125134155347.png">
+
+
+<link rel="canonical" href="https://drinkwateronly.github.io/2023/11/b8c525c7aadb/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://drinkwateronly.github.io/2023/11/b8c525c7aadb/","path":"2023/11/b8c525c7aadb/","title":"合成大西瓜基础版本魔改+4everland部署"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>合成大西瓜基础版本魔改+4everland部署 | Wallnut</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Wallnut</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%90%88%E6%88%90%E5%A4%A7%E8%A5%BF%E7%93%9C%E5%9F%BA%E7%A1%80%E7%89%88%E6%9C%AC%E9%AD%94%E6%94%B9-4everland%E9%83%A8%E7%BD%B2"><span class="nav-number">1.</span> <span class="nav-text">合成大西瓜基础版本魔改+4everland部署</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E6%A6%82%E8%A7%88"><span class="nav-number">1.1.</span> <span class="nav-text">文件概览</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%AD%94%E6%94%B9"><span class="nav-number">1.2.</span> <span class="nav-text">魔改</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%BE%E7%89%87%E5%A4%84%E7%90%86"><span class="nav-number">1.3.</span> <span class="nav-text">图片处理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%87%AA%E5%8A%A8%E5%A4%84%E7%90%86"><span class="nav-number">1.3.1.</span> <span class="nav-text">自动处理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%89%8B%E5%8A%A8"><span class="nav-number">1.3.2.</span> <span class="nav-text">手动</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%AC%E5%9C%B0%E9%A2%84%E8%A7%88"><span class="nav-number">1.4.</span> <span class="nav-text">本地预览</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%83%A8%E7%BD%B2"><span class="nav-number">1.5.</span> <span class="nav-text">部署</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Ref"><span class="nav-number">1.6.</span> <span class="nav-text">Ref</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Wallnut"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">Wallnut</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">26</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/drinkwateronly" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;drinkwateronly" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://drinkwateronly.github.io/2023/11/b8c525c7aadb/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Wallnut">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Wallnut">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="合成大西瓜基础版本魔改+4everland部署 | Wallnut">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          合成大西瓜基础版本魔改+4everland部署
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2023-11-25 14:47:14 / 修改时间：14:47:18" itemprop="dateCreated datePublished" datetime="2023-11-25T14:47:14+08:00">2023-11-25</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%8A%98%E8%85%BE/" itemprop="url" rel="index"><span itemprop="name">折腾</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%8A%98%E8%85%BE/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">计算机组成原理</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="合成大西瓜基础版本魔改-4everland部署"><a href="#合成大西瓜基础版本魔改-4everland部署" class="headerlink" title="合成大西瓜基础版本魔改+4everland部署"></a>合成大西瓜基础版本魔改+4everland部署</h1><p>仓库：<a target="_blank" rel="noopener" href="https://github.com/drinkwateronly/watermelon">https://github.com/drinkwateronly/watermelon</a></p>
+<p>使用本仓库的代码魔改合成大西瓜的要求</p>
+<ul>
+<li>会运行python代码</li>
+<li>会上传代码到github仓库。</li>
+</ul>
+<h2 id="文件概览"><a href="#文件概览" class="headerlink" title="文件概览"></a>文件概览</h2><p>下载本仓库文件后，文件如下：</p>
+<p><img src="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/iimage/image-20231125134155347.png" alt="image-20231125134155347"></p>
+<h2 id="魔改"><a href="#魔改" class="headerlink" title="魔改"></a>魔改</h2><p><code>src/extraSetting.js</code>中按需修改，要强调的是可以修改网页标题。</p>
+<h2 id="图片处理"><a href="#图片处理" class="headerlink" title="图片处理"></a>图片处理</h2><p>两种处理方式，本文提供python脚本自动处理。手动处理较为繁琐，请查询网络教程，或使用他人提供的在线大西瓜图片处理工具。</p>
+<h3 id="自动处理"><a href="#自动处理" class="headerlink" title="自动处理"></a>自动处理</h3><p>原本水果图片文件在<code>res/raw-assets</code>的位置、图片文件名等信息已按水果尺寸从小到大记录到<code>image_process/info.xlsx</code>中，具体如下。例如樱桃图片文件为<code>res/raw-assets/0c/0cbb3dbb-2a85-42a5-be21-9839611e5af7.png</code>。</p>
+<p><img src="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/iimage/image-20231125104727166.png" alt="image-20231125104727166"></p>
+<p>定制水果图片为想要的图片，则需要将要定制的11张图片（对应11种水果）放到<code>image_process/original</code>，并按水果尺寸从小到大的顺序命名为<code>1.jpg</code>, <code>2.jpg</code>…, <code>11.jpg</code>。</p>
+<p><strong>注意，这些定制图片的尺寸最好是近似正方形，以免在后续图片处理中的缩放操作导致图片被拉伸，效果变差。</strong></p>
+<p>随后运行<code>image_process/demo.py</code>即可自动将这些图片修改到原本水果图片的位置。其中该python脚本将图片先缩放到对应的正方形尺寸，并裁剪成圆形。</p>
+<h3 id="手动"><a href="#手动" class="headerlink" title="手动"></a>手动</h3><p>略</p>
+<h2 id="本地预览"><a href="#本地预览" class="headerlink" title="本地预览"></a>本地预览</h2><ul>
+<li><p>下载并安装Node</p>
+<p><a target="_blank" rel="noopener" href="http://nodejs.cn/download/">http://nodejs.cn/download/</a></p>
+</li>
+<li><p>进入命令行，检查npm是否安装成功</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm -v</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>命令行安装serve工具</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm i -g serve</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>从合成大西瓜文件夹进入命令行，启动serve</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">serve</span><br></pre></td></tr></table></figure></li>
+</ul>
+<p>成功后浏览器输访问<code>localhost:5000</code>即可</p>
+<h2 id="部署"><a href="#部署" class="headerlink" title="部署"></a>部署</h2><p>预览没问题后，可以开始部署上线。</p>
+<ul>
+<li><p><strong>首先代码要上传到github仓库</strong>。</p>
+</li>
+<li><p>随后使用<a target="_blank" rel="noopener" href="https://dashboard.4everland.org/?invite=49TRKU2D">4everland</a>进行静态网页托管，并使用github注册即可。</p>
+</li>
+<li><p>注册成功后，点击<code>new project</code>，创建一个新项目</p>
+<p><img src="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/iimage/image-20231125111433974.png" alt="image-20231125111433974"></p>
+</li>
+<li><p>然后在step 1，import保存了合成大西瓜代码的github的仓库</p>
+<p><img src="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/iimage/image-20231125112002423.png" alt="image-20231125112002423"></p>
+</li>
+<li><p>step2，可选仓库的branch，意味着可以定制不同的合成大西瓜，上传到同一个仓库的不同branch管理。此处使用默认的branch，直接deploy即可。</p>
+<img src="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/iimage/image-20231125112423795.png" alt="image-20231125112423795" style="zoom:67%;" />
+</li>
+<li><p>step3，耐心等待部署。完成后点击visit访问，并记录下url。首次加载该游戏可能比较慢。</p>
+</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/iimage/image-20231125112509144.png" alt="image-20231125112509144"></p>
+<ul>
+<li><p>拓展：</p>
+<p><a target="_blank" rel="noopener" href="https://dashboard.4everland.org/?invite=49TRKU2D">4everland</a>注册就送了1G的静态网页托管空间，一个合成大西瓜也就十几m，所以合理地管理好仓库的branch，可以上线很多个合成大西瓜游戏。</p>
+</li>
+</ul>
+<h2 id="Ref"><a href="#Ref" class="headerlink" title="Ref"></a>Ref</h2><p><a target="_blank" rel="noopener" href="https://docs.qq.com/sheet/DS0d2VVVJYmpvZ0pZ?tab=BB08J2">魔改大西瓜可替换的素材 (qq.com)</a></p>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/H9VR1MWn-9bKSC_1l_MkJw">魔改和上线你的合成大西瓜，最全教程！ (qq.com)</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1Vy4y1n7KW/?vd_source=9883419bb9939eb61834a63a38921b19">全网最贴心的魔改合成大西瓜教程，从修改到发布！_哔哩哔哩_bilibili</a></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2023/11/a6aff7c01e18/" rel="prev" title="VMvare+CentOS7的安装+桥接模式下的静态ip设置">
+                  <i class="fa fa-angle-left"></i> VMvare+CentOS7的安装+桥接模式下的静态ip设置
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2023</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Wallnut</span>
+  </div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  <script src="/js/third-party/pace.js"></script>
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"drinkwateronly/comments","issue_term":"pathname","theme":"github-light"}</script>
+<script src="/js/third-party/comments/utterances.js"></script>
+
+</body>
+</html>
