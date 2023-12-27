@@ -3201,17 +3201,9 @@ main函数终止，所有goroutine也会一并结束；终止goroutine的最好�
       </categories>
   </entry>
   <entry>
-    <title></title>
-    <url>/2023/12/dd3396aaa980/</url>
-    <content><![CDATA[<hr>
-<p>title: Fyne个人总结</p>
-<p>date: 2023-12-27<br>categories: </p>
-<ul>
-<li>Golang</li>
-<li>非标准库包</li>
-</ul>
-<hr>
-<h1 id="Fyne"><a href="#Fyne" class="headerlink" title="Fyne"></a>Fyne</h1><h2 id="简单介绍"><a href="#简单介绍" class="headerlink" title="简单介绍"></a>简单介绍</h2><p>一种基于Go的GUI。Golang的GUI没接触过，也有挺多库可用，选择fyne的原因是star比较多。Fyne的中文文档并不全面。本篇文章并完整地介绍Fyne的所有组件，主要是总结一下使用Fyne过程中对该库的一些个人理解和总结。</p>
+    <title>Fyne——基于go的GUI库</title>
+    <url>/2023/12/0be9c79d0522/</url>
+    <content><![CDATA[<h1 id="Fyne"><a href="#Fyne" class="headerlink" title="Fyne"></a>Fyne</h1><h2 id="简单介绍"><a href="#简单介绍" class="headerlink" title="简单介绍"></a>简单介绍</h2><p>一种基于Go的GUI。Golang的GUI没接触过，也有挺多库可用，选择fyne的原因是star比较多。Fyne的中文文档并不全面。本篇文章并完整地介绍Fyne的所有组件，主要是总结一下使用Fyne过程中对该库的一些个人理解和总结。</p>
 <blockquote>
 <p><a href="https://github.com/fyne-io/fyne">fyne-io&#x2F;fyne: Cross platform GUI toolkit in Go inspired by Material Design (github.com)</a></p>
 <p><a href="https://go-circle.cn/fyne-press/v1.0/1-getting-started/introduction.html">快速开始 | Fyne 开发文档 (go-circle.cn)</a></p>
@@ -3308,5 +3300,9 @@ main函数终止，所有goroutine也会一并结束；终止goroutine的最好�
 
 
 ]]></content>
+      <categories>
+        <category>Golang</category>
+        <category>非标准库包</category>
+      </categories>
   </entry>
 </search>
