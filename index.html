@@ -217,7 +217,7 @@
       <span class="post-meta-item-text">发表于</span>
       
 
-      <time title="创建时间：2023-12-27 00:00:00 / 修改时间：21:22:11" itemprop="dateCreated datePublished" datetime="2023-12-27T00:00:00+08:00">2023-12-27</time>
+      <time title="创建时间：2023-12-27 00:00:00 / 修改时间：21:25:49" itemprop="dateCreated datePublished" datetime="2023-12-27T00:00:00+08:00">2023-12-27</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -243,7 +243,7 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <h1 id="Fyne"><a href="#Fyne" class="headerlink" title="Fyne"></a>Fyne</h1><h2 id="简单介绍"><a href="#简单介绍" class="headerlink" title="简单介绍"></a>简单介绍</h2><p>一种基于Go的GUI。Golang的GUI没接触过，也有挺多库可用，选择fyne的原因是star比较多。Fyne的中文文档并不全面。本篇文章并完整地介绍Fyne的所有组件，主要是总结一下使用Fyne过程中对该库的一些个人理解和总结。</p>
+          <h1 id="Fyne"><a href="#Fyne" class="headerlink" title="Fyne"></a>Fyne</h1><h2 id="简单介绍"><a href="#简单介绍" class="headerlink" title="简单介绍"></a>简单介绍</h2><p>一种基于Go的GUI。Golang的GUI没接触过，也有挺多库可用，选择Fyne的原因是star比较多，但Fyne的中文文档并不全面。本篇文章不会完整介绍Fyne的所有组件，主要是总结一下使用Fyne过程中对该库的一些个人理解。</p>
 <blockquote>
 <p><a target="_blank" rel="noopener" href="https://github.com/fyne-io/fyne">fyne-io&#x2F;fyne: Cross platform GUI toolkit in Go inspired by Material Design (github.com)</a></p>
 <p><a target="_blank" rel="noopener" href="https://go-circle.cn/fyne-press/v1.0/1-getting-started/introduction.html">快速开始 | Fyne 开发文档 (go-circle.cn)</a></p>
@@ -300,14 +300,12 @@
 <h2 id="布局和容器"><a href="#布局和容器" class="headerlink" title="布局和容器"></a>布局和容器</h2><h3 id="container和layout的关系"><a href="#container和layout的关系" class="headerlink" title="container和layout的关系"></a>container和layout的关系</h3><p><strong>通俗来讲，容器是放元素的，而布局规定了容器内的元素该如何被摆放。一定程度上，可以认为布局就是容器</strong></p>
 <p><code>Container</code>用于将多种<code>CanvasObject</code>按一定的<code>Layout</code>布局或不按照布局排列拜访。同时<code>Container</code>本身也是<code>CanvasObject</code>，这意味着容器内也可以放容器。</p>
 <p><code>container</code>有两种实例化的方法，其区别就是是否带布局<code>Layout</code>。</p>
-<ul>
-<li>如果是<code>New</code>方法，其内部的元素尺寸和位置将由<code>Layout</code>决定。</li>
-<li>如果是<code>NewWithoutLayout</code>方法，其内部的元素尺寸和位置将由手动决定。</li>
-</ul>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// New returns a new Container instance holding the specified CanvasObjects which will be laid out according to the specified Layout.</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">// Since: 2.0</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">New</span><span class="params">(layout fyne.Layout, objects ...fyne.CanvasObject)</span></span> *fyne.Container &#123;</span><br><span class="line">	<span class="keyword">return</span> &amp;fyne.Container&#123;Layout: layout, Objects: objects&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// NewWithoutLayout returns a new Container instance holding the specified CanvasObjects that are manually arranged.</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">// Since: 2.0</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">NewWithoutLayout</span><span class="params">(objects ...fyne.CanvasObject)</span></span> *fyne.Container &#123;</span><br><span class="line">	<span class="keyword">return</span> &amp;fyne.Container&#123;Objects: objects&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-
-
+<ul>
+<li>如果是<code>New</code>方法，其内部的元素尺寸和位置将由<code>Layout</code>自动决定。</li>
+<li>如果是<code>NewWithoutLayout</code>方法，其内部的元素尺寸和位置将由手动决定（手动较为复杂，通常用自动布局）。</li>
+</ul>
 <h3 id="Fyne提供的布局"><a href="#Fyne提供的布局" class="headerlink" title="Fyne提供的布局"></a>Fyne提供的布局</h3><p>Fyne提供了很多种布局（容器），各布局有其元素尺寸和位置的摆放规则。</p>
 <blockquote>
 <p><a target="_blank" rel="noopener" href="https://go-circle.cn/fyne-press/v1.0/2-exploring-fyne/layout-list.html">布局列表 | Fyne 开发文档 (go-circle.cn)</a></p>
