@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.0.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/icon32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/icon16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha256-CTSx/A06dm1B063156EVh15m6Y67pAjZZaQc89LLSrU=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"drinkwateronly.github.io","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.18.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="title: Fyne个人总结 date: 2023-12-27categories:   Golang 非标准库包   Fyne简单介绍一种基于Go的GUI。Golang的GUI没接触过，也有挺多库可用，选择fyne的原因是star比较多。Fyne的中文文档并不全面。本篇文章并完整地介绍Fyne的所有组件，主要是总结一下使用Fyne过程中对该库的一些个人理解和总结。  fyne-io&amp;#x2F">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Wallnut">
+<meta property="og:url" content="https://drinkwateronly.github.io/2023/12/dd3396aaa980/index.html">
+<meta property="og:site_name" content="Wallnut">
+<meta property="og:description" content="title: Fyne个人总结 date: 2023-12-27categories:   Golang 非标准库包   Fyne简单介绍一种基于Go的GUI。Golang的GUI没接触过，也有挺多库可用，选择fyne的原因是star比较多。Fyne的中文文档并不全面。本篇文章并完整地介绍Fyne的所有组件，主要是总结一下使用Fyne过程中对该库的一些个人理解和总结。  fyne-io&amp;#x2F">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/iimage/image-20231224174710186.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/iimage/image-20231224210507244.png">
+<meta property="article:published_time" content="2023-12-25T01:07:18.713Z">
+<meta property="article:modified_time" content="2023-12-27T13:15:19.959Z">
+<meta property="article:author" content="Wallnut">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/iimage/image-20231224174710186.png">
+
+
+<link rel="canonical" href="https://drinkwateronly.github.io/2023/12/dd3396aaa980/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://drinkwateronly.github.io/2023/12/dd3396aaa980/","path":"2023/12/dd3396aaa980/","title":""}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title> | Wallnut</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Wallnut</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Fyne"><span class="nav-number">1.</span> <span class="nav-text">Fyne</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AE%80%E5%8D%95%E4%BB%8B%E7%BB%8D"><span class="nav-number">1.1.</span> <span class="nav-text">简单介绍</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Fyne%E7%9A%84%E5%AE%89%E8%A3%85"><span class="nav-number">1.2.</span> <span class="nav-text">Fyne的安装</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%87%A0%E4%B8%AA%E5%85%B3%E9%94%AE%E6%A6%82%E5%BF%B5"><span class="nav-number">1.3.</span> <span class="nav-text">几个关键概念</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%87%A0%E4%B8%AA%E5%85%B3%E9%94%AE%E6%8E%A5%E5%8F%A3%E6%A6%82%E8%A7%88"><span class="nav-number">1.4.</span> <span class="nav-text">几个关键接口概览</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#CanvasObject%E6%8E%A5%E5%8F%A3"><span class="nav-number">1.4.1.</span> <span class="nav-text">CanvasObject接口</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Layout%E6%8E%A5%E5%8F%A3"><span class="nav-number">1.4.2.</span> <span class="nav-text">Layout接口</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B8%83%E5%B1%80%E5%92%8C%E5%AE%B9%E5%99%A8"><span class="nav-number">1.5.</span> <span class="nav-text">布局和容器</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#container%E5%92%8Clayout%E7%9A%84%E5%85%B3%E7%B3%BB"><span class="nav-number">1.5.1.</span> <span class="nav-text">container和layout的关系</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Fyne%E6%8F%90%E4%BE%9B%E7%9A%84%E5%B8%83%E5%B1%80"><span class="nav-number">1.5.2.</span> <span class="nav-text">Fyne提供的布局</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Border%E8%BE%B9%E7%95%8C%E5%B8%83%E5%B1%80demo"><span class="nav-number">1.5.3.</span> <span class="nav-text">Border边界布局demo</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BC%96%E8%AF%91"><span class="nav-number">1.6.</span> <span class="nav-text">编译</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Wallnut"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">Wallnut</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">28</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/drinkwateronly" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;drinkwateronly" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://drinkwateronly.github.io/2023/12/dd3396aaa980/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Wallnut">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Wallnut">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content=" | Wallnut">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2023-12-25 09:07:18" itemprop="dateCreated datePublished" datetime="2023-12-25T09:07:18+08:00">2023-12-25</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-12-27 21:15:19" itemprop="dateModified" datetime="2023-12-27T21:15:19+08:00">2023-12-27</time>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><hr>
+<p>title: Fyne个人总结</p>
+<p>date: 2023-12-27<br>categories: </p>
+<ul>
+<li>Golang</li>
+<li>非标准库包</li>
+</ul>
+<hr>
+<h1 id="Fyne"><a href="#Fyne" class="headerlink" title="Fyne"></a>Fyne</h1><h2 id="简单介绍"><a href="#简单介绍" class="headerlink" title="简单介绍"></a>简单介绍</h2><p>一种基于Go的GUI。Golang的GUI没接触过，也有挺多库可用，选择fyne的原因是star比较多。Fyne的中文文档并不全面。本篇文章并完整地介绍Fyne的所有组件，主要是总结一下使用Fyne过程中对该库的一些个人理解和总结。</p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://github.com/fyne-io/fyne">fyne-io&#x2F;fyne: Cross platform GUI toolkit in Go inspired by Material Design (github.com)</a></p>
+<p><a target="_blank" rel="noopener" href="https://go-circle.cn/fyne-press/v1.0/1-getting-started/introduction.html">快速开始 | Fyne 开发文档 (go-circle.cn)</a></p>
+</blockquote>
+<h2 id="Fyne的安装"><a href="#Fyne的安装" class="headerlink" title="Fyne的安装"></a>Fyne的安装</h2><p>需求：</p>
+<ul>
+<li>golang（已满足）</li>
+<li>C编译器</li>
+<li>显卡驱动（已满足）</li>
+</ul>
+<p>C编译器官方文档给出了3种安装方式，但不论哪种都需要配置环境变量。否则会在编译Fyne库时会报错：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">exec</span>:<span class="string">&quot;gcc&quot;</span> executable file not found <span class="keyword">in</span> %PATH%</span><br></pre></td></tr></table></figure>
+
+<p>我选择的是TDM-GCC <a target="_blank" rel="noopener" href="https://jmeubank.github.io/tdm-gcc/download/">Download | tdm-gcc (jmeubank.github.io)</a>。</p>
+<p>环境变量：安装时记住安装的路径，例如<code>C:\TDM-GCC-64</code>，并复制<code>gcc.exe</code>所在所在路径，即<code>C:\TDM-GCC-64\bin</code>，最后在设置环境变量时，在系统变量<code>Path</code>中新增一项bin文件的路径即可。</p>
+<p><img src="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/iimage/image-20231224174710186.png" alt="image-20231224174710186"></p>
+<h2 id="几个关键概念"><a href="#几个关键概念" class="headerlink" title="几个关键概念"></a>几个关键概念</h2><ul>
+<li>窗口<code>Window</code>，略。</li>
+<li>画布<code>Canvas</code>，一个窗口有一个画布。</li>
+<li>画布对象<code>CanvasObject</code>，可用被放到画布上展示的元素。</li>
+<li>容器<code>Container</code>，一次存放多个画布对象的画布对象。</li>
+<li>布局<code>Layout</code>，规定了容器内的各个画布对象的尺寸与位置。</li>
+</ul>
+<h2 id="几个关键接口概览"><a href="#几个关键接口概览" class="headerlink" title="几个关键接口概览"></a>几个关键接口概览</h2><h3 id="CanvasObject接口"><a href="#CanvasObject接口" class="headerlink" title="CanvasObject接口"></a>CanvasObject接口</h3><p><code>CanvasObject</code>接口描述了一个可以被加到画布<code>canvas</code>的对象。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> CanvasObject <span class="keyword">interface</span> &#123;</span><br><span class="line">	<span class="comment">// geometry</span></span><br><span class="line">	<span class="comment">// MinSize returns the minimum size this object needs to be drawn.</span></span><br><span class="line">	MinSize() Size</span><br><span class="line">	<span class="comment">// Move moves this object to the given position relative to its parent.</span></span><br><span class="line">	<span class="comment">// This should only be called if your object is not in a container with a layout manager.</span></span><br><span class="line">	Move(Position)</span><br><span class="line">	<span class="comment">// Position returns the current position of the object relative to its parent.</span></span><br><span class="line">	Position() Position</span><br><span class="line">	<span class="comment">// Resize resizes this object to the given size.</span></span><br><span class="line">	<span class="comment">// This should only be called if your object is not in a container with a layout manager.</span></span><br><span class="line">	Resize(Size)</span><br><span class="line">	<span class="comment">// Size returns the current size of this object.</span></span><br><span class="line">	Size() Size</span><br><span class="line">	<span class="comment">// visibility</span></span><br><span class="line">	<span class="comment">// Hide hides this object.</span></span><br><span class="line">	Hide()</span><br><span class="line">	<span class="comment">// Visible returns whether this object is visible or not.</span></span><br><span class="line">	Visible() <span class="type">bool</span></span><br><span class="line">	<span class="comment">// Show shows this object.</span></span><br><span class="line">	Show()</span><br><span class="line">	<span class="comment">// Refresh must be called if this object should be redrawn because its inner state changed.</span></span><br><span class="line">	Refresh()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Layout接口"><a href="#Layout接口" class="headerlink" title="Layout接口"></a>Layout接口</h3><p><code>Layout</code>描述了许多<code>CanvasObject</code>怎么样以特定的<strong>尺寸</strong>被摆放。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Layout <span class="keyword">interface</span> &#123;</span><br><span class="line">	<span class="comment">// Layout will manipulate the listed CanvasObjects Size and Position</span></span><br><span class="line">	<span class="comment">// to fit within the specified size.</span></span><br><span class="line">	Layout([]CanvasObject, Size)</span><br><span class="line">	<span class="comment">// MinSize calculates the smallest size that will fit the listed</span></span><br><span class="line">	<span class="comment">// CanvasObjects using this Layout algorithm.</span></span><br><span class="line">	MinSize(objects []CanvasObject) Size</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>当一个<code>CanvasObject</code>同时实现了<code>Layout</code>接口时，<code>Resize()</code>和<code>Move()</code>方法将会失效。</strong></p>
+<p>Fyne中绘制的<strong>一切都是<code>CanvasObject</code>，因此几乎所有的结构体都实现了<code>CanvasObject</code>接口</strong>。例如下面的常见结构体。</p>
+<ul>
+<li>绘图或动画<ul>
+<li>Rectangle 长方形</li>
+<li>Text 文本</li>
+<li>Circle 圆圈</li>
+<li>Image 图像</li>
+</ul>
+</li>
+<li>组件<code>Widget</code>或<code>WidgetRenderer</code>，用于和用户交互的主要部分。<ul>
+<li>Label 标签</li>
+<li>Button 按钮</li>
+<li>Entry 输入框</li>
+</ul>
+</li>
+<li>容器<code>Container</code>，用于以一定的布局<code>Layout</code>包括一系列的<code>CanvasObject</code>，而容器本身也实现了<code>CanvasObject</code>接口。<ul>
+<li>Box 盒子</li>
+<li>Grid 流式布局</li>
+<li>GridWrap 弹性流式布局</li>
+<li>Border 边界布局</li>
+</ul>
+</li>
+</ul>
+<h2 id="布局和容器"><a href="#布局和容器" class="headerlink" title="布局和容器"></a>布局和容器</h2><h3 id="container和layout的关系"><a href="#container和layout的关系" class="headerlink" title="container和layout的关系"></a>container和layout的关系</h3><p><strong>通俗来讲，容器是放元素的，而布局规定了容器内的元素该如何被摆放。一定程度上，可以认为布局就是容器</strong></p>
+<p><code>Container</code>用于将多种<code>CanvasObject</code>按一定的<code>Layout</code>布局或不按照布局排列拜访。同时<code>Container</code>本身也是<code>CanvasObject</code>，这意味着容器内也可以放容器。</p>
+<p><code>container</code>有两种实例化的方法，其区别就是是否带布局<code>Layout</code>。</p>
+<ul>
+<li>如果是<code>New</code>方法，其内部的元素尺寸和位置将由<code>Layout</code>决定。</li>
+<li>如果是<code>NewWithoutLayout</code>方法，其内部的元素尺寸和位置将由手动决定。</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// New returns a new Container instance holding the specified CanvasObjects which will be laid out according to the specified Layout.</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">// Since: 2.0</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">New</span><span class="params">(layout fyne.Layout, objects ...fyne.CanvasObject)</span></span> *fyne.Container &#123;</span><br><span class="line">	<span class="keyword">return</span> &amp;fyne.Container&#123;Layout: layout, Objects: objects&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// NewWithoutLayout returns a new Container instance holding the specified CanvasObjects that are manually arranged.</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">// Since: 2.0</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">NewWithoutLayout</span><span class="params">(objects ...fyne.CanvasObject)</span></span> *fyne.Container &#123;</span><br><span class="line">	<span class="keyword">return</span> &amp;fyne.Container&#123;Objects: objects&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="Fyne提供的布局"><a href="#Fyne提供的布局" class="headerlink" title="Fyne提供的布局"></a>Fyne提供的布局</h3><p>Fyne提供了很多种布局（容器），各布局有其元素尺寸和位置的摆放规则。</p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://go-circle.cn/fyne-press/v1.0/2-exploring-fyne/layout-list.html">布局列表 | Fyne 开发文档 (go-circle.cn)</a></p>
+</blockquote>
+<p>通过使用多种布局，可以构建更复杂的应用程序结构。</p>
+<h3 id="Border边界布局demo"><a href="#Border边界布局demo" class="headerlink" title="Border边界布局demo"></a>Border边界布局demo</h3><p>我们只需要通过一个布局demo即可理解布局是如何影响各画布元素的尺寸和位置。</p>
+<p>Border布局创建方法：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">NewBorder</span><span class="params">(top, bottom, left, right fyne.CanvasObject, objects ...fyne.CanvasObject)</span></span> *fyne.Container </span><br></pre></td></tr></table></figure>
+
+<p>输入的<code>CanvasObject</code>会先后按照如下原则放置（建议跳过直接看demo进行理解）：</p>
+<ul>
+<li>前两个元素分别布局在上下，高度&#x3D;元素的最小高度，宽度&#x3D;窗口的最大宽度；</li>
+<li>随后两个元素分别布局在左右，宽度&#x3D;元素的最小宽度，高度&#x3D;窗口最大高度-上下元素高度之和；</li>
+<li>后面的多个<code>CanvasObject</code>将会按顺序先后以这些元素的最大尺寸填充到中间区域，这个区域被包围在前四个元素内的区域，且稍小一些。</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">a := app.New()</span><br><span class="line">w := a.NewWindow(<span class="string">&quot;demo&quot;</span>)</span><br><span class="line">w.Resize(fyne.NewSize(<span class="number">300</span>, <span class="number">300</span>))</span><br><span class="line"><span class="comment">// 上</span></span><br><span class="line">text := canvas.NewText(<span class="string">&quot;hello world&quot;</span>, color.Black)</span><br><span class="line"><span class="comment">// 左</span></span><br><span class="line">rect := canvas.NewRectangle(color.Black)</span><br><span class="line"><span class="comment">// 中</span></span><br><span class="line">midRect := canvas.NewRectangle(color.Black)</span><br><span class="line">midCircle := canvas.NewCircle(color.Gray&#123;Y: <span class="number">50</span>&#125;)</span><br><span class="line">midText := canvas.NewText(<span class="string">&quot;hello world&quot;</span>, color.White)</span><br><span class="line"><span class="comment">// 下</span></span><br><span class="line">button := widget.NewButton(<span class="string">&quot;button&quot;</span>, <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;&#125;)</span><br><span class="line">button.Resize(fyne.Size&#123;Width: <span class="number">100</span>, Height: <span class="number">50</span>&#125;) <span class="comment">// 显然失效</span></span><br><span class="line"><span class="comment">// 右</span></span><br><span class="line">input := widget.NewEntry()</span><br><span class="line"></span><br><span class="line">borderContent := container.NewBorder(text, button, rect, input, midRect, midCircle, midText)</span><br><span class="line">w.SetContent(borderContent)</span><br><span class="line">w.ShowAndRun()</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/iimage/image-20231224210507244.png" alt="image-20231224210507244"></p>
+<p>其中关注<code>NewBorder</code>所包含的元素，参照放置原则：</p>
+<ul>
+<li>前两个分别是<strong>黑色文本</strong>和<strong>按钮</strong>，均以其最小的高度放了窗口的上下区域；</li>
+<li>随后两个分别是一个<strong>黑色长方形</strong>和<strong>输入框</strong>，均以其最小的宽度放了窗口的左右区域。值得注意的是，黑色长方形的最小宽度只有一个像素；</li>
+<li>最后三个，分别以<strong>黑色长方形</strong>，<strong>灰色圆形</strong>，<strong>白色文本</strong>分别以最大的尺寸先后放置在了中心区域。其中文本框已经是最大尺寸，只是文本比较小，且默认上下居中。</li>
+</ul>
+<h2 id="编译"><a href="#编译" class="headerlink" title="编译"></a>编译</h2><p>此命令能减小编译后可执行文件的大小，同时关闭命令行窗口。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">go</span> build -ldflags <span class="string">&quot;-s -w -H=windowsgui&quot;</span> .</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2023/11/2978ee3a4e31/" rel="prev" title="Docker基础教程">
+                  <i class="fa fa-angle-left"></i> Docker基础教程
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2023</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Wallnut</span>
+  </div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  <script src="/js/third-party/pace.js"></script>
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"drinkwateronly/comments","issue_term":"pathname","theme":"github-light"}</script>
+<script src="/js/third-party/comments/utterances.js"></script>
+
+</body>
+</html>
