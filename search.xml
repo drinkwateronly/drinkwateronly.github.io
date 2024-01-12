@@ -786,9 +786,17 @@ Savepoints: NO
       </categories>
   </entry>
   <entry>
-    <title>git报错与解决方案</title>
+    <title>git的使用、报错与解决方案</title>
     <url>/2023/11/0643165177d6/</url>
-    <content><![CDATA[<h2 id="报错1"><a href="#报错1" class="headerlink" title="报错1"></a>报错1</h2><p>当pull遇到如下错误时</p>
+    <content><![CDATA[<h1 id="Commit"><a href="#Commit" class="headerlink" title="Commit"></a>Commit</h1><p>1、规范<a href="https://www.cnblogs.com/chonglu/p/15693950.html">https://www.cnblogs.com/chonglu/p/15693950.html</a></p>
+<p>2、撤销上一次的commit</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 把 HEAD 指针移回上一个提交（HEAD~1），并清除最后一次提交的内容。</span></span><br><span class="line">git reset HEAD~1  <span class="comment"># git reset HEAD~</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 撤回n次</span></span><br><span class="line">git reset HEAD~n</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h2 id="报错1"><a href="#报错1" class="headerlink" title="报错1"></a>报错1</h2><p>当pull遇到如下错误时</p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&gt; PS E:\_code\go_project\interpreter_in_Go-master&gt; git pull remote main:master</span><br><span class="line">From https://github.com/drinkwateronly/interpreter_in_Go</span><br><span class="line"> ! [rejected]        main       -&gt; master  (non-fast-forward)</span><br></pre></td></tr></table></figure>
 
 <p>github上的肯定是最新的代码，可能的原因是本机的代码添加了无关紧要的注释，且添加前没有pull，造成的冲突导致的。</p>
@@ -3014,7 +3022,19 @@ main函数终止，所有goroutine也会一并结束；终止goroutine的最好�
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker ps <span class="comment"># 不报错则安装成功</span></span><br><span class="line"></span><br><span class="line">systemctl start docker</span><br><span class="line">systemctl stop docker</span><br><span class="line">systemctl restart docker</span><br><span class="line"></span><br><span class="line">systemctl <span class="built_in">enable</span> docker <span class="comment"># 设置开启自启</span></span><br></pre></td></tr></table></figure>
 
 <p>4、配置镜像加速</p>
+<p>配置阿里云镜像加速</p>
 <p><a href="https://cr.console.aliyun.com/cn-hangzhou/instances/mirrors">https://cr.console.aliyun.com/cn-hangzhou/instances/mirrors</a></p>
+<p>添加其他镜像加速</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">vi /etc/docker/daemon.json</span><br></pre></td></tr></table></figure>
+
+<p>添加如下其中一项内容即可（实测，只能添加其中一个），如果某个速度慢，可以切换</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="string">&quot;registry-mirrors&quot;</span>: [<span class="string">&quot;https://_______.mirror.aliyuncs.com&quot;</span>]  <span class="comment"># 空白处从阿里云获取</span></span><br><span class="line">&#125;</span><br><span class="line">&#123;</span><br><span class="line">  <span class="string">&quot;registry-mirrors&quot;</span>: [<span class="string">&quot;https://hub-mirror.c.163.com&quot;</span>]</span><br><span class="line">&#125;</span><br><span class="line">&#123;</span><br><span class="line">  <span class="string">&quot;registry-mirrors&quot;</span>: [<span class="string">&quot;https://mirror.baidubce.com&quot;</span>]</span><br><span class="line">&#125;</span><br><span class="line">&#123;</span><br><span class="line">  <span class="string">&quot;registry-mirrors&quot;</span>: [<span class="string">&quot;https://docker.mirrors.ustc.edu.cn&quot;</span>]</span><br><span class="line">&#125;</span><br><span class="line">&#123;</span><br><span class="line">  <span class="string">&quot;registry-mirrors&quot;</span>: [<span class="string">&quot;https://registry.docker-cn.com&quot;</span>]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>或者用如下命令快速完成配置</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo <span class="built_in">mkdir</span> -p /etc/docker</span><br><span class="line">sudo <span class="built_in">tee</span> /etc/docker/daemon.json &lt;&lt;-<span class="string">&#x27;EOF&#x27;</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="string">&quot;registry-mirrors&quot;</span>: [<span class="string">&quot;https://_______.mirror.aliyuncs.com&quot;</span>]  <span class="comment"># 空白处从阿里云获取</span></span><br><span class="line">&#125;</span><br><span class="line">&#123;</span><br><span class="line">  <span class="string">&quot;registry-mirrors&quot;</span>: [<span class="string">&quot;https://hub-mirror.c.163.com&quot;</span>]</span><br><span class="line">&#125;</span><br><span class="line">&#123;</span><br><span class="line">  <span class="string">&quot;registry-mirrors&quot;</span>: [<span class="string">&quot;https://mirror.baidubce.com&quot;</span>]</span><br><span class="line">&#125;</span><br><span class="line">&#123;</span><br><span class="line">  <span class="string">&quot;registry-mirrors&quot;</span>: [<span class="string">&quot;https://docker.mirrors.ustc.edu.cn&quot;</span>]</span><br><span class="line">&#125;</span><br><span class="line">&#123;</span><br><span class="line">  <span class="string">&quot;registry-mirrors&quot;</span>: [<span class="string">&quot;https://registry.docker-cn.com&quot;</span>]</span><br><span class="line">&#125;</span><br><span class="line">EOF</span><br><span class="line">sudo systemctl daemon-reload</span><br><span class="line">sudo systemctl restart docker</span><br></pre></td></tr></table></figure>
+
+
+
 <h2 id="demo-部署mysql"><a href="#demo-部署mysql" class="headerlink" title="demo: 部署mysql"></a>demo: 部署mysql</h2><h3 id="下载并安装image"><a href="#下载并安装image" class="headerlink" title="下载并安装image"></a>下载并安装image</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker run -d \ <span class="comment"># 创建并运行 -d使得容器在后台运行</span></span><br><span class="line">--name mysql \  <span class="comment"># 容器名称</span></span><br><span class="line">-p 3306:3306 \  <span class="comment"># 端口映射</span></span><br><span class="line">-e TZ=Asia/Shanghai \  <span class="comment"># 环境变量 -e KEY=VALUE，不同镜像不同，需要查看镜像的文档说明</span></span><br><span class="line">-e MYSQL_ROOT_PASSWORD=123 \ </span><br><span class="line">mysql \  <span class="comment"># 镜像的名字 [仓库]:[版本号]，无版本号就是最新版本</span></span><br></pre></td></tr></table></figure>
 
 <p>端口映射：</p>
