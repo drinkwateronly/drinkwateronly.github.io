@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.0.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/icon32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/icon16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha256-CTSx/A06dm1B063156EVh15m6Y67pAjZZaQc89LLSrU=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"drinkwateronly.github.io","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.18.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="Go标准库bufio包bufio为io操作提供了缓冲区（内存），降低访问磁盘次数，以提高文件读写的效率。例如，有多次写入同一个文件时，可以先多次写到内存，再一次性写入磁盘，减少io系统调用次数。  bufio封装io.Writer和io.Reader接口的对象，并返回一个也实现该接口的对象  写时要注意Flush的使用  使用bufio读bufio.Reader12345678type Reade">
+<meta property="og:type" content="article">
+<meta property="og:title" content="6-go标准库bufio包">
+<meta property="og:url" content="https://drinkwateronly.github.io/2024/02/17d8a4ccd7fc/index.html">
+<meta property="og:site_name" content="Wallnut">
+<meta property="og:description" content="Go标准库bufio包bufio为io操作提供了缓冲区（内存），降低访问磁盘次数，以提高文件读写的效率。例如，有多次写入同一个文件时，可以先多次写到内存，再一次性写入磁盘，减少io系统调用次数。  bufio封装io.Writer和io.Reader接口的对象，并返回一个也实现该接口的对象  写时要注意Flush的使用  使用bufio读bufio.Reader12345678type Reade">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/image/image-20240201150001486.png">
+<meta property="article:published_time" content="2024-02-01T13:15:00.000Z">
+<meta property="article:modified_time" content="2024-03-13T02:57:04.724Z">
+<meta property="article:author" content="Wallnut">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/image/image-20240201150001486.png">
+
+
+<link rel="canonical" href="https://drinkwateronly.github.io/2024/02/17d8a4ccd7fc/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://drinkwateronly.github.io/2024/02/17d8a4ccd7fc/","path":"2024/02/17d8a4ccd7fc/","title":"6-go标准库bufio包"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>6-go标准库bufio包 | Wallnut</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Wallnut</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Go%E6%A0%87%E5%87%86%E5%BA%93bufio%E5%8C%85"><span class="nav-number">1.</span> <span class="nav-text">Go标准库bufio包</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8bufio%E8%AF%BB"><span class="nav-number">1.1.</span> <span class="nav-text">使用bufio读</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#bufio-Reader"><span class="nav-number">1.1.1.</span> <span class="nav-text">bufio.Reader</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#bufio-NewReaderSize"><span class="nav-number">1.1.2.</span> <span class="nav-text">bufio.NewReaderSize</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#bufio-NewReader"><span class="nav-number">1.1.3.</span> <span class="nav-text">bufio.NewReader</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#reader-Read"><span class="nav-number">1.1.4.</span> <span class="nav-text">reader.Read</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#reader-Peek"><span class="nav-number">1.1.5.</span> <span class="nav-text">reader.Peek</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#reader-ReadSlice"><span class="nav-number">1.1.6.</span> <span class="nav-text">reader.ReadSlice</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#reader-ReadBytes"><span class="nav-number">1.1.7.</span> <span class="nav-text">reader.ReadBytes</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#reader-ReadLine"><span class="nav-number">1.1.8.</span> <span class="nav-text">reader.ReadLine</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#reader-Buffered"><span class="nav-number">1.1.9.</span> <span class="nav-text">reader.Buffered</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#demo1%EF%BC%9ARead%E5%92%8CBuffered"><span class="nav-number">1.1.10.</span> <span class="nav-text">demo1：Read和Buffered</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81"><span class="nav-number">1.1.10.1.</span> <span class="nav-text">代码</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BE%93%E5%87%BA"><span class="nav-number">1.1.10.2.</span> <span class="nav-text">输出</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#demo2%EF%BC%9AReadSlice%E5%92%8CReadBytes"><span class="nav-number">1.1.11.</span> <span class="nav-text">demo2：ReadSlice和ReadBytes</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81-1"><span class="nav-number">1.1.11.1.</span> <span class="nav-text">代码</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BE%93%E5%87%BA-1"><span class="nav-number">1.1.11.2.</span> <span class="nav-text">输出</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BE%93%E5%87%BA2%EF%BC%9A%E5%B0%86%E6%89%80%E6%9C%89%E7%9A%84ReadSlice%E6%8D%A2%E4%B8%BAReadBytes"><span class="nav-number">1.1.11.3.</span> <span class="nav-text">输出2：将所有的ReadSlice换为ReadBytes</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8bufio%E5%86%99"><span class="nav-number">1.2.</span> <span class="nav-text">使用bufio写</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#bufio-Writer"><span class="nav-number">1.2.1.</span> <span class="nav-text">bufio.Writer</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#bufio-NewWriterSize"><span class="nav-number">1.2.2.</span> <span class="nav-text">bufio.NewWriterSize</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#bufio-NewWriter"><span class="nav-number">1.2.3.</span> <span class="nav-text">bufio.NewWriter</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#writer-Write"><span class="nav-number">1.2.4.</span> <span class="nav-text">writer.Write</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#writer-Buffered"><span class="nav-number">1.2.5.</span> <span class="nav-text">writer.Buffered</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#writer-Available"><span class="nav-number">1.2.6.</span> <span class="nav-text">writer.Available</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#demo"><span class="nav-number">1.2.7.</span> <span class="nav-text">demo</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%93%E6%9E%9C"><span class="nav-number">1.2.8.</span> <span class="nav-text">结果</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1%E3%80%81%E8%B0%83%E7%94%A8%E4%BA%86Flush"><span class="nav-number">1.2.8.1.</span> <span class="nav-text">1、调用了Flush</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2%E3%80%81%E6%9C%AA%E8%B0%83%E7%94%A8Flush"><span class="nav-number">1.2.8.2.</span> <span class="nav-text">2、未调用Flush</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BE%8B%E7%A8%8B%EF%BC%9A%E9%80%90%E8%A1%8C%E8%AF%BB%E5%8F%96%E6%9F%90%E4%B8%AA%E6%96%87%E4%BB%B6"><span class="nav-number">1.3.</span> <span class="nav-text">例程：逐行读取某个文件</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Ref"><span class="nav-number">2.</span> <span class="nav-text">Ref</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Wallnut"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">Wallnut</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">34</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">15</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/drinkwateronly" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;drinkwateronly" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://drinkwateronly.github.io/2024/02/17d8a4ccd7fc/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Wallnut">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Wallnut">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="6-go标准库bufio包 | Wallnut">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          6-go标准库bufio包
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2024-02-01 21:15:00" itemprop="dateCreated datePublished" datetime="2024-02-01T21:15:00+08:00">2024-02-01</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2024-03-13 10:57:04" itemprop="dateModified" datetime="2024-03-13T10:57:04+08:00">2024-03-13</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/go/" itemprop="url" rel="index"><span itemprop="name">go</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/go/go%E6%A0%87%E5%87%86%E5%BA%93/" itemprop="url" rel="index"><span itemprop="name">go标准库</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="Go标准库bufio包"><a href="#Go标准库bufio包" class="headerlink" title="Go标准库bufio包"></a>Go标准库bufio包</h1><p>bufio为io操作提供了缓冲区（内存），降低访问磁盘次数，以提高文件读写的效率。例如，有多次写入同一个文件时，可以先多次写到内存，再一次性写入磁盘，减少io系统调用次数。</p>
+<p><img src="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/image/image-20240201150001486.png" alt="image-20240201150001486"></p>
+<p>bufio封装<code>io.Writer</code>和<code>io.Reader</code>接口的对象，并返回一个也实现该接口的对象</p>
+<ul>
+<li>写时要注意<code>Flush</code>的使用</li>
+</ul>
+<h2 id="使用bufio读"><a href="#使用bufio读" class="headerlink" title="使用bufio读"></a>使用bufio读</h2><h3 id="bufio-Reader"><a href="#bufio-Reader" class="headerlink" title="bufio.Reader"></a>bufio.Reader</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Reader <span class="keyword">struct</span> &#123;</span><br><span class="line">	buf          []<span class="type">byte</span>    <span class="comment">// 缓存</span></span><br><span class="line">	rd           io.Reader <span class="comment">// 底层的io.Reader</span></span><br><span class="line">	r, w         <span class="type">int</span>       <span class="comment">// buf read and write positions</span></span><br><span class="line">	err          <span class="type">error</span></span><br><span class="line">	lastByte     <span class="type">int</span> <span class="comment">// last byte read for UnreadByte; -1 means invalid</span></span><br><span class="line">	lastRuneSize <span class="type">int</span> <span class="comment">// size of last rune read for UnreadRune; -1 means invalid</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="bufio-NewReaderSize"><a href="#bufio-NewReaderSize" class="headerlink" title="bufio.NewReaderSize"></a>bufio.NewReaderSize</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">bufio</span>.<span class="title">NewReaderSize</span><span class="params">(rd io.Reader, size <span class="type">int</span>)</span></span> *bufio.Reader</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>将<code>io.Reader</code>对象<code>rd</code>封装为缓存大小为<code>size</code>的<code>*bufio.Reader</code>对象</li>
+<li><code>size</code>小于16时会被设置为16</li>
+</ul>
+<h3 id="bufio-NewReader"><a href="#bufio-NewReader" class="headerlink" title="bufio.NewReader"></a>bufio.NewReader</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> (</span><br><span class="line">	defaultBufSize = <span class="number">4096</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">NewReader</span><span class="params">(rd io.Reader)</span></span> *Reader &#123;</span><br><span class="line">	<span class="keyword">return</span> NewReaderSize(rd, defaultBufSize)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>创建<code>size</code>为4096默认大小的<code>*bufio.Reader</code>对象。</li>
+</ul>
+<h3 id="reader-Read"><a href="#reader-Read" class="headerlink" title="reader.Read"></a>reader.Read</h3><p>为<code>bufio.Reader</code>对象可调用方法</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(b *Reader)</span></span> Read(p []<span class="type">byte</span>) (n <span class="type">int</span>, err <span class="type">error</span>) </span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>从<code>b</code>中读取长度为<code>len(p)</code>的内容，存放到<code>p</code>中</li>
+<li>情况1：当缓冲区<code>buf</code>有内容时，将缓冲区内容全部填入<code>p</code>并刷新缓冲</li>
+<li>情况2：当缓冲区<code>buf</code>没内容时<ul>
+<li><code>len(p)&gt;len(buf)</code>，即读取的内容大小&gt;缓冲大小，直接读文件。</li>
+<li><code>len(p)&lt;len(buf)</code>，即读取的内容大小&lt;缓冲大小，文件内容被读到缓冲中。随后，将缓冲中长度<code>len(p)</code>的数据读到<code>p</code>中，此时缓冲有剩余<code>len(buf)-len(p)</code>内容，可供下次读取（即情况1）。</li>
+</ul>
+</li>
+</ul>
+<p>这意味着，在情况2中，若读取的内容比较大时，bufio会将部分内容读进缓冲（预读），后续进行多次从缓冲中读取即可，直到读空缓冲，缓冲再装填。</p>
+<h3 id="reader-Peek"><a href="#reader-Peek" class="headerlink" title="reader.Peek"></a>reader.Peek</h3><p>为<code>bufio.Reader</code>对象可调用方法</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(b *Reader)</span></span> Peek(n <span class="type">int</span>) ([]<span class="type">byte</span>, <span class="type">error</span>)</span><br></pre></td></tr></table></figure>
+
+<p><code>Peek</code>会返回缓存中前<code>n</code>个字节，但不会像<code>reader.Read</code>那样消费缓存中的数据。</p>
+<ul>
+<li>若<code>n&gt;len(buf)</code>，即读取内容比缓存小，返回<code>bufio.ErrBufferFull</code></li>
+<li>若<code>n&lt;=len(buf)</code>，<ul>
+<li>若peek中不包含<code>EOF</code>，返回<code>n</code>个字节。</li>
+<li>若peek中还包含<code>EOF</code>，返回<code>EOF</code>前的所有字节，error会返回<code>EOF</code>。</li>
+</ul>
+</li>
+</ul>
+<h3 id="reader-ReadSlice"><a href="#reader-ReadSlice" class="headerlink" title="reader.ReadSlice"></a>reader.ReadSlice</h3><p><code>bufio.Reader</code>对象可调用方法</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(b *Reader)</span></span> ReadSlice(delim <span class="type">byte</span>) (line []<span class="type">byte</span>, err <span class="type">error</span>) 	</span><br></pre></td></tr></table></figure>
+
+<p>从<code>b</code>的缓冲区中读取数据到<code>line</code>，直到遇到第一个<code>byte</code>类型<code>delim</code>。读取的过程会消耗缓存。</p>
+<ul>
+<li>情况1：在缓存内遇到了<code>delim</code>，返回<code>line</code>和<code>nil</code></li>
+<li>情况2：读完缓存了，没遇到EOF，也没遇到<code>delim</code>，返回<code>line</code>和<code>EOF</code>错误</li>
+<li>情况3：遇到了EOF都没遇到<code>delim</code>，返回<code>line</code>和<code>io.ErrBufferFull</code>错误</li>
+</ul>
+<blockquote>
+<p>注意：</p>
+<p><code>ReadSlice</code>返回的是原始缓存中的内容，如果针对缓存作并发操作，则返回的内容有可能被其他操作覆盖。因此在官方注释里面有写，建议使用<code>ReadBytes</code>或<code>ReadString</code>。但<code>ReadBytes</code>和<code>ReadString</code>涉及内存申请和拷贝，因此会影响性能。在追求高性能的场景下，建议外部使用<code>sync.pool</code>来提供缓存。</p>
+</blockquote>
+<h3 id="reader-ReadBytes"><a href="#reader-ReadBytes" class="headerlink" title="reader.ReadBytes"></a>reader.ReadBytes</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(b *Reader)</span></span> ReadBytes(delim <span class="type">byte</span>) ([]<span class="type">byte</span>, <span class="type">error</span>)</span><br></pre></td></tr></table></figure>
+
+<p>与<code>ReadSlice</code>类似，不同之处在于</p>
+<ol>
+<li>返回<code>[]byte</code>是新的切片，适用于高并发时，而<code>ReadSlice</code>返回原始缓存的切片（众所周知，原始切片被修改后，从其切出来的切片也会被修改）。</li>
+<li>会从缓存中一直读，缓存也一直刷新，直到找到了或<code>EOF</code></li>
+</ol>
+<h3 id="reader-ReadLine"><a href="#reader-ReadLine" class="headerlink" title="reader.ReadLine"></a>reader.ReadLine</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(b *Reader)</span></span> ReadLine() (line []<span class="type">byte</span>, isPrefix <span class="type">bool</span>, err <span class="type">error</span>)</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>从缓存读取一行，底层使用了<code>ReadSlice(&#39;\n&#39;)</code>，并移除该行<code>\n</code>或<code>\r\n</code>。</li>
+<li>如果没有遇到换行符，也不会<code>EOF</code>或<code>io.ErrBufferFull</code>，而是将<code>isPrefix</code>置为真。</li>
+</ul>
+<h3 id="reader-Buffered"><a href="#reader-Buffered" class="headerlink" title="reader.Buffered"></a>reader.Buffered</h3><p><code>bufio.Reader</code>对象可调用方法</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(b *Reader)</span></span> Buffered() <span class="type">int</span> &#123; <span class="keyword">return</span> b.w - b.r &#125;</span><br></pre></td></tr></table></figure>
+
+<p>返回<code>b</code>的缓冲区的剩余的字节数。</p>
+<h3 id="demo1：Read和Buffered"><a href="#demo1：Read和Buffered" class="headerlink" title="demo1：Read和Buffered"></a>demo1：Read和Buffered</h3><h4 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h4><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">bufioReaderDemo</span><span class="params">()</span></span> &#123;</span><br><span class="line">	str := <span class="string">&quot;01234567890123456789012345678901234567890123&quot;</span> <span class="comment">// len(str) = 44</span></span><br><span class="line">	strReader := strings.NewReader(str)                   <span class="comment">// io.Reader</span></span><br><span class="line">	reader := bufio.NewReaderSize(strReader, <span class="number">25</span>)          <span class="comment">// bufio.Reader</span></span><br><span class="line"></span><br><span class="line">	res := <span class="built_in">make</span>([]<span class="type">byte</span>, <span class="number">5</span>)</span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="number">10</span>; i++ &#123;</span><br><span class="line">		n, err := reader.Read(res)</span><br><span class="line">		<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">			fmt.Printf(<span class="string">&quot;the %d-th read fail: %s&quot;</span>, i+<span class="number">1</span>, err)</span><br><span class="line">			<span class="keyword">return</span></span><br><span class="line">		&#125;</span><br><span class="line">		fmt.Printf(<span class="string">&quot;%d) read content：%s; res: %s ;buffer remains：%2d B\n&quot;</span>,</span><br><span class="line">			i+<span class="number">1</span>, <span class="type">string</span>(res[:n]), res, reader.Buffered())</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>此demo将长度为44的字符串转为缓存大小为25的<code>bufio.Reader</code>对象<code>reader</code>。</li>
+<li>随后使用将循环10次，每次从<code>reader</code>中读取5字节到<code>res</code>中</li>
+<li>从输出可以看出，每次读取对应字节后，<code>reader</code>中缓存的数据越来越少。</li>
+<li>再第5次读取后，<code>reader</code>的缓存读完了，因此第6次读取时<code>reader</code>重新填充了缓存。</li>
+<li>第9次读取时，缓存中应该只剩下<code>0123</code>。将数据放到<code>res</code>后，<code>res</code>中第5个位置已经有个9，所以<code>res</code>是<code>01239</code>。</li>
+<li>第9次读完后，同样缓存内容再次读完，同时字符串已经读完，因此第10次读时返回了<code>EOF</code>。</li>
+</ul>
+<h4 id="输出"><a href="#输出" class="headerlink" title="输出"></a>输出</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">1) read content：01234; res: 01234 ;buffer remains：20 B</span><br><span class="line">2) read content：56789; res: 56789 ;buffer remains：15 B</span><br><span class="line">3) read content：01234; res: 01234 ;buffer remains：10 B</span><br><span class="line">4) read content：56789; res: 56789 ;buffer remains： 5 B</span><br><span class="line">5) read content：01234; res: 01234 ;buffer remains： 0 B</span><br><span class="line">6) read content：56789; res: 56789 ;buffer remains：14 B</span><br><span class="line">7) read content：01234; res: 01234 ;buffer remains： 9 B</span><br><span class="line">8) read content：56789; res: 56789 ;buffer remains： 4 B</span><br><span class="line">9) read content：0123; res: 01239 ;buffer remains： 0 B</span><br><span class="line">the 10-th read fail: EOF</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h3 id="demo2：ReadSlice和ReadBytes"><a href="#demo2：ReadSlice和ReadBytes" class="headerlink" title="demo2：ReadSlice和ReadBytes"></a>demo2：ReadSlice和ReadBytes</h3><h4 id="代码-1"><a href="#代码-1" class="headerlink" title="代码"></a>代码</h4><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">readSliceDemo</span><span class="params">()</span></span> &#123;</span><br><span class="line">	str := <span class="string">&quot;abcdefghijklmnopqrstuvwxyz1234567890&quot;</span> <span class="comment">// len(str) = 44</span></span><br><span class="line">	strReader := strings.NewReader(str)           <span class="comment">// io.Reader</span></span><br><span class="line">	reader := bufio.NewReaderSize(strReader, <span class="number">16</span>)  <span class="comment">// bufio.Reader</span></span><br><span class="line"></span><br><span class="line">	b, err := reader.ReadSlice(<span class="string">&#x27;q&#x27;</span>) <span class="comment">// 第17个字母</span></span><br><span class="line">	fmt.Println(<span class="string">&quot;b:&quot;</span>, <span class="type">string</span>(b), <span class="string">&quot; error:&quot;</span>, err)</span><br><span class="line"></span><br><span class="line">	b, err = reader.ReadSlice(<span class="string">&#x27;5&#x27;</span>) <span class="comment">// 更换为ReadBytes</span></span><br><span class="line">	fmt.Println(<span class="string">&quot;b:&quot;</span>, <span class="type">string</span>(b), <span class="string">&quot; error:&quot;</span>, err)</span><br><span class="line"></span><br><span class="line">	b, err = reader.ReadSlice(<span class="string">&#x27;a&#x27;</span>)  <span class="comment">// 更换为ReadBytes</span></span><br><span class="line">	fmt.Println(<span class="string">&quot;b:&quot;</span>, <span class="type">string</span>(b), <span class="string">&quot; error:&quot;</span>, err)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>将字符串转为缓存大小大小16的<code>bufio.Reader</code></li>
+<li>第一次使用<code>ReadSlice</code>找第17个字符<code>q</code>，显然在缓存中找不到。此时为情况3，返回了长度为16的<code>b</code>和<code>io.ErrBufferFull</code>错误。</li>
+<li>第二次使用<code>ReadSlice</code>找到了字符<code>5</code>。此时为情况1，返回了长度为15的<code>b</code>。</li>
+<li>第三次使用<code>ReadSlice</code>，显然找不到字符<code>a</code>，且字符串已读完。此时为情况2，因此返回了长度为5的<code>b</code>和<code>EOF</code>错误。</li>
+</ul>
+<h4 id="输出-1"><a href="#输出-1" class="headerlink" title="输出"></a>输出</h4><blockquote>
+<p>b: abcdefghijklmnop  error: bufio: buffer full<br>b: qrstuvwxyz12345  error: <nil><br>b: 67890  error: EOF</p>
+</blockquote>
+<h4 id="输出2：将所有的ReadSlice换为ReadBytes"><a href="#输出2：将所有的ReadSlice换为ReadBytes" class="headerlink" title="输出2：将所有的ReadSlice换为ReadBytes"></a>输出2：将所有的<code>ReadSlice</code>换为<code>ReadBytes</code></h4><blockquote>
+<p>b: abcdefghijklmnopq  error: <nil><br>b: rstuvwxyz12345  error: <nil><br>b: 67890  error: EOF</p>
+</blockquote>
+<h2 id="使用bufio写"><a href="#使用bufio写" class="headerlink" title="使用bufio写"></a>使用bufio写</h2><h3 id="bufio-Writer"><a href="#bufio-Writer" class="headerlink" title="bufio.Writer"></a>bufio.Writer</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Writer <span class="keyword">struct</span> &#123;</span><br><span class="line">	err <span class="type">error</span>     <span class="comment">// 可能出现的错误</span></span><br><span class="line">	buf []<span class="type">byte</span>    <span class="comment">// 缓存</span></span><br><span class="line">	n   <span class="type">int</span>       <span class="comment">// 缓存内部当前的操作位</span></span><br><span class="line">	wr  io.Writer <span class="comment">// 底层io.Writer</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>对<code>bufio.Writer</code>写入时，不再直接写入<code>wr</code>，而是先写入缓存<code>buf</code>，当缓存写满或使用了<code>flush</code>后再写入<code>wr</code>。减少了多次写。</li>
+</ul>
+<h3 id="bufio-NewWriterSize"><a href="#bufio-NewWriterSize" class="headerlink" title="bufio.NewWriterSize"></a>bufio.NewWriterSize</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">NewWriterSize</span><span class="params">(w io.Writer, size <span class="type">int</span>)</span></span> *bufio.Writer </span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>将<code>io.Writer</code>对象<code>w</code>封装为缓存大小为<code>size</code>的<code>*bufio.Writer</code>对象</li>
+<li><code>size</code>大于0即可</li>
+</ul>
+<h3 id="bufio-NewWriter"><a href="#bufio-NewWriter" class="headerlink" title="bufio.NewWriter"></a>bufio.NewWriter</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">NewWriter</span><span class="params">(w io.Writer)</span></span> *bufio.Writer &#123;</span><br><span class="line">	<span class="keyword">return</span> NewWriterSize(w, defaultBufSize)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>将<code>io.Writer</code>对象<code>w</code>封装为缓存大小为<code>4096</code>的<code>*bufio.Writer</code>对象</li>
+</ul>
+<h3 id="writer-Write"><a href="#writer-Write" class="headerlink" title="writer.Write"></a>writer.Write</h3><p><code>bufio.Writer</code>对象可调用方法</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(b *bufio.Writer)</span></span> Write(p []<span class="type">byte</span>) (nn <span class="type">int</span>, err <span class="type">error</span>)</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>将<code>p</code>中内容向<code>b</code>中写入</li>
+<li>情况1：<code>len(p)&gt;len(buf)</code>，即写入的内容大小&gt;缓冲大小，直接写磁盘而不写入缓存。</li>
+<li>情况2：<code>len(p)&lt;len(buf)</code>，即写入的内容大小&lt;缓冲大小<ul>
+<li>当缓冲区<code>buf</code>满时，将缓冲区内容内容写入磁盘</li>
+<li>当缓冲区<code>buf</code>仍有空间时，不会写入磁盘，除非调用<code>Flush</code></li>
+</ul>
+</li>
+</ul>
+<h3 id="writer-Buffered"><a href="#writer-Buffered" class="headerlink" title="writer.Buffered"></a>writer.Buffered</h3><p>为<code>bufio.Writer</code>对象可调用方法</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(b *Writer)</span></span> Buffered() <span class="type">int</span> &#123; <span class="keyword">return</span> b.n &#125;</span><br></pre></td></tr></table></figure>
+
+<p>返回<code>b</code>的缓冲区的已存入的字节数。</p>
+<h3 id="writer-Available"><a href="#writer-Available" class="headerlink" title="writer.Available"></a>writer.Available</h3><p>为<code>bufio.Writer</code>对象可调用方法</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(b *Writer)</span></span> Available() <span class="type">int</span> &#123; <span class="keyword">return</span> <span class="built_in">len</span>(b.buf) - b.n &#125;</span><br></pre></td></tr></table></figure>
+
+<p>返回<code>b</code>的缓冲区的剩余可存入的字节数。</p>
+<h3 id="demo"><a href="#demo" class="headerlink" title="demo"></a>demo</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">bufioWriterDemo</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="comment">// 打开可写文件</span></span><br><span class="line">	file, _ := os.OpenFile(<span class="string">&quot;./6-bufio_demo/file.txt&quot;</span>, os.O_WRONLY, <span class="number">0777</span>)</span><br><span class="line">	<span class="keyword">defer</span> file.Close()</span><br><span class="line">	writer := bufio.NewWriterSize(file, <span class="number">5</span>) <span class="comment">// io.Writer</span></span><br><span class="line">	<span class="comment">// 第一次写</span></span><br><span class="line">	_, err := writer.Write([]<span class="type">byte</span>(<span class="string">&quot;123456&quot;</span>)) <span class="comment">// bufio.Writer</span></span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Println(<span class="string">&quot;bufio writer failed:&quot;</span>, err)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">	fmt.Println(<span class="string">&quot;Buffered:&quot;</span>, writer.Buffered(), <span class="string">&quot;; Available:&quot;</span>, writer.Available())</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 第二次写</span></span><br><span class="line">	_, err = writer.Write([]<span class="type">byte</span>(<span class="string">&quot;12345&quot;</span>)) <span class="comment">// bufio.Writer</span></span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Println(<span class="string">&quot;bufio writer failed:&quot;</span>, err)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">	fmt.Println(<span class="string">&quot;Buffered:&quot;</span>, writer.Buffered(), <span class="string">&quot;; Available:&quot;</span>, writer.Available())</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 第三次写</span></span><br><span class="line">	_, err = writer.Write([]<span class="type">byte</span>(<span class="string">&quot;6789&quot;</span>)) <span class="comment">// bufio.Writer</span></span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Println(<span class="string">&quot;bufio writer failed:&quot;</span>, err)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">	fmt.Println(<span class="string">&quot;Buffered:&quot;</span>, writer.Buffered(), <span class="string">&quot;; Available:&quot;</span>, writer.Available())</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 由于缓冲未满，如果不flush，则不会写入文件中</span></span><br><span class="line">	err = writer.Flush()</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Println(<span class="string">&quot;flush failed:&quot;</span>, err)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">	fmt.Println(<span class="string">&quot;Buffered:&quot;</span>, writer.Buffered(), <span class="string">&quot;; Available:&quot;</span>, writer.Available())</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>此demo打开了可写的文件，并转为了缓冲区大小为5的<code>bufio.writer</code>对象<code>writer</code>。</li>
+<li>第一次往<code>writer</code>中写入了长度为6的字符串，直接写入文件。因此Buffered为0。（情况1）</li>
+<li>第二次往<code>writer</code>中写入了长度为5的字符串，虽然缓冲容量也为5，但显然写入后，Buffered仍为5，即没有刷新，此时数据并未写入文件中。对应情况2中buf未满。</li>
+<li>第二次往<code>writer</code>中写入了长度为4的字符串，由于此时缓冲满了（情况2中buf已满），先将缓冲的数据写入到文件中，随后将4字节字符串写入到缓冲。因此Buffered: 4。</li>
+<li>若直接运行上述代码，最后4字节的字符串将会在缓冲中，由于缓冲未满，而不会被写入到文件（情况2中buf未满）。若取消注释，则调用了<code>Flush()</code>，才会被写入到文件。</li>
+</ul>
+<h3 id="结果"><a href="#结果" class="headerlink" title="结果"></a>结果</h3><h4 id="1、调用了Flush"><a href="#1、调用了Flush" class="headerlink" title="1、调用了Flush"></a>1、调用了Flush</h4><p>输出：</p>
+<blockquote>
+<p>Buffered: 0 ; Available: 5<br>Buffered: 5 ; Available: 0<br>Buffered: 4 ; Available: 1<br>Buffered: 0 ; Available: 5 </p>
+</blockquote>
+<p>文件内容：</p>
+<blockquote>
+<p>123456123456789</p>
+</blockquote>
+<h4 id="2、未调用Flush"><a href="#2、未调用Flush" class="headerlink" title="2、未调用Flush"></a>2、未调用Flush</h4><p>输出</p>
+<blockquote>
+<p>Buffered: 0 ; Available: 5<br>Buffered: 5 ; Available: 0<br>Buffered: 4 ; Available: 1</p>
+</blockquote>
+<p>文件内容</p>
+<blockquote>
+<p>12345612345</p>
+</blockquote>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// ReadWriter stores pointers to a Reader and a Writer.</span></span><br><span class="line"><span class="comment">// It implements io.ReadWriter.</span></span><br><span class="line"><span class="keyword">type</span> ReadWriter <span class="keyword">struct</span> &#123;</span><br><span class="line">	*Reader</span><br><span class="line">	*Writer</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// NewReadWriter allocates a new ReadWriter that dispatches to r and w.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">NewReadWriter</span><span class="params">(r *Reader, w *Writer)</span></span> *ReadWriter &#123;</span><br><span class="line">	<span class="keyword">return</span> &amp;ReadWriter&#123;r, w&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h2 id="例程：逐行读取某个文件"><a href="#例程：逐行读取某个文件" class="headerlink" title="例程：逐行读取某个文件"></a>例程：逐行读取某个文件</h2><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">    <span class="string">&quot;bufio&quot;</span></span><br><span class="line">    <span class="string">&quot;fmt&quot;</span></span><br><span class="line">    <span class="string">&quot;os&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="comment">// 打开一个文本文件</span></span><br><span class="line">    file, err := os.Open(<span class="string">&quot;example.txt&quot;</span>)</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        fmt.Println(<span class="string">&quot;无法打开文件:&quot;</span>, err)</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">defer</span> file.Close()</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 创建一个 Scanner 对象，将文件作为输入源</span></span><br><span class="line">    scanner := bufio.NewScanner(file)</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 逐行读取文本文件并输出</span></span><br><span class="line">    <span class="keyword">for</span> scanner.Scan() &#123;</span><br><span class="line">        line := scanner.Text()</span><br><span class="line">        fmt.Println(<span class="string">&quot;行内容:&quot;</span>, line)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 检查扫描是否发生错误</span></span><br><span class="line">    <span class="keyword">if</span> err := scanner.Err(); err != <span class="literal">nil</span> &#123;</span><br><span class="line">        fmt.Println(<span class="string">&quot;扫描错误:&quot;</span>, err)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h1 id="Ref"><a href="#Ref" class="headerlink" title="Ref"></a>Ref</h1><blockquote>
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/73690883">https://zhuanlan.zhihu.com/p/73690883</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/04aebd42b762">https://www.jianshu.com/p/04aebd42b762</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.jb51.net/article/245382.htm">https://www.jb51.net/article/245382.htm</a></p>
+</blockquote>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2024/01/d253896ad3da/" rel="prev" title="5-go标准库io包">
+                  <i class="fa fa-angle-left"></i> 5-go标准库io包
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2024</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Wallnut</span>
+  </div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  <script src="/js/third-party/pace.js"></script>
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"drinkwateronly/comments","issue_term":"pathname","theme":"github-light"}</script>
+<script src="/js/third-party/comments/utterances.js"></script>
+
+</body>
+</html>

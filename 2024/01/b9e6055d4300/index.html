@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.0.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/icon32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/icon16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha256-CTSx/A06dm1B063156EVh15m6Y67pAjZZaQc89LLSrU=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"drinkwateronly.github.io","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.18.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="go标准库表encoding&#x2F;jsonchannel、function、complex、循环引用的数据类型不能被json.Marshal序列 json基本数据格式 字符串（Strings）：由双引号包围的一串Unicode字符。例如：”小明”。 数字（Numbers）：可以是整数（如25）或浮点数（如3.14）。在JSON中不区分整型和浮点型，都使用IEEE-754双精度浮点格式表示。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="3-go标准库encoding&#x2F;json包">
+<meta property="og:url" content="https://drinkwateronly.github.io/2024/01/b9e6055d4300/index.html">
+<meta property="og:site_name" content="Wallnut">
+<meta property="og:description" content="go标准库表encoding&#x2F;jsonchannel、function、complex、循环引用的数据类型不能被json.Marshal序列 json基本数据格式 字符串（Strings）：由双引号包围的一串Unicode字符。例如：”小明”。 数字（Numbers）：可以是整数（如25）或浮点数（如3.14）。在JSON中不区分整型和浮点型，都使用IEEE-754双精度浮点格式表示。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2024-01-27T05:55:00.000Z">
+<meta property="article:modified_time" content="2024-01-28T13:16:52.000Z">
+<meta property="article:author" content="Wallnut">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://drinkwateronly.github.io/2024/01/b9e6055d4300/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://drinkwateronly.github.io/2024/01/b9e6055d4300/","path":"2024/01/b9e6055d4300/","title":"3-go标准库encoding/json包"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>3-go标准库encoding/json包 | Wallnut</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Wallnut</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#go%E6%A0%87%E5%87%86%E5%BA%93%E8%A1%A8encoding-json"><span class="nav-number">1.</span> <span class="nav-text">go标准库表encoding&#x2F;json</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#json%E5%9F%BA%E6%9C%AC%E6%95%B0%E6%8D%AE%E6%A0%BC%E5%BC%8F"><span class="nav-number">1.1.</span> <span class="nav-text">json基本数据格式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#go%E7%BB%93%E6%9E%84%E4%BD%93Tag"><span class="nav-number">1.2.</span> <span class="nav-text">go结构体Tag</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#json%E4%B8%AD%E5%B8%B8%E7%94%A8%E7%9A%84value"><span class="nav-number">1.2.1.</span> <span class="nav-text">json中常用的value</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#demo1"><span class="nav-number">1.2.1.1.</span> <span class="nav-text">demo1</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BE%93%E5%87%BA"><span class="nav-number">1.2.1.2.</span> <span class="nav-text">输出</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%B3%E9%94%AE%E7%82%B9"><span class="nav-number">1.2.1.3.</span> <span class="nav-text">关键点</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E5%AD%97%E8%A7%A3%E6%9E%90"><span class="nav-number">1.3.</span> <span class="nav-text">数字解析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%EF%BC%9A%E5%BA%8F%E5%88%97%E5%8C%96-%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%97%B6%E9%97%AE%E9%A2%98"><span class="nav-number">1.3.1.</span> <span class="nav-text">问题：序列化&#x2F;反序列化时问题</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#demo%EF%BC%9A%E4%BD%BF%E7%94%A8Unmarshal%E5%92%8CDecoder%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E7%9A%84%E6%B5%81%E7%A8%8B"><span class="nav-number">1.3.1.1.</span> <span class="nav-text">demo：使用Unmarshal和Decoder反序列化的流程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BE%93%E5%87%BA-1"><span class="nav-number">1.3.1.2.</span> <span class="nav-text">输出</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%B3%E9%94%AE%E7%82%B9-1"><span class="nav-number">1.3.1.3.</span> <span class="nav-text">关键点</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%97%B6%E9%97%B4%E8%A7%A3%E6%9E%90"><span class="nav-number">1.4.</span> <span class="nav-text">时间解析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%EF%BC%9Ajson%E8%A7%A3%E6%9E%90%E7%9A%84%E6%97%B6%E9%97%B4%E6%A0%BC%E5%BC%8F%E5%A4%84%E7%90%86"><span class="nav-number">1.4.1.</span> <span class="nav-text">问题：json解析的时间格式处理</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#demo%EF%BC%9Ajson%E8%A7%A3%E6%9E%90%E7%89%B9%E5%AE%9A%E6%A0%BC%E5%BC%8F%E6%97%B6%E9%97%B4%E5%AD%97%E7%AC%A6%E4%B8%B2"><span class="nav-number">1.4.1.1.</span> <span class="nav-text">demo：json解析特定格式时间字符串</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BE%93%E5%87%BA-2"><span class="nav-number">1.4.1.2.</span> <span class="nav-text">输出</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%87%AA%E5%AE%9A%E4%B9%89%E8%A7%A3%E6%9E%90%E6%97%B6%E9%97%B4%E5%AD%97%E6%AE%B5"><span class="nav-number">1.4.2.</span> <span class="nav-text">自定义解析时间字段</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#demo"><span class="nav-number">1.4.2.1.</span> <span class="nav-text">demo</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BE%93%E5%87%BA-3"><span class="nav-number">1.4.2.2.</span> <span class="nav-text">输出</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%B3%E9%94%AE%E7%82%B9-2"><span class="nav-number">1.4.2.3.</span> <span class="nav-text">关键点</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Ref"><span class="nav-number">2.</span> <span class="nav-text">Ref</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Wallnut"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">Wallnut</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">34</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">15</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/drinkwateronly" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;drinkwateronly" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://drinkwateronly.github.io/2024/01/b9e6055d4300/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Wallnut">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Wallnut">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="3-go标准库encoding/json包 | Wallnut">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          3-go标准库encoding/json包
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2024-01-27 13:55:00" itemprop="dateCreated datePublished" datetime="2024-01-27T13:55:00+08:00">2024-01-27</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2024-01-28 21:16:52" itemprop="dateModified" datetime="2024-01-28T21:16:52+08:00">2024-01-28</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/go/" itemprop="url" rel="index"><span itemprop="name">go</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/go/go%E6%A0%87%E5%87%86%E5%BA%93/" itemprop="url" rel="index"><span itemprop="name">go标准库</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="go标准库表encoding-json"><a href="#go标准库表encoding-json" class="headerlink" title="go标准库表encoding&#x2F;json"></a>go标准库表encoding&#x2F;json</h1><p>channel、function、complex、循环引用的数据类型不能被json.Marshal序列</p>
+<h2 id="json基本数据格式"><a href="#json基本数据格式" class="headerlink" title="json基本数据格式"></a>json基本数据格式</h2><ol>
+<li>字符串（Strings）：由<strong>双引号包围</strong>的一串Unicode字符。例如：”小明”。</li>
+<li>数字（Numbers）：可以是整数（如25）或浮点数（如3.14）。在JSON中不区分整型和浮点型，都使用IEEE-754双精度浮点格式表示。</li>
+<li>布尔值（Booleans）：只有两个值，分别是true和false。</li>
+<li>空值（Null）：用来表示没有任何值的字段。</li>
+<li>对象（Objects）：由花括号{}包围的无序键值对集合。每个对象可以包含零个或多个键值对，每个键值对之间使用逗号分隔。</li>
+<li>数组（Arrays）：有序的值集合，使用方括ets围起来。每个数组项可以是任何JSON数据类型。</li>
+</ol>
+<p>例如</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;123&quot;</span><span class="punctuation">,</span> <span class="comment">// 字符串</span></span><br><span class="line">    <span class="attr">&quot;age&quot;</span><span class="punctuation">:</span> <span class="number">123</span><span class="punctuation">,</span> <span class="comment">// 数字</span></span><br><span class="line">    <span class="attr">&quot;sex1&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">false</span></span><span class="punctuation">,</span>  <span class="comment">// 布尔值</span></span><br><span class="line">    <span class="attr">&quot;sex2&quot;</span><span class="punctuation">:</span> <span class="string">&quot;false&quot;</span><span class="punctuation">,</span>  <span class="comment">// 字符串</span></span><br><span class="line">    <span class="attr">&quot;height1&quot;</span><span class="punctuation">:</span> <span class="number">180.12</span><span class="punctuation">,</span> <span class="comment">// 数字</span></span><br><span class="line">    <span class="attr">&quot;height2&quot;</span><span class="punctuation">:</span> <span class="string">&quot;180.12&quot;</span><span class="comment">// 字符串</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>可见，虽然某些字段的想表达的类型可能是数字或布尔值，但由于被双引号包围，因此它们在json中仍属于字符串。后续在反序列化需要对这种字符串形数据解析出它们所表达的类型时，需要特殊处理。</p>
+<h2 id="go结构体Tag"><a href="#go结构体Tag" class="headerlink" title="go结构体Tag"></a>go结构体Tag</h2><p>Tag是结构体的元信息，可以在运行时通过反射机制读取，格式为</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">`key1:&quot;value1&quot; key2&quot;value2&quot;`</span></span><br></pre></td></tr></table></figure>
+
+<p>例如使用<code>json</code>这个Tag指定进行json序列化时的字段名称。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Person <span class="keyword">struct</span>&#123;</span><br><span class="line">    Name <span class="type">string</span> <span class="string">`json:&quot;name&quot;`</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="json中常用的value"><a href="#json中常用的value" class="headerlink" title="json中常用的value"></a>json中常用的value</h3><ul>
+<li><code>json:&quot;name&quot;</code>，指定字段名</li>
+<li><code>json:&quot;-&quot;</code>，序列化&#x2F;反序列化时忽略某字段</li>
+<li><code>json:&quot;name,omitempty&quot;</code>，需要和指定字段名使用，在序列化，字段若为空则忽略。而在反序列化时不忽略。</li>
+<li><code>json:&quot;name,string&quot;</code>，需要和指定字段名使用，序列化&#x2F;反序列化时，该字段以字符串形式解析。</li>
+</ul>
+<h4 id="demo1"><a href="#demo1" class="headerlink" title="demo1"></a>demo1</h4><p>该demo展示了tag中不同的value的使用情况</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">demo1</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">type</span> Partner <span class="keyword">struct</span> &#123;</span><br><span class="line">		Name <span class="type">string</span> <span class="string">`json:&quot;firstName&quot;`</span></span><br><span class="line">		Age  <span class="type">uint</span>   <span class="string">`json:&quot;age&quot;`</span></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">type</span> Person <span class="keyword">struct</span> &#123;</span><br><span class="line">		FirstName <span class="type">string</span>  <span class="string">`json:&quot;firstName&quot;`</span>       <span class="comment">// 指定字段名</span></span><br><span class="line">		LastName  <span class="type">string</span>  <span class="string">`json:&quot;-&quot;`</span>               <span class="comment">// 序列化/反序列化时，忽略该字段</span></span><br><span class="line">		Email     <span class="type">string</span>  <span class="string">`json:&quot;email,omitempty&quot;`</span> <span class="comment">// &quot;omitempty&quot; 忽略空值字段，需要和指定字段名搭配使用</span></span><br><span class="line">		Age       <span class="type">uint</span>    <span class="string">`json:&quot;age&quot;`</span>             <span class="comment">// 反序列化时，若为负值，解析失败。</span></span><br><span class="line">		Height    <span class="type">float64</span> <span class="string">`json:&quot;height,string&quot;`</span>   <span class="comment">// 序列化/反序列化时，该数字以字符串形式解析。若不是字符串形式，解析失败。</span></span><br><span class="line">		Sex       <span class="type">bool</span>    <span class="string">`json:&quot;sex&quot;`</span>             <span class="comment">// 反序列化时，只能是true或false</span></span><br><span class="line">		IsNative  <span class="type">bool</span>    <span class="string">`json:&quot;isNative,string&quot;`</span> <span class="comment">// 反序列化时，只能是&quot;true&quot;或&quot;false&quot;</span></span><br><span class="line"></span><br><span class="line">		PartnerA Partner  <span class="string">`json:&quot;partnerA&quot;`</span>           <span class="comment">// 嵌套结构体</span></span><br><span class="line">		PartnerB *Partner <span class="string">`json:&quot;partnerB,omitempty&quot;`</span> <span class="comment">// 只有嵌套结构体是指针时，才能被忽略空值</span></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 序列化</span></span><br><span class="line">	p := Person&#123;</span><br><span class="line">		FirstName: <span class="string">&quot;John&quot;</span>,</span><br><span class="line">		LastName:  <span class="string">&quot;Smith&quot;</span>,</span><br><span class="line">		Email:     <span class="string">&quot;john@example.com&quot;</span>,</span><br><span class="line">		Age:       <span class="number">11</span>,</span><br><span class="line">		Height:    <span class="number">180.01</span>,</span><br><span class="line">		Sex:       <span class="literal">true</span>,</span><br><span class="line">		IsNative:  <span class="literal">false</span>,</span><br><span class="line"></span><br><span class="line">		PartnerA: Partner&#123;</span><br><span class="line">			Name: <span class="string">&quot;&quot;</span>,</span><br><span class="line">			Age:  <span class="number">0</span>,</span><br><span class="line">		&#125;,</span><br><span class="line">		PartnerB: <span class="literal">nil</span>,</span><br><span class="line">	&#125;</span><br><span class="line">	b, err := json.Marshal(p)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Println(<span class="string">&quot;Marshal fail: &quot;</span>, err)</span><br><span class="line">	&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">		fmt.Printf(<span class="string">&quot;Marshal success: %v\n&quot;</span>, <span class="type">string</span>(b))</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 反序列化</span></span><br><span class="line">	s := <span class="string">`&#123;</span></span><br><span class="line"><span class="string">		&quot;firstName&quot;:&quot;John&quot;,</span></span><br><span class="line"><span class="string">		&quot;lastName&quot;:&quot;Smith&quot;,</span></span><br><span class="line"><span class="string">		&quot;email&quot;:&quot;john@example.com&quot;,</span></span><br><span class="line"><span class="string">		&quot;age&quot;:11,</span></span><br><span class="line"><span class="string">		&quot;height&quot;:&quot;180.01&quot;,</span></span><br><span class="line"><span class="string">		&quot;sex&quot;:true,</span></span><br><span class="line"><span class="string">		&quot;isNative&quot;:&quot;false&quot;,</span></span><br><span class="line"><span class="string">		&quot;partnerA&quot;:&#123;</span></span><br><span class="line"><span class="string">			&quot;firstName&quot;:&quot;&quot;,</span></span><br><span class="line"><span class="string">			&quot;age&quot;:0</span></span><br><span class="line"><span class="string">		&#125;</span></span><br><span class="line"><span class="string">	&#125;`</span></span><br><span class="line">	<span class="keyword">var</span> p2 Person</span><br><span class="line">	err = json.Unmarshal([]<span class="type">byte</span>(s), &amp;p2)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Println(<span class="string">&quot;Unmarshal fail: &quot;</span>, err)</span><br><span class="line">	&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">		fmt.Printf(<span class="string">&quot;Unmarshal success: %+v\n&quot;</span>, p2)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="输出"><a href="#输出" class="headerlink" title="输出"></a>输出</h4><blockquote>
+<p>Marshal success: {“firstName”:”John”,”email”:”<a href="mailto:&#x6a;&#111;&#104;&#110;&#x40;&#x65;&#x78;&#x61;&#109;&#112;&#108;&#x65;&#x2e;&#99;&#x6f;&#x6d;">&#x6a;&#111;&#104;&#110;&#x40;&#x65;&#x78;&#x61;&#109;&#112;&#108;&#x65;&#x2e;&#99;&#x6f;&#x6d;</a>“,”age”:11,”height”:”180.01”,”sex”:true,”isNative”:”false”,”partnerA”:{“firstName”:””,”age”:0}}<br>Unmarshal success: {FirstName:John LastName: Email:<a href="mailto:&#106;&#111;&#x68;&#110;&#64;&#101;&#120;&#x61;&#109;&#112;&#x6c;&#101;&#46;&#x63;&#111;&#x6d;">&#106;&#111;&#x68;&#110;&#64;&#101;&#120;&#x61;&#109;&#112;&#x6c;&#101;&#46;&#x63;&#111;&#x6d;</a> Age:11 Height:180.01 Sex:true IsNative:false PartnerA:{Name: Age:0} PartnerB:<nil>}</p>
+</blockquote>
+<h4 id="关键点"><a href="#关键点" class="headerlink" title="关键点"></a>关键点</h4><ul>
+<li><p><code>-</code>在序列化和反序列化时忽略字段。</p>
+</li>
+<li><p><code>omitempty</code>只在序列化时有用。</p>
+</li>
+<li><p><strong>由于结构体并不是原生类型，所以没有默认值（零值），因此<code>omitempty</code>忽略嵌套结构体会失效。想要实现，就要嵌套结构体指针，此时<code>omitempty</code>实际上是忽略了指针的零值，当且仅当这个结构体指针为nil时才会被忽略，如果是<code>&amp;StructExample&#123;&#125;</code>执行了默认初始化后的结构体的指针，则不能被忽略。</strong></p>
+</li>
+<li><p>注意处理json中字符串形的数字&#x2F;布尔型。</p>
+</li>
+</ul>
+<h2 id="数字解析"><a href="#数字解析" class="headerlink" title="数字解析"></a>数字解析</h2><h3 id="问题：序列化-反序列化时问题"><a href="#问题：序列化-反序列化时问题" class="headerlink" title="问题：序列化&#x2F;反序列化时问题"></a>问题：序列化&#x2F;反序列化时问题</h3><p>由于json中没有浮点和整型的区别，统称number。在将数据反序列化为<code>map[string]interface&#123;&#125;</code>时，在这些number被反序列都会默认变成<code>float64</code>。如果想要将number反序列化为int，应当使用<code>json.Decoder</code>进行反序列化为<code>json.Number</code>类型，再调用<code>json.Number</code>实现的方法即可。</p>
+<h4 id="demo：使用Unmarshal和Decoder反序列化的流程"><a href="#demo：使用Unmarshal和Decoder反序列化的流程" class="headerlink" title="demo：使用Unmarshal和Decoder反序列化的流程"></a>demo：使用Unmarshal和Decoder反序列化的流程</h4><p>此时应当使用decoder反序列化。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">parseNumbersDemo</span><span class="params">()</span></span> &#123;</span><br><span class="line">	s := <span class="string">`&#123;&quot;name&quot;:&quot;John&quot;, &quot;age&quot;:123, &quot;height&quot;: 1234567890&#125;`</span></span><br><span class="line">	<span class="keyword">var</span> m1 <span class="keyword">map</span>[<span class="type">string</span>]<span class="keyword">interface</span>&#123;&#125;</span><br><span class="line">    <span class="keyword">var</span> m2 <span class="keyword">map</span>[<span class="type">string</span>]<span class="keyword">interface</span>&#123;&#125;</span><br><span class="line">    </span><br><span class="line">	<span class="comment">// 常用的Unmarshal反序列化，number解析到m1中会成为float64类型</span></span><br><span class="line">	err := json.Unmarshal([]<span class="type">byte</span>(s), &amp;m1)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Println(<span class="string">&quot;Unmarshal fail: &quot;</span>, err)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">	fmt.Printf(<span class="string">&quot;value: %#v, type:%T\n&quot;</span>, m1[<span class="string">&quot;name&quot;</span>], m1[<span class="string">&quot;name&quot;</span>])</span><br><span class="line">	fmt.Printf(<span class="string">&quot;value: %#v, type:%T\n&quot;</span>, m1[<span class="string">&quot;age&quot;</span>], m1[<span class="string">&quot;age&quot;</span>])</span><br><span class="line">	fmt.Printf(<span class="string">&quot;value: %#v, type:%T\n&quot;</span>, m1[<span class="string">&quot;height&quot;</span>], m1[<span class="string">&quot;height&quot;</span>])</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 使用decoder反序列化，指定使用number类型，此时number解析到m2中会成为json.Number类型</span></span><br><span class="line">	decoder := json.NewDecoder(bytes.NewReader([]<span class="type">byte</span>(s)))</span><br><span class="line">	decoder.UseNumber()</span><br><span class="line">	err = decoder.Decode(&amp;m2)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Println(<span class="string">&quot;Decode fail: &quot;</span>, err)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">	fmt.Printf(<span class="string">&quot;value: %#v, type:%T\n&quot;</span>, m2[<span class="string">&quot;name&quot;</span>], m2[<span class="string">&quot;name&quot;</span>])</span><br><span class="line">	fmt.Printf(<span class="string">&quot;value: %#v, type:%T\n&quot;</span>, m2[<span class="string">&quot;age&quot;</span>], m2[<span class="string">&quot;age&quot;</span>])</span><br><span class="line">	fmt.Printf(<span class="string">&quot;value: %#v, type:%T\n&quot;</span>, m2[<span class="string">&quot;height&quot;</span>], m2[<span class="string">&quot;height&quot;</span>])</span><br><span class="line"></span><br><span class="line">    age, err := m2[<span class="string">&quot;age&quot;</span>].(json.Number).Int64()  <span class="comment">// 类型断言，并调用json.Number实现的Int64()方法</span></span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Println(<span class="string">&quot;parse to int64 fail: &quot;</span>, err)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">	fmt.Printf(<span class="string">&quot;value: %#v, type:%T\n&quot;</span>, age, age)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="输出-1"><a href="#输出-1" class="headerlink" title="输出"></a>输出</h4><blockquote>
+<p>value: “John”, type:string<br>value: 123, type:float64<br>value: 1.23456789e+09, type:float64</p>
+<p>value: “John”, type:string<br>value: “123”, type:json.Number<br>value: “1234567890”, type:json.Number</p>
+<p>value: 123, type:int64</p>
+</blockquote>
+<h4 id="关键点-1"><a href="#关键点-1" class="headerlink" title="关键点"></a>关键点</h4><ul>
+<li><p>使用decoder反序列化后，都变成了json.Number类型，共有3中方法可以转为想要的类型，底层都是strconv。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// A Number represents a JSON number literal.</span></span><br><span class="line"><span class="keyword">type</span> Number <span class="type">string</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// String returns the literal text of the number.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(n Number)</span></span> String() <span class="type">string</span> &#123; <span class="keyword">return</span> <span class="type">string</span>(n) &#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Float64 returns the number as a float64.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(n Number)</span></span> Float64() (<span class="type">float64</span>, <span class="type">error</span>) &#123;</span><br><span class="line">	<span class="keyword">return</span> strconv.ParseFloat(<span class="type">string</span>(n), <span class="number">64</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Int64 returns the number as an int64.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(n Number)</span></span> Int64() (<span class="type">int64</span>, <span class="type">error</span>) &#123;</span><br><span class="line">	<span class="keyword">return</span> strconv.ParseInt(<span class="type">string</span>(n), <span class="number">10</span>, <span class="number">64</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h2 id="时间解析"><a href="#时间解析" class="headerlink" title="时间解析"></a>时间解析</h2><h3 id="问题：json解析的时间格式处理"><a href="#问题：json解析的时间格式处理" class="headerlink" title="问题：json解析的时间格式处理"></a>问题：json解析的时间格式处理</h3><p>Go标准库的json包使用<code>RFC3339</code>标准定义的时间格式：</p>
+<blockquote>
+<p>RFC3339格式：“{年}-{月}-{日}T{时}:{分}:{秒}.{毫秒}{时区}”；<br>其中的年要用零补齐为4位，月日时分秒则补齐为2位。毫秒部分是可选的。<br>最后一部分是时区，例如 Z 其实是零时区 Zulu 的缩写，它也可能是 +08:00 或 -08:00 等；<br>2017-12-08T00:00:00.00Z<br>2017-12-08T08:00:00.00+08:00<br>都代表所在时区的本地时间。</p>
+</blockquote>
+<p>因此json通常无法反序列化常用的时间字符串。而在序列化时也只能得到RFC3339标准的字符串。</p>
+<p>例如<code>&quot;2006-01-02 15:04:05&quot;</code>。</p>
+<h4 id="demo：json解析特定格式时间字符串"><a href="#demo：json解析特定格式时间字符串" class="headerlink" title="demo：json解析特定格式时间字符串"></a>demo：json解析特定格式时间字符串</h4><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">parseTimeInDefaultDemo</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">type</span> Times <span class="keyword">struct</span> &#123;</span><br><span class="line">		CreatedAt time.Time <span class="string">`json:&quot;createdAt&quot;`</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">// 反序列化</span></span><br><span class="line">	str := <span class="string">`&#123;&quot;createdAt&quot;: &quot;2024-01-25 01:23:45&quot;&#125;`</span></span><br><span class="line">	<span class="keyword">var</span> times Times</span><br><span class="line">	err := json.Unmarshal([]<span class="type">byte</span>(str), &amp;times)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="comment">// parsing time &quot;2024-01-25 01:23:45&quot; as &quot;2006-01-02T15:04:05Z07:00&quot;: cannot parse &quot; 01:23:45&quot; as &quot;T&quot;</span></span><br><span class="line">		fmt.Println(<span class="string">&quot;unmarshal error:&quot;</span>, err)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 序列化</span></span><br><span class="line">	b, err := json.Marshal(Times&#123;CreatedAt: time.Now()&#125;)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="comment">// 不会err</span></span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">	fmt.Println(<span class="type">string</span>(b))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="输出-2"><a href="#输出-2" class="headerlink" title="输出"></a>输出</h4><blockquote>
+<p>unmarshal error: parsing time “2024-01-25 01:23:45” as “2006-01-02T15:04:05Z07:00”: cannot parse “ 01:23:45” as “T”<br>{“createdAt”:”2024-01-26T00:12:45.5037411+08:00”}</p>
+</blockquote>
+<h3 id="自定义解析时间字段"><a href="#自定义解析时间字段" class="headerlink" title="自定义解析时间字段"></a>自定义解析时间字段</h3><p>只需要对结构体实现 <code>json.Marshaler</code>&#x2F;<code>json.Unmarshaler</code> 接口，即可实现自定义的事件格式解析。</p>
+<h4 id="demo"><a href="#demo" class="headerlink" title="demo"></a>demo</h4><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Order <span class="keyword">struct</span> &#123;</span><br><span class="line">	Id        <span class="type">string</span>    <span class="string">`json:&quot;id&quot;`</span></span><br><span class="line">	CreatedAt time.Time <span class="string">`json:&quot;createdAt&quot;`</span> </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> layout = <span class="string">&quot;2006-01-02 15:04:05&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 实现json.Marshaler</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(o *Order)</span></span> MarshalJSON() ([]<span class="type">byte</span>, <span class="type">error</span>) &#123;</span><br><span class="line">	<span class="keyword">type</span> TempOrder Order <span class="comment">// 定义与Order字段一致的新类型</span></span><br><span class="line">	ot := <span class="keyword">struct</span> &#123;</span><br><span class="line">		CreatedAt  <span class="type">string</span> <span class="string">`json:&quot;createdAt&quot;`</span> <span class="comment">// 和原Order的CreatedAt同名</span></span><br><span class="line">		*TempOrder        <span class="comment">// 匿名字段。避免直接嵌套Order进入死循环</span></span><br><span class="line">	&#125;&#123;</span><br><span class="line">		CreatedAt: o.CreatedAt.Format(layout),</span><br><span class="line">		TempOrder: (*TempOrder)(o), <span class="comment">// 类型转换，虽然TempOrder也有CreatedAt，但编译器会直接使用当前作用域已有的CreatedAt</span></span><br><span class="line">	&#125;</span><br><span class="line">	fmt.Println(<span class="string">&quot;MarshalJSON: &quot;</span>, ot.CreatedAt)</span><br><span class="line">	<span class="keyword">return</span> json.Marshal(ot)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 实现json.Unmarshaler</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(o *Order)</span></span> UnmarshalJSON(data []<span class="type">byte</span>) <span class="type">error</span> &#123;</span><br><span class="line">	<span class="keyword">type</span> TempOrder Order <span class="comment">// 定义与Order字段一致的新类型</span></span><br><span class="line">	ot := <span class="keyword">struct</span> &#123;</span><br><span class="line">		CreatedAt  <span class="type">string</span> <span class="string">`json:&quot;createdAt&quot;`</span> <span class="comment">// 和原Order的CreatedAt同名</span></span><br><span class="line">		*TempOrder        <span class="comment">// 避免直接嵌套Order进入死循环</span></span><br><span class="line">	&#125;&#123;</span><br><span class="line">		TempOrder: (*TempOrder)(o), <span class="comment">// 类型转换，虽然TempOrder也有CreatedAt，但编译器会直接使用当前作用域已有的CreatedAt，也就是空值str</span></span><br><span class="line">	&#125;</span><br><span class="line">	fmt.Println(<span class="string">&quot;ot created: &quot;</span>, ot.CreatedAt) <span class="comment">// 目前os.CreatedAt为空值字符串</span></span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> err := json.Unmarshal(data, &amp;ot); err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> err</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">var</span> err <span class="type">error</span></span><br><span class="line">	o.CreatedAt, err = time.Parse(layout, ot.CreatedAt)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> err</span><br><span class="line">	&#125;</span><br><span class="line">	fmt.Println(<span class="string">&quot;UnmarshalJSON: &quot;</span>, ot.CreatedAt)</span><br><span class="line">	<span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">parseTimeInCustomDemo</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="comment">// 反序列化</span></span><br><span class="line">	str := <span class="string">`&#123;&quot;id&quot;:&quot;123&quot;,&quot;createdAt&quot;: &quot;2024-01-25 01:23:45&quot;&#125;`</span></span><br><span class="line">	<span class="keyword">var</span> order Order</span><br><span class="line">	err := json.Unmarshal([]<span class="type">byte</span>(str), &amp;order)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Println(<span class="string">&quot;unmarshal error: &quot;</span>, err)</span><br><span class="line">	&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">		fmt.Printf(<span class="string">&quot;unmarshal success: %+v\n&quot;</span>, order)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 序列化</span></span><br><span class="line">	b, err := json.Marshal(&amp;Order&#123;CreatedAt: time.Now(), Id: <span class="string">&quot;123&quot;</span>&#125;)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Println(<span class="string">&quot;marshal error:&quot;</span>, err)</span><br><span class="line">	&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">		fmt.Println(<span class="string">&quot;marshal success: &quot;</span> + <span class="type">string</span>(b))</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="输出-3"><a href="#输出-3" class="headerlink" title="输出"></a>输出</h4><blockquote>
+<p>ot created:<br>UnmarshalJSON:  2024-01-25 01:23:45<br>unmarshal success: {Id:123 CreatedAt:2024-01-25 01:23:45 +0000 UTC}<br>MarshalJSON:  2024-01-26 10:15:29<br>marshal success: {“createdAt”:”2024-01-26 10:15:29”,”id”:”123”}</p>
+</blockquote>
+<h4 id="关键点-2"><a href="#关键点-2" class="headerlink" title="关键点"></a>关键点</h4><ul>
+<li>需要实现的两个方法的参数和返回值</li>
+<li>原理都是新建一个新的结构体，该结构体和原来结构体的时间字段不一致（分别是string和time.Time），其他字段完全一致，因此在序列化和反序列化时，额外对这个新结构体的string类型的时间字段进行修改即可完成。</li>
+<li>匿名字段：如何使得新结构体和原结构体的其他字段完全一样，而只有时间字段不一样？直接使用指针匿名字段即可，而新结构体的时间字段修改为string类型，并和原结构体同名同tag。</li>
+</ul>
+<h1 id="Ref"><a href="#Ref" class="headerlink" title="Ref"></a>Ref</h1><blockquote>
+<p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/b8eb352bbd77">时间格式 ISO8601 &#x2F; RFC3339 - 简书 (jianshu.com)</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.liwenzhou.com/posts/Go/json-tricks/#c-0-0-0">你需要知道的那些go语言json技巧 | 李文周的博客 (liwenzhou.com)</a></p>
+</blockquote>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2024/01/15d44f407738/" rel="prev" title="2-go标准库strconv包">
+                  <i class="fa fa-angle-left"></i> 2-go标准库strconv包
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2024/01/7d6e633c1e61/" rel="next" title="4-go标准库time包">
+                  4-go标准库time包 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2024</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Wallnut</span>
+  </div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  <script src="/js/third-party/pace.js"></script>
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"drinkwateronly/comments","issue_term":"pathname","theme":"github-light"}</script>
+<script src="/js/third-party/comments/utterances.js"></script>
+
+</body>
+</html>

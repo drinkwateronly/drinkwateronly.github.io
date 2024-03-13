@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.0.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/icon32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/icon16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha256-CTSx/A06dm1B063156EVh15m6Y67pAjZZaQc89LLSrU=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"drinkwateronly.github.io","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.18.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="go标准库io包接口输入和输出是针对go程序而言的。 基础接口io.Reader定义了从输入设备读取的方法，实现了对输入设备的抽象 123type Reader interface &#123;    Read(p []byte) (n int, err error)&#125;  Read方法有如下关键点  它期望从reader中读到len(p)长度的数据，并放到p中；而实际读到的长度由返回的n">
+<meta property="og:type" content="article">
+<meta property="og:title" content="5-go标准库io包">
+<meta property="og:url" content="https://drinkwateronly.github.io/2024/01/d253896ad3da/index.html">
+<meta property="og:site_name" content="Wallnut">
+<meta property="og:description" content="go标准库io包接口输入和输出是针对go程序而言的。 基础接口io.Reader定义了从输入设备读取的方法，实现了对输入设备的抽象 123type Reader interface &#123;    Read(p []byte) (n int, err error)&#125;  Read方法有如下关键点  它期望从reader中读到len(p)长度的数据，并放到p中；而实际读到的长度由返回的n">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/iimage/image-20240128164757866.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/iimage/v2-6a4e875953da37edee80a82473f21199_720w.webp">
+<meta property="og:image" content="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/image/image-20230907211612801.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/iimage/7b0b0e891b4c2184c459b31b2354fcfe.png">
+<meta property="article:published_time" content="2024-01-28T13:15:00.000Z">
+<meta property="article:modified_time" content="2024-01-28T13:17:06.000Z">
+<meta property="article:author" content="Wallnut">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/iimage/image-20240128164757866.png">
+
+
+<link rel="canonical" href="https://drinkwateronly.github.io/2024/01/d253896ad3da/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://drinkwateronly.github.io/2024/01/d253896ad3da/","path":"2024/01/d253896ad3da/","title":"5-go标准库io包"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>5-go标准库io包 | Wallnut</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Wallnut</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#go%E6%A0%87%E5%87%86%E5%BA%93io%E5%8C%85"><span class="nav-number">1.</span> <span class="nav-text">go标准库io包</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8E%A5%E5%8F%A3"><span class="nav-number">1.1.</span> <span class="nav-text">接口</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9F%BA%E7%A1%80%E6%8E%A5%E5%8F%A3"><span class="nav-number">1.1.1.</span> <span class="nav-text">基础接口</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#io-Reader"><span class="nav-number">1.1.1.1.</span> <span class="nav-text">io.Reader</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#io-Writer"><span class="nav-number">1.1.1.2.</span> <span class="nav-text">io.Writer</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#io-Seeker"><span class="nav-number">1.1.1.3.</span> <span class="nav-text">io.Seeker</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#io-Closer"><span class="nav-number">1.1.1.4.</span> <span class="nav-text">io.Closer</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#demo"><span class="nav-number">1.1.1.5.</span> <span class="nav-text">demo</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%84%E5%90%88%E6%8E%A5%E5%8F%A3"><span class="nav-number">1.1.2.</span> <span class="nav-text">组合接口</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8C%87%E5%AE%9A%E5%81%8F%E7%A7%BB%E9%87%8F%E8%AF%BB%E5%86%99"><span class="nav-number">1.1.3.</span> <span class="nav-text">指定偏移量读写</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#io-ReaderAt"><span class="nav-number">1.1.3.1.</span> <span class="nav-text">io.ReaderAt</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#io-WriterAt"><span class="nav-number">1.1.3.2.</span> <span class="nav-text">io.WriterAt</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8C%87%E5%AE%9A%E8%AF%BB%E5%86%99%E5%99%A8%E6%8E%A5%E5%8F%A3"><span class="nav-number">1.1.4.</span> <span class="nav-text">指定读写器接口</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#io-ReaderFrom"><span class="nav-number">1.1.4.1.</span> <span class="nav-text">io.ReaderFrom</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#io-WriterTo"><span class="nav-number">1.1.4.2.</span> <span class="nav-text">io.WriterTo</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#demo%EF%BC%9A"><span class="nav-number">1.1.4.3.</span> <span class="nav-text">demo：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#demo%EF%BC%9A-1"><span class="nav-number">1.1.4.4.</span> <span class="nav-text">demo：</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#byte%E8%AF%BB%E5%86%99%E6%8E%A5%E5%8F%A3"><span class="nav-number">1.1.5.</span> <span class="nav-text">byte读写接口</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#io-ByteReader"><span class="nav-number">1.1.5.1.</span> <span class="nav-text">io.ByteReader</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#io-ByteWriter"><span class="nav-number">1.1.5.2.</span> <span class="nav-text">io.ByteWriter</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#io-ByteScanner"><span class="nav-number">1.1.5.3.</span> <span class="nav-text">io.ByteScanner</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Rune%E8%AF%BB%E5%86%99%E6%8E%A5%E5%8F%A3"><span class="nav-number">1.1.6.</span> <span class="nav-text">Rune读写接口</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%86%99%E6%8E%A5%E5%8F%A3"><span class="nav-number">1.1.7.</span> <span class="nav-text">字符串写接口</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#io-StringWriter"><span class="nav-number">1.1.7.1.</span> <span class="nav-text">io.StringWriter</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#IO%E5%B7%A5%E5%85%B7"><span class="nav-number">1.2.</span> <span class="nav-text">IO工具</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%93%E6%9E%84%E4%BD%93"><span class="nav-number">1.2.1.</span> <span class="nav-text">结构体</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#LimitedReader"><span class="nav-number">1.2.1.1.</span> <span class="nav-text">LimitedReader</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#PipeReader"><span class="nav-number">1.2.1.2.</span> <span class="nav-text">PipeReader</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#PipeWriter"><span class="nav-number">1.2.1.3.</span> <span class="nav-text">PipeWriter</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#SectionReader"><span class="nav-number">1.2.1.4.</span> <span class="nav-text">SectionReader</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%B9%E6%B3%95"><span class="nav-number">1.2.2.</span> <span class="nav-text">方法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A4%8D%E5%88%B6"><span class="nav-number">1.2.2.1.</span> <span class="nav-text">复制</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#demo%EF%BC%9A%E4%BD%BF%E7%94%A8copy%E5%B0%86%E6%96%87%E4%BB%B6io%E5%A4%8D%E5%88%B6%E5%88%B0%E6%A0%87%E5%87%86%E8%BE%93%E5%87%BA"><span class="nav-number">1.2.2.1.1.</span> <span class="nav-text">demo：使用copy将文件io复制到标准输出</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AF%BB%E5%8F%96"><span class="nav-number">1.2.2.2.</span> <span class="nav-text">读取</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#demo-1"><span class="nav-number">1.2.2.2.1.</span> <span class="nav-text">demo</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%BE%93%E5%87%BA"><span class="nav-number">1.2.2.2.2.</span> <span class="nav-text">输出</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%86%99"><span class="nav-number">1.2.2.3.</span> <span class="nav-text">写</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#io%E5%8C%85%E4%B9%8B%E9%97%B4%E7%9A%84%E5%85%B3%E7%B3%BB"><span class="nav-number">2.</span> <span class="nav-text">io包之间的关系</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Ref"><span class="nav-number">3.</span> <span class="nav-text">Ref</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Wallnut"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">Wallnut</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">34</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">15</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/drinkwateronly" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;drinkwateronly" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://drinkwateronly.github.io/2024/01/d253896ad3da/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Wallnut">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Wallnut">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="5-go标准库io包 | Wallnut">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          5-go标准库io包
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2024-01-28 21:15:00 / 修改时间：21:17:06" itemprop="dateCreated datePublished" datetime="2024-01-28T21:15:00+08:00">2024-01-28</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/go/" itemprop="url" rel="index"><span itemprop="name">go</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/go/go%E6%A0%87%E5%87%86%E5%BA%93/" itemprop="url" rel="index"><span itemprop="name">go标准库</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="go标准库io包"><a href="#go标准库io包" class="headerlink" title="go标准库io包"></a>go标准库io包</h1><h2 id="接口"><a href="#接口" class="headerlink" title="接口"></a>接口</h2><p>输入和输出是针对go程序而言的。</p>
+<h3 id="基础接口"><a href="#基础接口" class="headerlink" title="基础接口"></a>基础接口</h3><h4 id="io-Reader"><a href="#io-Reader" class="headerlink" title="io.Reader"></a>io.Reader</h4><p>定义了从输入设备读取的方法，实现了对输入设备的抽象</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Reader <span class="keyword">interface</span> &#123;</span><br><span class="line">    Read(p []<span class="type">byte</span>) (n <span class="type">int</span>, err <span class="type">error</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>Read</code>方法有如下关键点</p>
+<ul>
+<li>它期望从reader中读到<code>len(p)</code>长度的数据，并放到<code>p</code>中；而实际读到的长度由返回的<code>n</code>给出，可能少于期望长度。</li>
+<li>若读到数据，<code>n&gt;0 且 err == nil</code>。</li>
+<li>若读到空数据，<code>n==0且 err == io.EOF</code>。</li>
+<li>根据定义，若当前读到了n&gt;0的数据且读完，它可能即返回<code>io.EO</code>F又返回<code>nil</code>。</li>
+</ul>
+<h4 id="io-Writer"><a href="#io-Writer" class="headerlink" title="io.Writer"></a>io.Writer</h4><p>定义了向输出设备写的操作，实现了对输出设备的抽象，可以向writer写输出</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Writer <span class="keyword">interface</span> &#123;</span><br><span class="line">   Write(p []<span class="type">byte</span>) (n <span class="type">int</span>, err <span class="type">error</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>关键点</p>
+<ul>
+<li><p>将<code>p</code>写到writer中，返回实际写入的字节长度。</p>
+</li>
+<li><p>若全部写入，<code>err == nil</code></p>
+</li>
+<li><p>若只写入一部分，<code>err != nil</code></p>
+</li>
+</ul>
+<h4 id="io-Seeker"><a href="#io-Seeker" class="headerlink" title="io.Seeker"></a>io.Seeker</h4><p>定义了读写光标的移动操作</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Seeker <span class="keyword">interface</span> &#123;</span><br><span class="line">	Seek(offset <span class="type">int64</span>, whence <span class="type">int</span>) (<span class="type">int64</span>, <span class="type">error</span>) </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="io-Closer"><a href="#io-Closer" class="headerlink" title="io.Closer"></a>io.Closer</h4><p>定义了关闭数据流的方法</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Closer <span class="keyword">interface</span> &#123;</span><br><span class="line">	Close() <span class="type">error</span>  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="demo"><a href="#demo" class="headerlink" title="demo"></a>demo</h4><p>将文件打开并</p>
+<p><strong>注意 os.File同时实现了Reader接口和Writer接口。</strong></p>
+<p>假设文件内容为</p>
+<blockquote>
+<p>12345</p>
+</blockquote>
+<p>以io的形式读取文件，读三次，而切片bs长度为3，因此每次最多读3个字节的数据。</p>
+<ul>
+<li>第一次读了3个字节，err为nil，n&#x3D;3，bs切片存放了123</li>
+<li>第二次读了2个字节，err为nil，n&#x3D;2，bs切片存放了453，这意味着切片的数据在被真正读取时才会改变。</li>
+<li>第三次读时，文件已经读完，产生了EOF。</li>
+</ul>
+<p><strong>可以看出每次read，内部有个读写指针在运作。</strong></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">filename := <span class="string">&quot;io-demo/file-for-io.txt&quot;</span></span><br><span class="line">file, err := os.Open(filename) <span class="comment">// 只读</span></span><br><span class="line"><span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">    <span class="keyword">return</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">defer</span> file.Close()</span><br><span class="line"><span class="comment">// 读取数据</span></span><br><span class="line">bs := <span class="built_in">make</span>([]<span class="type">byte</span>, <span class="number">3</span>, <span class="number">3</span>)</span><br><span class="line">n, err := file.Read(bs)</span><br><span class="line">fmt.Println(err, n, <span class="type">string</span>(bs)) <span class="comment">// &lt;nil&gt; 3 123</span></span><br><span class="line">n, err = file.Read(bs)</span><br><span class="line">fmt.Println(err, n, <span class="type">string</span>(bs)) <span class="comment">//&lt;nil&gt; 2 453</span></span><br><span class="line">n, err = file.Read(bs)</span><br><span class="line">fmt.Println(err, n, <span class="type">string</span>(bs)) <span class="comment">// EOF 0 453</span></span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h3 id="组合接口"><a href="#组合接口" class="headerlink" title="组合接口"></a>组合接口</h3><p>即将上述4种接口的 组合</p>
+<ul>
+<li>io.ReadWriter接</li>
+<li>io.ReadCloser接</li>
+<li>io.WriteCloser接</li>
+<li>io.ReadWriteCloser接</li>
+<li>io.ReadSeeker接</li>
+<li>io.WriteSeeker接</li>
+<li>io.ReadWriteSeeker接</li>
+</ul>
+<h3 id="指定偏移量读写"><a href="#指定偏移量读写" class="headerlink" title="指定偏移量读写"></a>指定偏移量读写</h3><p>适合并行读写同一个数据源的场景</p>
+<h4 id="io-ReaderAt"><a href="#io-ReaderAt" class="headerlink" title="io.ReaderAt"></a>io.ReaderAt</h4><p>将Reader中指定偏移的内容写进store中</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> ReaderAt <span class="keyword">interface</span> &#123;</span><br><span class="line">    ReadAt(store []<span class="type">byte</span>, off <span class="type">int64</span>) (n <span class="type">int</span>, err <span class="type">error</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>忽略数据的读写指针，从数据的<strong>起始位置的偏移</strong> off 处开始读取</p>
+</li>
+<li><p>如果对象的数据流只有部分可用，不足以填满 store， 则 ReadAt 将等待所有数据可用之后，继续向 store 中写入直到将 store 填满后再返回，在这点上 ReadAt 要比 Read 更严格</p>
+</li>
+<li><p>返回读取的字节数 n 和读取时遇到的错误</p>
+<ul>
+<li>n &lt; len(store)，则需要返回一个 err 值来说明为什么没有将 p 填满（比如 EOF）</li>
+<li>n &#x3D; len(store)，而且对象的数据没有全部读完，则err 将返回 nil</li>
+<li>n &#x3D; len(store)，而且对象的数据刚好全部读完，则err 将返回 EOF 或者 nil（不确定）</li>
+</ul>
+</li>
+<li><p>例程</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">readAtDemo</span><span class="params">()</span></span> &#123;</span><br><span class="line">	byteReader := bytes.NewReader([]<span class="type">byte</span>(<span class="string">&quot;0123456789&quot;</span>))</span><br><span class="line">	store := <span class="built_in">make</span>([]<span class="type">byte</span>, <span class="number">5</span>)</span><br><span class="line">	n, err := byteReader.ReadAt(store, <span class="number">4</span>)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Println(err, n, <span class="type">string</span>(store))</span><br><span class="line">	&#125;</span><br><span class="line">	fmt.Println(err, n, <span class="type">string</span>(store))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>结果</p>
+<blockquote>
+<p><nil> 5 45678</p>
+</blockquote>
+</li>
+</ul>
+<h4 id="io-WriterAt"><a href="#io-WriterAt" class="headerlink" title="io.WriterAt"></a>io.WriterAt</h4><p>从Writer的指定偏移位置中写入</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> WriterAt <span class="keyword">interface</span> &#123;</span><br><span class="line">    WriteAt(store []<span class="type">byte</span>, off <span class="type">int64</span>) (n <span class="type">int</span>, err <span class="type">error</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>忽略数据的读写指针，从数据的<strong>起始的位置偏移</strong> off 处开始写入</p>
+</li>
+<li><p>返回写入的字节数和写入时遇到的错误</p>
+</li>
+<li><p>如果 n &lt; len(p)，则必须返回一个 err 值来说明为什么没有将 p 完全写入</p>
+</li>
+<li><p>如果偏移off要比输出设备的长度要大，也能写入，但会补充对应数量的全0字节。</p>
+</li>
+<li><p>例程1</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">writeAtDemo1</span><span class="params">()</span></span> &#123;</span><br><span class="line">	f, _ := os.OpenFile(<span class="string">&quot;./io-demo/file-for-io.txt&quot;</span>, os.O_RDWR, <span class="number">0775</span>)</span><br><span class="line">	<span class="keyword">defer</span> f.Close()</span><br><span class="line">	f.WriteString(<span class="string">&quot;01234567890&quot;</span>)</span><br><span class="line">	n, err := f.WriteAt([]<span class="type">byte</span>(<span class="string">&quot;从第3个位置写入&quot;</span>), <span class="number">3</span>)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Println(<span class="string">&quot;WriteAt error: &quot;</span>, err)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">	fmt.Println(n) <span class="comment">// 2</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>结果</p>
+<blockquote>
+<p>运行完毕后文件内容：012从第3个位置写入置写入</p>
+</blockquote>
+</li>
+<li><p>例程2</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">writeAtDemo2</span><span class="params">()</span></span> &#123;</span><br><span class="line">	f, _ := os.OpenFile(<span class="string">&quot;./io-demo/file-for-io.txt&quot;</span>, os.O_RDWR, <span class="number">0775</span>)</span><br><span class="line">	<span class="keyword">defer</span> f.Close()</span><br><span class="line">	n, err := f.WriteAt([]<span class="type">byte</span>(<span class="string">&quot;从第3个位置写入&quot;</span>), <span class="number">30</span>)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Println(<span class="string">&quot;WriteAt error: &quot;</span>, err)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">	fmt.Println(n)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>结果</p>
+<p>运行完毕后文件内容：</p>
+<p><img src="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/iimage/image-20240128164757866.png" alt="image-20240128164757866"></p>
+<p>其中，文件前面补充了30个ASCII中的空字符，即全0字节。</p>
+</li>
+</ul>
+<h3 id="指定读写器接口"><a href="#指定读写器接口" class="headerlink" title="指定读写器接口"></a>指定读写器接口</h3><h4 id="io-ReaderFrom"><a href="#io-ReaderFrom" class="headerlink" title="io.ReaderFrom"></a>io.ReaderFrom</h4><p>定义了直接从另一个reader读取数据的方法，而不需要经过byte数组</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> ReaderFrom <span class="keyword">interface</span> &#123;</span><br><span class="line">	ReadFrom(r Reader) (n <span class="type">int64</span>, err <span class="type">error</span>)		</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>会从另一个reader读到Eof或出错</li>
+</ul>
+<h4 id="io-WriterTo"><a href="#io-WriterTo" class="headerlink" title="io.WriterTo"></a>io.WriterTo</h4><p>定义了直接向另一个writer写入数据的方法，而不需要经过byte数组。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> WriterTo <span class="keyword">interface</span> &#123;</span><br><span class="line">	WriteTo(w Writer) (n <span class="type">int64</span>, err <span class="type">error</span>)		</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>会向另一个writer写完本writer的所有内容直到EOF，或出错</li>
+</ul>
+<h4 id="demo："><a href="#demo：" class="headerlink" title="demo："></a>demo：</h4><p>使用WriterTo&#x2F;ReadFrom将标准输入直接写到标准输出中</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">writeToDemo</span><span class="params">()</span></span> &#123;</span><br><span class="line">	stdReader := bufio.NewReader(os.Stdin)</span><br><span class="line">	stdWriter := bufio.NewWriter(os.Stdout)</span><br><span class="line">	<span class="comment">// 将从os.Stdin读到数据直接写到os.Stdout中</span></span><br><span class="line">	n, err := stdReader.WriteTo(stdWriter)</span><br><span class="line">	fmt.Println(n)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">readFromDemo</span><span class="params">()</span></span> &#123;</span><br><span class="line">	stdReader := bufio.NewReader(os.Stdin)</span><br><span class="line">	stdWriter := bufio.NewWriter(os.Stdout)</span><br><span class="line">	<span class="comment">// 将从os.Stdin读到数据直接写到os.Stdout中</span></span><br><span class="line">	n, err := stdWriter.ReadFrom(stdReader)</span><br><span class="line">	fmt.Println(n)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="demo：-1"><a href="#demo：-1" class="headerlink" title="demo："></a>demo：</h4><p>将文件全部读到标准输出中</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">readFromFileDemo</span><span class="params">()</span></span> &#123;</span><br><span class="line">	f, _ := os.Open(<span class="string">&quot;./io-demo/file-for-io.txt&quot;</span>)</span><br><span class="line">    <span class="keyword">defer</span> f.Close()</span><br><span class="line">	stdWriter := bufio.NewWriter(os.Stdout)</span><br><span class="line">	<span class="comment">// 将从os.Stdin读到数据直接写到os.Stdout中</span></span><br><span class="line">	n, err := stdWriter.ReadFrom(f)</span><br><span class="line">	fmt.Println(<span class="string">&quot;\n&quot;</span>, n)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="byte读写接口"><a href="#byte读写接口" class="headerlink" title="byte读写接口"></a>byte读写接口</h3><p>该io中，每次的操作只有一个字节。</p>
+<h4 id="io-ByteReader"><a href="#io-ByteReader" class="headerlink" title="io.ByteReader"></a>io.ByteReader</h4><p>定义了读取一个字节的方法</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> ByteReader <span class="keyword">interface</span> &#123;</span><br><span class="line">    ReadByte() (c <span class="type">byte</span>, err <span class="type">error</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="io-ByteWriter"><a href="#io-ByteWriter" class="headerlink" title="io.ByteWriter"></a>io.ByteWriter</h4><p>定义了写入一个字节的方法</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> ByteWriter <span class="keyword">interface</span> &#123;</span><br><span class="line">    WriteByte(c <span class="type">byte</span>) <span class="type">error</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="io-ByteScanner"><a href="#io-ByteScanner" class="headerlink" title="io.ByteScanner"></a>io.ByteScanner</h4><p>不仅定义了读取一个字节的方法，还有回退上一次因ReadByte的读操作导致的指针右移</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> ByteScanner <span class="keyword">interface</span> &#123;</span><br><span class="line">    ByteReader                    <span class="comment">// ByteReader接口</span></span><br><span class="line">    UnreadByte() <span class="type">error</span>           </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="Rune读写接口"><a href="#Rune读写接口" class="headerlink" title="Rune读写接口"></a>Rune读写接口</h3><p>几乎用不上，略</p>
+<h3 id="字符串写接口"><a href="#字符串写接口" class="headerlink" title="字符串写接口"></a>字符串写接口</h3><h4 id="io-StringWriter"><a href="#io-StringWriter" class="headerlink" title="io.StringWriter"></a>io.StringWriter</h4><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> StringWriter <span class="keyword">interface</span> &#123;</span><br><span class="line">   WriteString(s <span class="type">string</span>) (n <span class="type">int</span>, err <span class="type">error</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>直接往数据源写字符串。</p>
+<h2 id="IO工具"><a href="#IO工具" class="headerlink" title="IO工具"></a>IO工具</h2><p><img src="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/iimage/v2-6a4e875953da37edee80a82473f21199_720w.webp" alt="img"></p>
+<h3 id="结构体"><a href="#结构体" class="headerlink" title="结构体"></a>结构体</h3><h4 id="LimitedReader"><a href="#LimitedReader" class="headerlink" title="LimitedReader"></a>LimitedReader</h4><p>限制读取的数据长度，至多读取 n 个字节</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> LimitedReader <span class="keyword">struct</span> &#123;</span><br><span class="line">	R Reader <span class="comment">// underlying reader</span></span><br><span class="line">	N <span class="type">int64</span>  <span class="comment">// max bytes remaining</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="PipeReader"><a href="#PipeReader" class="headerlink" title="PipeReader"></a>PipeReader</h4><h4 id="PipeWriter"><a href="#PipeWriter" class="headerlink" title="PipeWriter"></a>PipeWriter</h4><h4 id="SectionReader"><a href="#SectionReader" class="headerlink" title="SectionReader"></a>SectionReader</h4><h3 id="方法"><a href="#方法" class="headerlink" title="方法"></a>方法</h3><h4 id="复制"><a href="#复制" class="headerlink" title="复制"></a>复制</h4><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Copy</span><span class="params">(dst Writer, src Reader)</span></span> (written <span class="type">int64</span>, err <span class="type">error</span>)</span><br></pre></td></tr></table></figure>
+
+<p>将副本从src复制到dst，直到在src上达到EOF或发生错误。类似ReadFrom和WriteTo。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">CopyBuffer</span><span class="params">(dst Writer, src Reader, buf []<span class="type">byte</span>)</span></span> (written <span class="type">int64</span>, err <span class="type">error</span>)</span><br></pre></td></tr></table></figure>
+
+<p>与copy类似，但带缓冲</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">CopyN</span><span class="params">(dst Writer, src Reader, n <span class="type">int64</span>)</span></span> (written <span class="type">int64</span>, err <span class="type">error</span>)</span><br></pre></td></tr></table></figure>
+
+<p>CopyN将n个字节（或直到出错）从src复制到dst。</p>
+<h5 id="demo：使用copy将文件io复制到标准输出"><a href="#demo：使用copy将文件io复制到标准输出" class="headerlink" title="demo：使用copy将文件io复制到标准输出"></a>demo：使用copy将文件io复制到标准输出</h5><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">copyFromFileDemo</span><span class="params">()</span></span> &#123;</span><br><span class="line">	f, _ := os.Open(<span class="string">&quot;./io-demo/file-for-io.txt&quot;</span>)</span><br><span class="line">	n, err := io.Copy(os.Stdout, f)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Println(<span class="string">&quot;Copy fail: &quot;</span>, err)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">	fmt.Println(<span class="string">&quot;\nn: &quot;</span>, n)</span><br><span class="line">	f.Close()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="读取"><a href="#读取" class="headerlink" title="读取"></a>读取</h4><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">ReadAtLeast</span><span class="params">(r Reader, buf []<span class="type">byte</span>, min <span class="type">int</span>)</span></span> (n <span class="type">int</span>, err <span class="type">error</span>)</span><br></pre></td></tr></table></figure>
+
+<p>至少将min个字节读到buf中，如果buf长度小于min，则error。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">ReadAll</span><span class="params">(r Reader)</span></span> ([]<span class="type">byte</span>, <span class="type">error</span>)</span><br></pre></td></tr></table></figure>
+
+<p>ReadAll从r读取，直到出现错误或EOF。<strong>由于ReadAll定义为从src读取直到EOF，因此它不会将读取的EOF视为要报告的错误。</strong></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">ReadFull</span><span class="params">(r Reader, buf []<span class="type">byte</span>)</span></span> (n <span class="type">int</span>, err <span class="type">error</span>) &#123;</span><br><span class="line">	<span class="keyword">return</span> ReadAtLeast(r, buf, <span class="built_in">len</span>(buf))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>读取直到buf填满。</p>
+<h5 id="demo-1"><a href="#demo-1" class="headerlink" title="demo"></a>demo</h5><p>ReadAtLeast和ReadFull区别。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">readDemo</span><span class="params">()</span></span> &#123;</span><br><span class="line">	strReader := strings.NewReader(<span class="string">&quot;01234567890&quot;</span>)</span><br><span class="line">	b1 := <span class="built_in">make</span>([]<span class="type">byte</span>, <span class="number">10</span>)</span><br><span class="line">	n, err := io.ReadAtLeast(strReader, b1, <span class="number">5</span>)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Println(<span class="string">&quot;ReadAtLeast fail: &quot;</span>, err)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">	fmt.Println(<span class="string">&quot;ReadAtLeast: &quot;</span>, <span class="type">string</span>(b1), n)</span><br><span class="line"></span><br><span class="line">	strReader = strings.NewReader(<span class="string">&quot;01234567890&quot;</span>)</span><br><span class="line">	b2 := <span class="built_in">make</span>([]<span class="type">byte</span>, <span class="number">6</span>)</span><br><span class="line">	n, err = io.ReadFull(strReader, b2)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Println(<span class="string">&quot;ReadFull fail: &quot;</span>, err)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">	fmt.Println(<span class="string">&quot;ReadFull: &quot;</span>, <span class="type">string</span>(b2), n)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="输出"><a href="#输出" class="headerlink" title="输出"></a>输出</h5><blockquote>
+<p>ReadAtLeast:  0123456789 10<br>ReadFull:  012345 6</p>
+</blockquote>
+<p>可见，ReadAtLeast可能会读更多内容。</p>
+<h4 id="写"><a href="#写" class="headerlink" title="写"></a>写</h4><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">WriteString</span><span class="params">(w Writer, s <span class="type">string</span>)</span></span> (n <span class="type">int</span>, err <span class="type">error</span>)</span><br></pre></td></tr></table></figure>
+
+<p>不需要实现io.StringWriter即可直接WriteString</p>
+<h1 id="io包之间的关系"><a href="#io包之间的关系" class="headerlink" title="io包之间的关系"></a>io包之间的关系</h1><p><img src="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/image/image-20230907211612801.png" alt="image-20230907211612801"></p>
+<p><img src="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/iimage/7b0b0e891b4c2184c459b31b2354fcfe.png" alt="7b0b0e891b4c2184c459b31b2354fcfe"></p>
+<h1 id="Ref"><a href="#Ref" class="headerlink" title="Ref"></a>Ref</h1><p><a target="_blank" rel="noopener" href="https://www.lifelmy.cn/post/2021_12_25_go_io_source/">Go语言 io包源码解读 - CodePlayer (lifelmy.cn)</a></p>
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/525137132">Go中常用I&#x2F;O说明 - 知乎 (zhihu.com)</a></p>
+<p><a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/article/2318444">一图掌握golang中IO包的关系-腾讯云开发者社区-腾讯云 (tencent.com)</a></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2024/01/7d6e633c1e61/" rel="prev" title="4-go标准库time包">
+                  <i class="fa fa-angle-left"></i> 4-go标准库time包
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2024/02/17d8a4ccd7fc/" rel="next" title="6-go标准库bufio包">
+                  6-go标准库bufio包 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2024</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Wallnut</span>
+  </div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  <script src="/js/third-party/pace.js"></script>
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"drinkwateronly/comments","issue_term":"pathname","theme":"github-light"}</script>
+<script src="/js/third-party/comments/utterances.js"></script>
+
+</body>
+</html>

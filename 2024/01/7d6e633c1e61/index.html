@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.0.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/icon32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/icon16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha256-CTSx/A06dm1B063156EVh15m6Y67pAjZZaQc89LLSrU=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"drinkwateronly.github.io","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.18.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="go标准库time时间概念： 秒（Second）： 秒是国际单位制中最基本的时间单位。 毫秒（Millisecond）： 一毫秒等于一秒的千分之一，即 0.001 秒。 微秒（Microsecond）： 一微秒等于一秒的百万分之一，即 0.000001 秒。 纳秒（Nanosecond）： 一纳秒等于一秒的十亿分之一，即 0.000000001 秒。  time包中几个重要的类型时间time.Ti">
+<meta property="og:type" content="article">
+<meta property="og:title" content="4-go标准库time包">
+<meta property="og:url" content="https://drinkwateronly.github.io/2024/01/7d6e633c1e61/index.html">
+<meta property="og:site_name" content="Wallnut">
+<meta property="og:description" content="go标准库time时间概念： 秒（Second）： 秒是国际单位制中最基本的时间单位。 毫秒（Millisecond）： 一毫秒等于一秒的千分之一，即 0.001 秒。 微秒（Microsecond）： 一微秒等于一秒的百万分之一，即 0.000001 秒。 纳秒（Nanosecond）： 一纳秒等于一秒的十亿分之一，即 0.000000001 秒。  time包中几个重要的类型时间time.Ti">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/image/image-20230904202005254.png">
+<meta property="article:published_time" content="2024-01-27T13:06:00.000Z">
+<meta property="article:modified_time" content="2024-01-28T13:16:59.000Z">
+<meta property="article:author" content="Wallnut">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/image/image-20230904202005254.png">
+
+
+<link rel="canonical" href="https://drinkwateronly.github.io/2024/01/7d6e633c1e61/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://drinkwateronly.github.io/2024/01/7d6e633c1e61/","path":"2024/01/7d6e633c1e61/","title":"4-go标准库time包"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>4-go标准库time包 | Wallnut</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Wallnut</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#go%E6%A0%87%E5%87%86%E5%BA%93time"><span class="nav-number">1.</span> <span class="nav-text">go标准库time</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%97%B6%E9%97%B4%E6%A6%82%E5%BF%B5%EF%BC%9A"><span class="nav-number">1.1.</span> <span class="nav-text">时间概念：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#time%E5%8C%85%E4%B8%AD%E5%87%A0%E4%B8%AA%E9%87%8D%E8%A6%81%E7%9A%84%E7%B1%BB%E5%9E%8B"><span class="nav-number">1.2.</span> <span class="nav-text">time包中几个重要的类型</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%97%B6%E9%97%B4time-Time"><span class="nav-number">1.2.1.</span> <span class="nav-text">时间time.Time</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#demo1%EF%BC%9A%E9%80%9A%E8%BF%87Time%E7%B1%BB%E5%9E%8B%E5%AE%9E%E7%8E%B0%E7%9A%84%E6%96%B9%E6%B3%95%E8%8E%B7%E5%8F%96%E5%BD%93%E5%89%8D%E7%9A%84%E5%B9%B4%E6%9C%88%E6%97%A5%E6%97%B6%E5%88%86%E7%A7%92%E7%AD%89%E4%BF%A1%E6%81%AF"><span class="nav-number">1.2.1.1.</span> <span class="nav-text">demo1：通过Time类型实现的方法获取当前的年月日时分秒等信息</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BE%93%E5%87%BA"><span class="nav-number">1.2.1.2.</span> <span class="nav-text">输出</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%97%B6%E9%97%B4%E6%88%B3-int64"><span class="nav-number">1.2.2.</span> <span class="nav-text">时间戳 int64</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#demo%EF%BC%9A-Time%E5%92%8C%E6%97%B6%E9%97%B4%E6%88%B3%E7%9A%84%E7%9B%B8%E4%BA%92%E8%BD%AC%E6%8D%A2"><span class="nav-number">1.2.2.1.</span> <span class="nav-text">demo： Time和时间戳的相互转换</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BE%93%E5%87%BA-1"><span class="nav-number">1.2.2.2.</span> <span class="nav-text">输出</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%97%B6%E9%97%B4%E9%97%B4%E9%9A%94-time-Duration"><span class="nav-number">1.2.3.</span> <span class="nav-text">时间间隔 time.Duration</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%A1%E6%97%B6%E5%99%A8-time-Ticker"><span class="nav-number">1.2.4.</span> <span class="nav-text">计时器 time.Ticker</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BB%B6%E8%BF%9F%E6%89%A7%E8%A1%8C-time-Timeer"><span class="nav-number">1.2.5.</span> <span class="nav-text">延迟执行 time.Timeer</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%97%B6%E9%97%B4%E6%93%8D%E4%BD%9C"><span class="nav-number">1.3.</span> <span class="nav-text">时间操作</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#demo"><span class="nav-number">1.3.0.1.</span> <span class="nav-text">demo</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BE%93%E5%87%BA-2"><span class="nav-number">1.3.0.2.</span> <span class="nav-text">输出</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A0%BC%E5%BC%8F%E5%8C%96%E6%97%B6%E9%97%B4"><span class="nav-number">1.4.</span> <span class="nav-text">格式化时间</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#demo-Time-%E5%AD%97%E7%AC%A6%E4%B8%B2-%E5%92%8C-%E5%AD%97%E7%AC%A6%E4%B8%B2-Time"><span class="nav-number">1.4.0.1.</span> <span class="nav-text">demo: Time-&gt;字符串 和 字符串-&gt;Time</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BE%93%E5%87%BA-3"><span class="nav-number">1.4.0.2.</span> <span class="nav-text">输出</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%B3%E9%94%AE%E7%82%B9"><span class="nav-number">1.4.0.3.</span> <span class="nav-text">关键点</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9A%E6%97%B6%E4%B8%8E%E5%BB%B6%E8%BF%9F%E6%89%A7%E8%A1%8C"><span class="nav-number">1.5.</span> <span class="nav-text">定时与延迟执行</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9A%E6%97%B6%E5%99%A8"><span class="nav-number">1.5.1.</span> <span class="nav-text">定时器</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#demo%EF%BC%9A%E5%AE%9A%E6%97%B6%E5%99%A8"><span class="nav-number">1.5.1.1.</span> <span class="nav-text">demo：定时器</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BE%93%E5%87%BA-4"><span class="nav-number">1.5.1.2.</span> <span class="nav-text">输出</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BB%B6%E8%BF%9F%E6%89%A7%E8%A1%8C"><span class="nav-number">1.5.2.</span> <span class="nav-text">延迟执行</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#demo%EF%BC%9A%E5%BB%B6%E8%BF%9F%E6%89%A7%E8%A1%8C"><span class="nav-number">1.5.2.1.</span> <span class="nav-text">demo：延迟执行</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BE%93%E5%87%BA-5"><span class="nav-number">1.5.2.2.</span> <span class="nav-text">输出</span></a></li></ol></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Wallnut"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">Wallnut</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">34</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">15</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/drinkwateronly" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;drinkwateronly" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://drinkwateronly.github.io/2024/01/7d6e633c1e61/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Wallnut">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Wallnut">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="4-go标准库time包 | Wallnut">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          4-go标准库time包
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2024-01-27 21:06:00" itemprop="dateCreated datePublished" datetime="2024-01-27T21:06:00+08:00">2024-01-27</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2024-01-28 21:16:59" itemprop="dateModified" datetime="2024-01-28T21:16:59+08:00">2024-01-28</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/go/" itemprop="url" rel="index"><span itemprop="name">go</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/go/go%E6%A0%87%E5%87%86%E5%BA%93/" itemprop="url" rel="index"><span itemprop="name">go标准库</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="go标准库time"><a href="#go标准库time" class="headerlink" title="go标准库time"></a>go标准库time</h1><h2 id="时间概念："><a href="#时间概念：" class="headerlink" title="时间概念："></a>时间概念：</h2><ol>
+<li><strong>秒（Second）：</strong> 秒是国际单位制中最基本的时间单位。</li>
+<li><strong>毫秒（Millisecond）：</strong> 一毫秒等于一秒的千分之一，即 0.001 秒。</li>
+<li><strong>微秒（Microsecond）：</strong> 一微秒等于一秒的百万分之一，即 0.000001 秒。</li>
+<li><strong>纳秒（Nanosecond）：</strong> 一纳秒等于一秒的十亿分之一，即 0.000000001 秒。</li>
+</ol>
+<h2 id="time包中几个重要的类型"><a href="#time包中几个重要的类型" class="headerlink" title="time包中几个重要的类型"></a>time包中几个重要的类型</h2><h3 id="时间time-Time"><a href="#时间time-Time" class="headerlink" title="时间time.Time"></a>时间time.Time</h3><p>直接打印time.Time</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">fmt.Println(time.Now())</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>2024-01-27 16:54:00.820804 +0800 CST m&#x3D;+0.001517601</p>
+</blockquote>
+<ol>
+<li><strong>日期：</strong>  “2024-01-27”</li>
+<li><strong>时间：</strong>  “16:54:00”</li>
+<li><strong>毫秒：</strong> “.820804” 表示毫秒部分，即 0.820804秒。</li>
+<li><strong>时区：</strong> “+0800 CST” 表示时区为中国标准时间 (CST)，偏移量为 +08:00。</li>
+</ol>
+<p>“m&#x3D;+0.001517601” 是 Go 语言中的一个时间戳增量（timestamp increment）部分。它通常出现在 Go 的时间字符串中，表示时间相对于某个基准时间的增量。</p>
+<p>在这个增量部分中：</p>
+<ul>
+<li>“m&#x3D;” 表示这是一个时间戳增量的标识。</li>
+<li>“+0.001517601” 表示时间戳相对于某个基准时间增加了 0.001653801 秒。</li>
+</ul>
+<p>因此，整个时间戳字符串表示的是在基准时间<code>2024-01-27 16:54:00.820804 +0800 CST</code>上增加了约 0.001517601 秒的时间点。这在某些应用中用于测量事件的时间差或计时。</p>
+<h4 id="demo1：通过Time类型实现的方法获取当前的年月日时分秒等信息"><a href="#demo1：通过Time类型实现的方法获取当前的年月日时分秒等信息" class="headerlink" title="demo1：通过Time类型实现的方法获取当前的年月日时分秒等信息"></a>demo1：通过Time类型实现的方法获取当前的年月日时分秒等信息</h4><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">timeDemo</span><span class="params">()</span></span> &#123;</span><br><span class="line">	now := time.Now()</span><br><span class="line">	fmt.Println(now)</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 都返回int</span></span><br><span class="line">	year := now.Year()                 <span class="comment">// 年</span></span><br><span class="line">	month := now.Month()               <span class="comment">// 月</span></span><br><span class="line">	day := now.Day()                   <span class="comment">// 日</span></span><br><span class="line">	hour := now.Hour()                 <span class="comment">// 时</span></span><br><span class="line">	minute := now.Minute()             <span class="comment">// 分</span></span><br><span class="line">	second := now.Second()             <span class="comment">// 秒</span></span><br><span class="line">	hour, minute, second = now.Clock() <span class="comment">// 同时获得时分秒</span></span><br><span class="line">	fmt.Printf(<span class="string">&quot;%d-%02d-%02d %02d:%02d:%02d\n&quot;</span>, year, month, day, hour, minute, second)</span><br><span class="line"></span><br><span class="line">	yearDay := now.YearDay() <span class="comment">// 当年的第几天</span></span><br><span class="line">	fmt.Println(yearDay)</span><br><span class="line"></span><br><span class="line">	year, week := now.ISOWeek() <span class="comment">// 第几年的第几周</span></span><br><span class="line">	fmt.Println(year, week)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="输出"><a href="#输出" class="headerlink" title="输出"></a>输出</h4><blockquote>
+<p>2024-01-27 19:43:42.6785304 +0800 CST m&#x3D;+0.001528201<br>2024-01-27 19:43:42<br>27<br>2024 4</p>
+</blockquote>
+<h3 id="时间戳-int64"><a href="#时间戳-int64" class="headerlink" title="时间戳 int64"></a>时间戳 int64</h3><p>时间戳是自1970年1月1日（08:00:00GMT）至当前时间的<strong>总毫秒数&#x2F;总纳秒数</strong>。因此毫秒时间戳和纳秒时间戳本质上是int64类型。</p>
+<p>主要处理的是Time对象和int64时间戳的相互转换。</p>
+<p><img src="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/image/image-20230904202005254.png" alt="image-20230904202005254"></p>
+<h4 id="demo：-Time和时间戳的相互转换"><a href="#demo：-Time和时间戳的相互转换" class="headerlink" title="demo： Time和时间戳的相互转换"></a>demo： Time和时间戳的相互转换</h4><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">timeStampDemo</span><span class="params">()</span></span> &#123;</span><br><span class="line">    now := time.Now() <span class="comment">//获取当前时间</span></span><br><span class="line">    <span class="comment">// -------Time对象转化为时间戳，即int64</span></span><br><span class="line">    timestamp1 := now.Unix()     <span class="comment">//时间戳</span></span><br><span class="line">    timestamp2 := now.UnixNano() <span class="comment">//纳秒时间戳</span></span><br><span class="line">    fmt.Printf(<span class="string">&quot;current timestamp1: %v\n&quot;</span>, timestamp1)</span><br><span class="line">    fmt.Printf(<span class="string">&quot;current timestamp2: %v\n&quot;</span>, timestamp2)</span><br><span class="line"></span><br><span class="line">    <span class="comment">// ------Unix()将时间戳转化为Time对象</span></span><br><span class="line">    timeObj := time.Unix(timestamp1, <span class="number">0</span>) <span class="comment">// 0表示纳秒部分为0</span></span><br><span class="line">    fmt.Println(timeObj)</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 但纳秒时间戳不能被Unix()转化为Time对象，因为也是int64可以调用，但结果有错</span></span><br><span class="line">    timeObj2 := time.Unix(timestamp2, <span class="number">0</span>) <span class="comment">// 0表示纳秒部分为0</span></span><br><span class="line">    fmt.Println(timeObj2)                <span class="comment">// 有错</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="输出-1"><a href="#输出-1" class="headerlink" title="输出"></a>输出</h4><blockquote>
+<p>current timestamp1: 1706346896<br>current timestamp2: 1706346896333444600<br>2024-01-27 17:14:56 +0800 CST<br>54071982569-10-27 00:23:20 +0800 CST  &#x2F;&#x2F; 显然出错</p>
+</blockquote>
+<h3 id="时间间隔-time-Duration"><a href="#时间间隔-time-Duration" class="headerlink" title="时间间隔 time.Duration"></a>时间间隔 time.Duration</h3><p>time.Duration本质也是一个int64类型，但有很多可调用的方法（而同为int64的时间戳没有），表示两个时间点之间经过的时间，<strong>以纳秒为单位</strong>。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Duration <span class="type">int64</span> <span class="comment">// 实际上就是int64类型，因此最长时间间隔可以表示到290年</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> (</span><br><span class="line">    Nanosecond  Duration = <span class="number">1</span></span><br><span class="line">    Microsecond          = <span class="number">1000</span> * Nanosecond</span><br><span class="line">    Millisecond          = <span class="number">1000</span> * Microsecond</span><br><span class="line">    Second               = <span class="number">1000</span> * Millisecond</span><br><span class="line">    Minute               = <span class="number">60</span> * Second</span><br><span class="line">    Hour                 = <span class="number">60</span> * Minute</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="计时器-time-Ticker"><a href="#计时器-time-Ticker" class="headerlink" title="计时器 time.Ticker"></a>计时器 time.Ticker</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Ticker <span class="keyword">struct</span> &#123;</span><br><span class="line">	C &lt;-<span class="keyword">chan</span> Time <span class="comment">// The channel on which the ticks are delivered.</span></span><br><span class="line">	r runtimeTimer</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="延迟执行-time-Timeer"><a href="#延迟执行-time-Timeer" class="headerlink" title="延迟执行 time.Timeer"></a>延迟执行 time.Timeer</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Timer <span class="keyword">struct</span> &#123;</span><br><span class="line">    C &lt;-<span class="keyword">chan</span> Time</span><br><span class="line">    r runtimeTimer</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="时间操作"><a href="#时间操作" class="headerlink" title="时间操作"></a>时间操作</h2><p>使用时间类型<code>time.Time</code>所调用的方法来操作时间。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span></span> </span><br><span class="line"><span class="comment">// 增减</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(t Time)</span></span> Add(d Duration) Time</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(t Time)</span></span> Sub(u Time) Duration   </span><br><span class="line"><span class="comment">// 比较</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(t Time)</span></span> Equal(u Time) <span class="type">bool</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(t Time)</span></span> Before(u Time) <span class="type">bool</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(t Time)</span></span> After(u Time) <span class="type">bool</span></span><br></pre></td></tr></table></figure>
+
+<p>需要注意的点是：</p>
+<ul>
+<li>加和减的参数和返回值完全相反，注意使用目的：<ul>
+<li>如果想获得Time对象减去d的Time对象，直接调用<code>Add(-d)</code>即可</li>
+</ul>
+</li>
+<li>Sub中，如果结果超过Duration的最大值&#x2F;最小值，那么结果就是最大值&#x2F;最小值。</li>
+</ul>
+<h4 id="demo"><a href="#demo" class="headerlink" title="demo"></a>demo</h4><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">timeOperation</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="comment">// 创建时间</span></span><br><span class="line">	t1 := time.Date(<span class="number">2024</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, time.Local)</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 时间加减</span></span><br><span class="line">	t2 := t1.Add(time.Hour)</span><br><span class="line">	fmt.Println(t2.Format(<span class="string">&quot;2006-01-02 15:04:05&quot;</span>))</span><br><span class="line">	subDuration := t2.Sub(t1)</span><br><span class="line">	fmt.Println(subDuration)</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 时间比较</span></span><br><span class="line">	fmt.Println(<span class="string">&quot;equal?: &quot;</span>, t1.Equal(t2))</span><br><span class="line">	fmt.Println(<span class="string">&quot;before?: &quot;</span>, t1.Before(t2))</span><br><span class="line">	fmt.Println(<span class="string">&quot;after?: &quot;</span>, t1.After(t2))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="输出-2"><a href="#输出-2" class="headerlink" title="输出"></a>输出</h4><blockquote>
+<p>2024-01-01 01:00:00<br>1h0m0s<br>equal?:  false<br>before?:  true<br>after?:  false</p>
+</blockquote>
+<h2 id="格式化时间"><a href="#格式化时间" class="headerlink" title="格式化时间"></a>格式化时间</h2><p>格式化中，有两种情况：</p>
+<ul>
+<li>Time以某个格式转为字符串</li>
+<li>以某个时间格式的时间字符串转为Time</li>
+</ul>
+<p>因此，这种<strong>格式</strong>需要有一个模板来告知，例如<code>2006-01-02 15:04:05.000 Mon Jan PM</code></p>
+<p>其中：</p>
+<ul>
+<li>2006或06表示年份，4位和2位的区别。</li>
+<li>15或3时表示小时，并且15表示24小时制，3表示12小时制。</li>
+<li>.000表示秒后多少位</li>
+<li>Jan为月份英文缩写。</li>
+<li>Mon表示星期的英文缩写。</li>
+<li>PM指上午或下午</li>
+</ul>
+<p>time包给出的时间模板</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> (</span><br><span class="line">	Layout      = <span class="string">&quot;01/02 03:04:05PM &#x27;06 -0700&quot;</span> <span class="comment">// The reference time, in numerical order.</span></span><br><span class="line">	ANSIC       = <span class="string">&quot;Mon Jan _2 15:04:05 2006&quot;</span></span><br><span class="line">	UnixDate    = <span class="string">&quot;Mon Jan _2 15:04:05 MST 2006&quot;</span></span><br><span class="line">	RubyDate    = <span class="string">&quot;Mon Jan 02 15:04:05 -0700 2006&quot;</span></span><br><span class="line">	RFC822      = <span class="string">&quot;02 Jan 06 15:04 MST&quot;</span></span><br><span class="line">	RFC822Z     = <span class="string">&quot;02 Jan 06 15:04 -0700&quot;</span> <span class="comment">// RFC822 with numeric zone</span></span><br><span class="line">	RFC850      = <span class="string">&quot;Monday, 02-Jan-06 15:04:05 MST&quot;</span></span><br><span class="line">	RFC1123     = <span class="string">&quot;Mon, 02 Jan 2006 15:04:05 MST&quot;</span></span><br><span class="line">	RFC1123Z    = <span class="string">&quot;Mon, 02 Jan 2006 15:04:05 -0700&quot;</span> <span class="comment">// RFC1123 with numeric zone</span></span><br><span class="line">	RFC3339     = <span class="string">&quot;2006-01-02T15:04:05Z07:00&quot;</span></span><br><span class="line">	RFC3339Nano = <span class="string">&quot;2006-01-02T15:04:05.999999999Z07:00&quot;</span></span><br><span class="line">	Kitchen     = <span class="string">&quot;3:04PM&quot;</span></span><br><span class="line">	<span class="comment">// Handy time stamps.</span></span><br><span class="line">	Stamp      = <span class="string">&quot;Jan _2 15:04:05&quot;</span></span><br><span class="line">	StampMilli = <span class="string">&quot;Jan _2 15:04:05.000&quot;</span></span><br><span class="line">	StampMicro = <span class="string">&quot;Jan _2 15:04:05.000000&quot;</span></span><br><span class="line">	StampNano  = <span class="string">&quot;Jan _2 15:04:05.000000000&quot;</span></span><br><span class="line">	DateTime   = <span class="string">&quot;2006-01-02 15:04:05&quot;</span></span><br><span class="line">	DateOnly   = <span class="string">&quot;2006-01-02&quot;</span></span><br><span class="line">	TimeOnly   = <span class="string">&quot;15:04:05&quot;</span></span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="demo-Time-字符串-和-字符串-Time"><a href="#demo-Time-字符串-和-字符串-Time" class="headerlink" title="demo: Time-&gt;字符串 和 字符串-&gt;Time"></a>demo: Time-&gt;字符串 和 字符串-&gt;Time</h4><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">formatDemo</span><span class="params">()</span></span> &#123;</span><br><span class="line">	now := time.Now()</span><br><span class="line">	<span class="comment">// ----------Time-&gt;字符串</span></span><br><span class="line">	fmt.Println(now.Format(<span class="string">&quot;2006-01-02 15:04:05.000000 Mon PM Jan&quot;</span>))</span><br><span class="line">	fmt.Println(now.Format(<span class="string">&quot;2006-1-2 3:04:05.000000&quot;</span>))</span><br><span class="line">	fmt.Println(now.Format(<span class="string">&quot;03:04 06/01/02&quot;</span>))</span><br><span class="line"></span><br><span class="line">	<span class="comment">// ----------字符串-&gt;Time</span></span><br><span class="line">	<span class="comment">// 使用默认Parse</span></span><br><span class="line">	timeObj, err := time.Parse(<span class="string">&quot;2006/01/02 15:04:05&quot;</span>, <span class="string">&quot;2023/09/12 15:04:05&quot;</span>)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(err)</span><br><span class="line">	&#125;</span><br><span class="line">	fmt.Println(timeObj, timeObj.Location())</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 使用ParseInLocation</span></span><br><span class="line">	<span class="comment">// 加载时区</span></span><br><span class="line">	<span class="comment">// loc := time.Local</span></span><br><span class="line">	loc, err := time.LoadLocation(<span class="string">&quot;Asia/Shanghai&quot;</span>)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Println(err)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">// 按照指定时区和指定格式解析字符串时间</span></span><br><span class="line">	timeObj, err = time.ParseInLocation(<span class="string">&quot;2006/01/02 15:04:05&quot;</span>, <span class="string">&quot;2023/09/12 15:04:05&quot;</span>, loc)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Println(err)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">	fmt.Println(timeObj, timeObj.Location())</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="输出-3"><a href="#输出-3" class="headerlink" title="输出"></a>输出</h4><blockquote>
+<p>2024-01-27 20:19:46.756028 Sat PM Jan<br>2024-1-27 8:19:46.756028<br>08:19 24&#x2F;01&#x2F;27<br>2023-09-12 15:04:05 +0000 UTC UTC<br>2023-09-12 15:04:05 +0800 CST Asia&#x2F;Shanghai</p>
+</blockquote>
+<h4 id="关键点"><a href="#关键点" class="headerlink" title="关键点"></a>关键点</h4><ul>
+<li>要注意模板中01或1的区别，01时，表示解析出来的月份要2位，不足两位要补0。而1时，解析出来的月份则不需要满足2位。</li>
+<li>parse的问题是，默认Parse返回的时间是美国时区，因此可以使用ParseInLocation指定时区。</li>
+</ul>
+<h2 id="定时与延迟执行"><a href="#定时与延迟执行" class="headerlink" title="定时与延迟执行"></a>定时与延迟执行</h2><h3 id="定时器"><a href="#定时器" class="headerlink" title="定时器"></a>定时器</h3><p>个人觉得定时器这个翻译不太好，ticker有心脏的意思，意味着ticker是一直跳动的，翻译成定时器后给我的感觉像是闹钟，只会响一次。定时器的本质是每隔一定时间往通道C里放<code>time.now()</code></p>
+<p>创建计时器有两种方式：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">NewTicker</span><span class="params">(d Duration)</span></span> *Ticker </span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Tick</span><span class="params">(d Duration)</span></span> &lt;-<span class="keyword">chan</span> Time &#123;</span><br><span class="line">	<span class="keyword">if</span> d &lt;= <span class="number">0</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> NewTicker(d).C</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>可见，<code>NewTicker</code>返回<code>*Ticker</code>，而<code>Tick</code>直接返回产生定时作用的通道C，</p>
+<h4 id="demo：定时器"><a href="#demo：定时器" class="headerlink" title="demo：定时器"></a>demo：定时器</h4><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">tickerDemo</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">		ticker := time.NewTicker(time.Second)</span><br><span class="line">		<span class="keyword">for</span> i := <span class="keyword">range</span> ticker.C &#123; <span class="comment">// 每秒往通道里放当前Time对象</span></span><br><span class="line">			fmt.Println(<span class="string">&quot;NewTicker: &quot;</span>, i)</span><br><span class="line"></span><br><span class="line">		&#125;</span><br><span class="line">	&#125;()</span><br><span class="line"></span><br><span class="line">	<span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">		tickerChan := time.Tick(time.Second) <span class="comment">// 返回通道</span></span><br><span class="line">		<span class="keyword">for</span> i := <span class="keyword">range</span> tickerChan &#123;          <span class="comment">// 每秒往通道里放当前Time对象</span></span><br><span class="line">			fmt.Println(<span class="string">&quot;Tick: &quot;</span>, i)</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;()</span><br><span class="line">	time.Sleep(time.Second * <span class="number">3</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="输出-4"><a href="#输出-4" class="headerlink" title="输出"></a>输出</h4><blockquote>
+<p>NewTicker:  2024-01-27 20:34:35.992855 +0800 CST m&#x3D;+1.015519701<br>Tick:  2024-01-27 20:34:35.992855 +0800 CST m&#x3D;+1.015519701<br>NewTicker:  2024-01-27 20:34:36.9878244 +0800 CST m&#x3D;+2.010439701<br>Tick:  2024-01-27 20:34:36.9878244 +0800 CST m&#x3D;+2.010439701</p>
+</blockquote>
+<h3 id="延迟执行"><a href="#延迟执行" class="headerlink" title="延迟执行"></a>延迟执行</h3><p>与定时器不同，延迟执行像闹钟，只会往通道放一次<code>time.now()</code>作为”午时已到”的信号。</p>
+<p>同样有两种方式，分别返回<code>*Timer</code>和通道</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">NewTimer</span><span class="params">(d Duration)</span></span> *Timer </span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">After</span><span class="params">(d Duration)</span></span> &lt;-<span class="keyword">chan</span> Time &#123;</span><br><span class="line">	<span class="keyword">return</span> NewTimer(d).C</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>可见，<code>NewTicker</code>返回Ticker对象，而<code>Tick</code>直接返回产生定时作用的通道C，</p>
+<h4 id="demo：延迟执行"><a href="#demo：延迟执行" class="headerlink" title="demo：延迟执行"></a>demo：延迟执行</h4><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">delayDemo</span><span class="params">()</span></span> &#123;</span><br><span class="line">	fmt.Println(time.Now())</span><br><span class="line">	<span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">		timer := time.NewTimer(time.Second * <span class="number">3</span>)</span><br><span class="line">		<span class="keyword">for</span> i := <span class="keyword">range</span> timer.C &#123;</span><br><span class="line">			fmt.Println(<span class="string">&quot;after 3 second: &quot;</span>, i)</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;()</span><br><span class="line"></span><br><span class="line">	<span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">		C := time.After(time.Second * <span class="number">2</span>)</span><br><span class="line">		<span class="keyword">for</span> i := <span class="keyword">range</span> C &#123;</span><br><span class="line">			fmt.Println(<span class="string">&quot;after 2 second: &quot;</span>, i)</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;()</span><br><span class="line"></span><br><span class="line">	time.Sleep(time.Second * <span class="number">4</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="输出-5"><a href="#输出-5" class="headerlink" title="输出"></a>输出</h4><blockquote>
+<p>after 2 second:  2024-01-27 20:43:00.630604 +0800 CST m&#x3D;+2.018875701<br>after 3 second:  2024-01-27 20:43:01.6330493 +0800 CST m&#x3D;+3.021285301</p>
+</blockquote>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2024/01/b9e6055d4300/" rel="prev" title="3-go标准库encoding/json包">
+                  <i class="fa fa-angle-left"></i> 3-go标准库encoding/json包
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2024/01/d253896ad3da/" rel="next" title="5-go标准库io包">
+                  5-go标准库io包 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2024</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Wallnut</span>
+  </div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  <script src="/js/third-party/pace.js"></script>
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"drinkwateronly/comments","issue_term":"pathname","theme":"github-light"}</script>
+<script src="/js/third-party/comments/utterances.js"></script>
+
+</body>
+</html>

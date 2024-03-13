@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.0.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/icon32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/icon16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha256-CTSx/A06dm1B063156EVh15m6Y67pAjZZaQc89LLSrU=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"drinkwateronly.github.io","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.18.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="go标准库表strings查找方法分为两类  字串包含判断     方法名 描述    Count(s, substr string)int 返回字符串s包含字符串substr的个数   Contains(s, substr string)bool 判断字符串s是否包含substr字符串   ContainsAny(s, chars string)bool 判断字符串s是否包含chars字符串中的">
+<meta property="og:type" content="article">
+<meta property="og:title" content="1-go标准库strings包">
+<meta property="og:url" content="https://drinkwateronly.github.io/2024/01/5d9d2c40ad0a/index.html">
+<meta property="og:site_name" content="Wallnut">
+<meta property="og:description" content="go标准库表strings查找方法分为两类  字串包含判断     方法名 描述    Count(s, substr string)int 返回字符串s包含字符串substr的个数   Contains(s, substr string)bool 判断字符串s是否包含substr字符串   ContainsAny(s, chars string)bool 判断字符串s是否包含chars字符串中的">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2024-01-14T05:55:00.000Z">
+<meta property="article:modified_time" content="2024-01-28T13:16:47.000Z">
+<meta property="article:author" content="Wallnut">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://drinkwateronly.github.io/2024/01/5d9d2c40ad0a/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://drinkwateronly.github.io/2024/01/5d9d2c40ad0a/","path":"2024/01/5d9d2c40ad0a/","title":"1-go标准库strings包"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>1-go标准库strings包 | Wallnut</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Wallnut</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#go%E6%A0%87%E5%87%86%E5%BA%93%E8%A1%A8strings"><span class="nav-number">1.</span> <span class="nav-text">go标准库表strings</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9F%A5%E6%89%BE"><span class="nav-number">1.1.</span> <span class="nav-text">查找</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%B9%E6%B3%95"><span class="nav-number">1.1.1.</span> <span class="nav-text">方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#demo1"><span class="nav-number">1.1.2.</span> <span class="nav-text">demo1</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81"><span class="nav-number">1.1.2.1.</span> <span class="nav-text">代码</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BE%93%E5%87%BA"><span class="nav-number">1.1.2.2.</span> <span class="nav-text">输出</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#demo2"><span class="nav-number">1.1.3.</span> <span class="nav-text">demo2</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81-1"><span class="nav-number">1.1.3.1.</span> <span class="nav-text">代码</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BE%93%E5%87%BA-1"><span class="nav-number">1.1.3.2.</span> <span class="nav-text">输出</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%87%8D%E7%82%B9"><span class="nav-number">1.1.3.3.</span> <span class="nav-text">重点</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%AF%94%E8%BE%83"><span class="nav-number">1.2.</span> <span class="nav-text">比较</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%B9%E6%B3%95-1"><span class="nav-number">1.2.1.</span> <span class="nav-text">方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#demo"><span class="nav-number">1.2.2.</span> <span class="nav-text">demo</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81-2"><span class="nav-number">1.2.2.1.</span> <span class="nav-text">代码</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BE%93%E5%87%BA-2"><span class="nav-number">1.2.2.2.</span> <span class="nav-text">输出</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%87%8D%E7%82%B9-1"><span class="nav-number">1.2.2.3.</span> <span class="nav-text">重点</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%86%E5%89%B2"><span class="nav-number">1.3.</span> <span class="nav-text">分割</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%B9%E6%B3%95-2"><span class="nav-number">1.3.1.</span> <span class="nav-text">方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#demo-1"><span class="nav-number">1.3.2.</span> <span class="nav-text">demo</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81-3"><span class="nav-number">1.3.2.1.</span> <span class="nav-text">代码</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BE%93%E5%87%BA-3"><span class="nav-number">1.3.2.2.</span> <span class="nav-text">输出</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%87%8D%E7%82%B9-2"><span class="nav-number">1.3.2.3.</span> <span class="nav-text">重点</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9B%BF%E6%8D%A2"><span class="nav-number">1.4.</span> <span class="nav-text">替换</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%B9%E6%B3%95-3"><span class="nav-number">1.4.1.</span> <span class="nav-text">方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#demo-2"><span class="nav-number">1.4.2.</span> <span class="nav-text">demo</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81-4"><span class="nav-number">1.4.2.1.</span> <span class="nav-text">代码</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BE%93%E5%87%BA-4"><span class="nav-number">1.4.2.2.</span> <span class="nav-text">输出</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%87%8D%E7%82%B9-3"><span class="nav-number">1.4.2.3.</span> <span class="nav-text">重点</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%A0%E9%99%A4"><span class="nav-number">1.5.</span> <span class="nav-text">删除</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%B9%E6%B3%95-4"><span class="nav-number">1.5.1.</span> <span class="nav-text">方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#demo-3"><span class="nav-number">1.5.2.</span> <span class="nav-text">demo</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81-5"><span class="nav-number">1.5.2.1.</span> <span class="nav-text">代码</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BE%93%E5%87%BA-5"><span class="nav-number">1.5.2.2.</span> <span class="nav-text">输出</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%87%8D%E7%82%B9-4"><span class="nav-number">1.5.2.3.</span> <span class="nav-text">重点</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A4%A7%E5%B0%8F%E5%86%99"><span class="nav-number">1.6.</span> <span class="nav-text">大小写</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%B9%E6%B3%95-5"><span class="nav-number">1.6.1.</span> <span class="nav-text">方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#demo-4"><span class="nav-number">1.6.2.</span> <span class="nav-text">demo</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81-6"><span class="nav-number">1.6.2.1.</span> <span class="nav-text">代码</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BE%93%E5%87%BA-6"><span class="nav-number">1.6.2.2.</span> <span class="nav-text">输出</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%87%8D%E7%82%B9-5"><span class="nav-number">1.6.2.3.</span> <span class="nav-text">重点</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8B%BC%E6%8E%A5Join%E5%92%8C%E9%87%8D%E5%A4%8DRepeat"><span class="nav-number">1.7.</span> <span class="nav-text">拼接Join和重复Repeat</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%B9%E6%B3%95-6"><span class="nav-number">1.7.1.</span> <span class="nav-text">方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#demo-5"><span class="nav-number">1.7.2.</span> <span class="nav-text">demo</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81-7"><span class="nav-number">1.7.2.1.</span> <span class="nav-text">代码</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BE%93%E5%87%BA-7"><span class="nav-number">1.7.2.2.</span> <span class="nav-text">输出</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%87%8D%E7%82%B9-6"><span class="nav-number">1.7.2.3.</span> <span class="nav-text">重点</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">1.8.</span> <span class="nav-text">参考</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Wallnut"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">Wallnut</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">34</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">15</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/drinkwateronly" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;drinkwateronly" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://drinkwateronly.github.io/2024/01/5d9d2c40ad0a/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Wallnut">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Wallnut">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="1-go标准库strings包 | Wallnut">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          1-go标准库strings包
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2024-01-14 13:55:00" itemprop="dateCreated datePublished" datetime="2024-01-14T13:55:00+08:00">2024-01-14</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2024-01-28 21:16:47" itemprop="dateModified" datetime="2024-01-28T21:16:47+08:00">2024-01-28</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/go/" itemprop="url" rel="index"><span itemprop="name">go</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/go/go%E6%A0%87%E5%87%86%E5%BA%93/" itemprop="url" rel="index"><span itemprop="name">go标准库</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="go标准库表strings"><a href="#go标准库表strings" class="headerlink" title="go标准库表strings"></a>go标准库表strings</h1><h2 id="查找"><a href="#查找" class="headerlink" title="查找"></a>查找</h2><h3 id="方法"><a href="#方法" class="headerlink" title="方法"></a>方法</h3><p>分为两类</p>
+<ul>
+<li>字串包含判断</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>方法名</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Count(s, substr string)int</td>
+<td>返回字符串s包含字符串substr的个数</td>
+</tr>
+<tr>
+<td>Contains(s, substr string)bool</td>
+<td>判断字符串s是否包含substr字符串</td>
+</tr>
+<tr>
+<td>ContainsAny(s, chars string)bool</td>
+<td>判断字符串s是否包含chars字符串中的任意一个字符</td>
+</tr>
+<tr>
+<td>ContainsRune(s string, r rune)bool</td>
+<td>判断字符串s是否包含unicode的码值r</td>
+</tr>
+<tr>
+<td>HasPrefix(s, prefix string)bool</td>
+<td>判断字符串s是否有前缀prefix</td>
+</tr>
+<tr>
+<td>HasSuffix(s, suffix string)bool</td>
+<td>判断字符串s是否有后缀suffix</td>
+</tr>
+</tbody></table>
+<ul>
+<li>获取字串位置</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>方法名</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Index(s, substr string)int</td>
+<td>返回字符串s中字符串substr首次出现的位置</td>
+</tr>
+<tr>
+<td>IndexByte(s string, c byte)int</td>
+<td>返回字符串s中字符c首次出现的位置</td>
+</tr>
+<tr>
+<td>IndexRune(s string, r rune)int</td>
+<td>返回unicode的码值r在字符串s中首次出现的位置</td>
+</tr>
+<tr>
+<td>IndexAny(s, chars string)int</td>
+<td>返回字符串chars中的任意一个字符unicode码值, 在s中首次出现的位置</td>
+</tr>
+<tr>
+<td>IndexFunc(s string, f func(r)bool)int</td>
+<td>返回字符串s中满足函数f(r)&#x3D;&#x3D;true, 字符首次出现的位置</td>
+</tr>
+<tr>
+<td>LastIndex(s, substr string)int</td>
+<td>返回字符串s中字符串substr最后一次出现的位置</td>
+</tr>
+<tr>
+<td>LastIndexByte(s string, c byte)int</td>
+<td>返回字符串s中字符c最后一次出现的位置</td>
+</tr>
+<tr>
+<td>LastIndexAny(s, chars string)int</td>
+<td>返回字符串chars中的任意一个字符unicode码值, 在s中最后一次出现的位置</td>
+</tr>
+<tr>
+<td>LastIndexFunc(s string, f func(r)bool)int</td>
+<td>返回字符串s中满足函数f(r)&#x3D;&#x3D;true , 字符最后一次出现的位置</td>
+</tr>
+</tbody></table>
+<h3 id="demo1"><a href="#demo1" class="headerlink" title="demo1"></a>demo1</h3><h4 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h4><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">containDemo</span><span class="params">()</span></span> &#123;</span><br><span class="line">	a := <span class="string">&quot;hello world 你好! hello world 你好!&quot;</span></span><br><span class="line">	fmt.Println(strings.Count(a, <span class="string">&quot;hello&quot;</span>))</span><br><span class="line">    </span><br><span class="line">	fmt.Println(strings.Contains(a, <span class="string">&quot;hello&quot;</span>))</span><br><span class="line">	fmt.Println(strings.ContainsAny(a, <span class="string">&quot;abcd&quot;</span>)) <span class="comment">// a是否包含“abcd任一字符串”</span></span><br><span class="line">	fmt.Println(strings.ContainsRune(a, <span class="string">&#x27;!&#x27;</span>))</span><br><span class="line">	fmt.Println(strings.HasPrefix(a, <span class="string">&quot;hello&quot;</span>))</span><br><span class="line">	fmt.Println(strings.HasSuffix(a, <span class="string">&quot;你好!&quot;</span>))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="输出"><a href="#输出" class="headerlink" title="输出"></a>输出</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">2</span><br><span class="line">true</span><br><span class="line">true</span><br><span class="line">true</span><br><span class="line">0</span><br></pre></td></tr></table></figure>
+
+<h3 id="demo2"><a href="#demo2" class="headerlink" title="demo2"></a>demo2</h3><h4 id="代码-1"><a href="#代码-1" class="headerlink" title="代码"></a>代码</h4><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">indexDemo</span><span class="params">()</span></span> &#123;</span><br><span class="line">	a := <span class="string">&quot;hello world 你好! hello world 你好!&quot;</span></span><br><span class="line">	fmt.Println(strings.Index(a, <span class="string">&quot;hello&quot;</span>))</span><br><span class="line">	fmt.Println(strings.IndexAny(a, <span class="string">&quot;你好&quot;</span>))</span><br><span class="line">	fmt.Println(strings.IndexRune(a, <span class="string">&#x27;你&#x27;</span>))  </span><br><span class="line">	fmt.Println(strings.IndexByte(a, <span class="string">&#x27;w&#x27;</span>))  <span class="comment">// 如果此时是&#x27;你&#x27;会报错，因为只允许ASCII。</span></span><br><span class="line">	fmt.Println(strings.IndexFunc(a, <span class="function"><span class="keyword">func</span><span class="params">(r <span class="type">rune</span>)</span></span> <span class="type">bool</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> r == <span class="string">&#x27;w&#x27;</span></span><br><span class="line">	&#125;))</span><br><span class="line"></span><br><span class="line">	fmt.Println(strings.LastIndex(a, <span class="string">&quot;hello&quot;</span>))</span><br><span class="line">	fmt.Println(strings.LastIndexAny(a, <span class="string">&quot;你好&quot;</span>))</span><br><span class="line">	<span class="comment">// 没有LastIndexRune</span></span><br><span class="line">	fmt.Println(strings.LastIndexByte(a, <span class="string">&#x27;w&#x27;</span>))</span><br><span class="line">	fmt.Println(strings.LastIndexFunc(a, <span class="function"><span class="keyword">func</span><span class="params">(r <span class="type">rune</span>)</span></span> <span class="type">bool</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> r == <span class="string">&#x27;w&#x27;</span></span><br><span class="line">	&#125;))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="输出-1"><a href="#输出-1" class="headerlink" title="输出"></a>输出</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">0</span><br><span class="line">12</span><br><span class="line">12</span><br><span class="line">6</span><br><span class="line">6</span><br><span class="line">20</span><br><span class="line">35</span><br><span class="line">26</span><br><span class="line">26</span><br></pre></td></tr></table></figure>
+
+<h4 id="重点"><a href="#重点" class="headerlink" title="重点"></a>重点</h4><ul>
+<li>区分Rune和Byte：Byte就是ASCII，8位；Rune是对应的是Unicode字符集，代表utf-8字符，32位。</li>
+<li>除了Rune没有从后index的方法，其他获取子串index都有从前往后、从后往前的方法（非常奇怪的一点）。</li>
+</ul>
+<h2 id="比较"><a href="#比较" class="headerlink" title="比较"></a>比较</h2><h3 id="方法-1"><a href="#方法-1" class="headerlink" title="方法"></a>方法</h3><table>
+<thead>
+<tr>
+<th>方法名</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Compare(a, b string) int</td>
+<td>按字典顺序比较a和b字符串的大小 如果 a &gt; b，返回一个大于 0 的数 如果 a &#x3D;&#x3D; b，返回 0 如果 a &lt; b，返回一个小于 0 的数</td>
+</tr>
+<tr>
+<td>EqualFold(s, t string) bool</td>
+<td>判断s和t两个UTF-8字符串是否相等，忽略大小写</td>
+</tr>
+</tbody></table>
+<h3 id="demo"><a href="#demo" class="headerlink" title="demo"></a>demo</h3><h4 id="代码-2"><a href="#代码-2" class="headerlink" title="代码"></a>代码</h4><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">demo5</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="comment">// a &lt; b &lt; c</span></span><br><span class="line">	a := <span class="string">&quot;hello worlc&quot;</span></span><br><span class="line">	b := <span class="string">&quot;hello world&quot;</span></span><br><span class="line">	c := <span class="string">&quot;hello world !&quot;</span> </span><br><span class="line">	fmt.Println(strings.Compare(a, b)) <span class="comment">// 比较字典顺序</span></span><br><span class="line">	fmt.Println(strings.Compare(b, b)) <span class="comment">// </span></span><br><span class="line">	fmt.Println(strings.Compare(c, b)) <span class="comment">// 先比较字典顺序，后比较了长度</span></span><br><span class="line"></span><br><span class="line">	e := <span class="string">&quot;Hello World !&quot;</span></span><br><span class="line">	fmt.Println(strings.EqualFold(c, e)) <span class="comment">// 忽略大小写</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="输出-2"><a href="#输出-2" class="headerlink" title="输出"></a>输出</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">-1</span><br><span class="line">0</span><br><span class="line">1</span><br><span class="line">true</span><br></pre></td></tr></table></figure>
+
+<h4 id="重点-1"><a href="#重点-1" class="headerlink" title="重点"></a>重点</h4><ul>
+<li><code>Compare</code>按字典序比较，字典序相同时比较长度。</li>
+<li><code>EqualFold</code>忽略大小写。</li>
+</ul>
+<h2 id="分割"><a href="#分割" class="headerlink" title="分割"></a>分割</h2><h3 id="方法-2"><a href="#方法-2" class="headerlink" title="方法"></a>方法</h3><table>
+<thead>
+<tr>
+<th>方法名</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Fields(s string)[]string</td>
+<td>将字符串s以空白字符分割，返回切片</td>
+</tr>
+<tr>
+<td>FieldsFunc(s string, f func(r) bool)[]string</td>
+<td>将字符串s以满足f(r)&#x3D;&#x3D;true的字符分割， 分割后返回切片</td>
+</tr>
+<tr>
+<td>Split(s,sep string)[]string</td>
+<td>将字符串s以sep作为分割符进行分割， 分割后字符最后去掉sep,返回切片</td>
+</tr>
+<tr>
+<td>SplitAfter(s,sep string)[]string</td>
+<td>将字符串s以sep作为分割符进行分割， 分割后字符最后加上sep,返回切片</td>
+</tr>
+<tr>
+<td>SplitAfterN(s,sep string, n int)[]string</td>
+<td>将字符串s以sep作为分割符进行分割， 分割后字符最后加上sep,n决定分割成切片长度</td>
+</tr>
+<tr>
+<td>SplitN(s,sep string, n int)[]string</td>
+<td>将字符串s以sep作为分割符进行分割， 分割后字符最后去掉sep,n决定分割成切片长度</td>
+</tr>
+</tbody></table>
+<h3 id="demo-1"><a href="#demo-1" class="headerlink" title="demo"></a>demo</h3><h4 id="代码-3"><a href="#代码-3" class="headerlink" title="代码"></a>代码</h4><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">splitDemo</span><span class="params">()</span></span> &#123;</span><br><span class="line">	a := <span class="string">&quot;  hello  world !  &quot;</span></span><br><span class="line">	fmt.Printf(<span class="string">&quot;Fields: %q\n&quot;</span>, strings.Fields(a))</span><br><span class="line">	fmt.Printf(<span class="string">&quot;Split: %q\n&quot;</span>, strings.Split(a, <span class="string">&quot; &quot;</span>))</span><br><span class="line">	fmt.Println()</span><br><span class="line"></span><br><span class="line">	a = <span class="string">&quot;__hello__world_!___&quot;</span></span><br><span class="line">	fmt.Printf(<span class="string">&quot;FieldsFunc: %q\n&quot;</span>, strings.FieldsFunc(a, <span class="function"><span class="keyword">func</span><span class="params">(r <span class="type">rune</span>)</span></span> <span class="type">bool</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> r == <span class="string">&#x27;_&#x27;</span></span><br><span class="line">	&#125;))</span><br><span class="line">	fmt.Printf(<span class="string">&quot;Split: %q\n&quot;</span>, strings.Split(a, <span class="string">&quot;_&quot;</span>))</span><br><span class="line">	fmt.Printf(<span class="string">&quot;SplitAfter: %q\n&quot;</span>, strings.SplitAfter(a, <span class="string">&quot;_&quot;</span>))</span><br><span class="line">	fmt.Printf(<span class="string">&quot;SplitN: %q\n&quot;</span>, strings.SplitN(a, <span class="string">&quot;_&quot;</span>, <span class="number">3</span>))</span><br><span class="line">	fmt.Printf(<span class="string">&quot;SplitAfterN: %q\n&quot;</span>, strings.SplitAfterN(a, <span class="string">&quot;_&quot;</span>, <span class="number">3</span>))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="输出-3"><a href="#输出-3" class="headerlink" title="输出"></a>输出</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Fields: [&quot;hello&quot; &quot;world&quot; &quot;!&quot;]</span><br><span class="line">Split: [&quot;&quot; &quot;&quot; &quot;hello&quot; &quot;&quot; &quot;world&quot; &quot;!&quot; &quot;&quot; &quot;&quot;]</span><br><span class="line"></span><br><span class="line">FieldsFunc: [&quot;hello&quot; &quot;world&quot; &quot;!&quot;]</span><br><span class="line">Split: [&quot;&quot; &quot;&quot; &quot;hello&quot; &quot;&quot; &quot;world&quot; &quot;!&quot; &quot;&quot; &quot;&quot; &quot;&quot;]</span><br><span class="line">SplitAfter: [&quot;_&quot; &quot;_&quot; &quot;hello_&quot; &quot;_&quot; &quot;world_&quot; &quot;!_&quot; &quot;_&quot; &quot;_&quot; &quot;&quot;]</span><br><span class="line">SplitN: [&quot;&quot; &quot;&quot; &quot;hello__world_!___&quot;]</span><br><span class="line">SplitAfterN: [&quot;_&quot; &quot;_&quot; &quot;hello__world_!___&quot;]</span><br></pre></td></tr></table></figure>
+
+<h4 id="重点-2"><a href="#重点-2" class="headerlink" title="重点"></a>重点</h4><ul>
+<li>区分<code>Fields</code>和<code>Split</code>方法。例如demo中以空白字符串作为分隔符，Field显然将主字符串<code>s</code>左右两侧的空格全部忽略，并将主字符串<code>s</code>以空白字符串分割，其中这个空白字符串可以是任意长度。而Split只能以固定长度的空白字符串<code>sep</code>分割字符。</li>
+<li>带after的分割方法，以分隔符的右侧（尾部，所以是after）为界，并将分隔符归给左边的字符串。</li>
+<li>带N的字符串分割方法限定了分割后的切片长度，即如果当分割时达到设定的N值，就不再分割。</li>
+</ul>
+<h2 id="替换"><a href="#替换" class="headerlink" title="替换"></a>替换</h2><h3 id="方法-3"><a href="#方法-3" class="headerlink" title="方法"></a>方法</h3><table>
+<thead>
+<tr>
+<th>方法名</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Replace(s, old, new string, n int)string</td>
+<td>将字符串s前n个不重叠old子串都替换为new的新字符串 如果n&lt;0会替换所有old子串。</td>
+</tr>
+<tr>
+<td>ReplaceAll(s, old, new string) string</td>
+<td>将字符串s中的old子串全部替换为new的新字符串</td>
+</tr>
+</tbody></table>
+<h3 id="demo-2"><a href="#demo-2" class="headerlink" title="demo"></a>demo</h3><h4 id="代码-4"><a href="#代码-4" class="headerlink" title="代码"></a>代码</h4><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">replaceDemo</span><span class="params">()</span></span> &#123;</span><br><span class="line">	a := <span class="string">&quot;hello world ! hello world ! hello world !&quot;</span></span><br><span class="line">	fmt.Println(strings.Replace(a, <span class="string">&quot;hello&quot;</span>, <span class="string">&quot;hi&quot;</span>, <span class="number">1</span>))</span><br><span class="line">	fmt.Println(strings.Replace(a, <span class="string">&quot;hello&quot;</span>, <span class="string">&quot;hi&quot;</span>, <span class="number">2</span>))</span><br><span class="line">	fmt.Println(strings.Replace(a, <span class="string">&quot;hello&quot;</span>, <span class="string">&quot;hi&quot;</span>, <span class="number">-100</span>))</span><br><span class="line">	fmt.Println(strings.ReplaceAll(a, <span class="string">&quot;hello&quot;</span>, <span class="string">&quot;hi&quot;</span>))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="输出-4"><a href="#输出-4" class="headerlink" title="输出"></a>输出</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">hi world ! hello world ! hello world !</span><br><span class="line">hi world ! hi world ! hello world !</span><br><span class="line">hi world ! hi world ! hi world !</span><br><span class="line">hi world ! hi world ! hi world !</span><br></pre></td></tr></table></figure>
+
+<h4 id="重点-3"><a href="#重点-3" class="headerlink" title="重点"></a>重点</h4><ul>
+<li>替换所有字串<code>old</code>有3种写法。</li>
+</ul>
+<h2 id="删除"><a href="#删除" class="headerlink" title="删除"></a>删除</h2><h3 id="方法-4"><a href="#方法-4" class="headerlink" title="方法"></a>方法</h3><table>
+<thead>
+<tr>
+<th>方法名</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Trim(s,cutset string)string</td>
+<td>将字符串s首尾包含在cutset中的任一字符去掉</td>
+</tr>
+<tr>
+<td>TrimLeft(s,cutset string)string</td>
+<td>将字符串s左边包含在cutset中的任一字符去掉</td>
+</tr>
+<tr>
+<td>TrimRight(s,cutset string) string</td>
+<td>将字符串s右边包含在cutset中的任一字符去掉</td>
+</tr>
+<tr>
+<td>TrimFunc(s string,f func(r)bool)string</td>
+<td>将字符串s首尾满足函数f(r)&#x3D;&#x3D;true的字符串去掉</td>
+</tr>
+<tr>
+<td>TrimLeftFunc(s string,f func(r)bool) string</td>
+<td>将字符串s左边满足函数f(r)&#x3D;&#x3D;true的字符串去掉</td>
+</tr>
+<tr>
+<td>TrimRightFunc(s string, f func(r) bool) string</td>
+<td>将字符串s右边满足函数f(r)&#x3D;&#x3D;true的字符串去掉</td>
+</tr>
+<tr>
+<td>TrimPrefix(s,prefix string)string</td>
+<td>将字符串s中前缀字符串prefix去掉</td>
+</tr>
+<tr>
+<td>TrimSuffix(s, suffix string) string</td>
+<td>将字符串s中后缀字符串suffix去掉</td>
+</tr>
+<tr>
+<td>TrimSpace(s string) string</td>
+<td>将字符串首尾空白去掉</td>
+</tr>
+</tbody></table>
+<h3 id="demo-3"><a href="#demo-3" class="headerlink" title="demo"></a>demo</h3><h4 id="代码-5"><a href="#代码-5" class="headerlink" title="代码"></a>代码</h4><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">trimDemo</span><span class="params">()</span></span> &#123;</span><br><span class="line">    a := <span class="string">&quot;__hello__world_!___&quot;</span></span><br><span class="line">    <span class="comment">// 基础</span></span><br><span class="line">    fmt.Printf(<span class="string">&quot;Trim: %q\n&quot;</span>, strings.Trim(a, <span class="string">&quot;_&quot;</span>))</span><br><span class="line">    fmt.Printf(<span class="string">&quot;TrimLeft: %q\n&quot;</span>, strings.TrimLeft(a, <span class="string">&quot;_&quot;</span>))</span><br><span class="line">    fmt.Printf(<span class="string">&quot;TrimRight: %q\n&quot;</span>, strings.TrimRight(a, <span class="string">&quot;_&quot;</span>))</span><br><span class="line">    <span class="comment">// Func</span></span><br><span class="line">    delFunc := <span class="function"><span class="keyword">func</span><span class="params">(r <span class="type">rune</span>)</span></span> <span class="type">bool</span> &#123;</span><br><span class="line">       <span class="keyword">return</span> r == <span class="string">&#x27;_&#x27;</span></span><br><span class="line">    &#125;</span><br><span class="line">    fmt.Printf(<span class="string">&quot;TrimFunc: %q\n&quot;</span>, strings.TrimFunc(a, delFunc))</span><br><span class="line">    fmt.Printf(<span class="string">&quot;TrimLeftFunc: %q\n&quot;</span>, strings.TrimLeftFunc(a, delFunc))</span><br><span class="line">    fmt.Printf(<span class="string">&quot;TrimRightFunc: %q\n&quot;</span>, strings.TrimRightFunc(a, delFunc))</span><br><span class="line">    <span class="comment">// 前后缀</span></span><br><span class="line">    fmt.Printf(<span class="string">&quot;TrimPrefix: %q\n&quot;</span>, strings.TrimPrefix(a, <span class="string">&quot;__h&quot;</span>))</span><br><span class="line">    fmt.Printf(<span class="string">&quot;TrimSuffix: %q\n&quot;</span>, strings.TrimSuffix(a, <span class="string">&quot;_!___&quot;</span>))</span><br><span class="line">    <span class="comment">// 特殊</span></span><br><span class="line">    a = <span class="string">&quot;  hello  world !   &quot;</span></span><br><span class="line">    fmt.Printf(<span class="string">&quot;TrimSpace: %q\n&quot;</span>, strings.TrimSpace(a))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="输出-5"><a href="#输出-5" class="headerlink" title="输出"></a>输出</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Trim: &quot;hello__world_!&quot;</span><br><span class="line">TrimLeft: &quot;hello__world_!___&quot;</span><br><span class="line">TrimRight: &quot;__hello__world_!&quot;</span><br><span class="line">TrimFunc: &quot;hello__world_!&quot;</span><br><span class="line">TrimLeftFunc: &quot;hello__world_!___&quot;</span><br><span class="line">TrimRightFunc: &quot;__hello__world_!&quot;</span><br><span class="line">TrimPrefix: &quot;ello__world_!___&quot;</span><br><span class="line">TrimSuffix: &quot;__hello__world&quot;</span><br><span class="line">TrimSpace: &quot;hello  world !&quot;</span><br></pre></td></tr></table></figure>
+
+<h4 id="重点-4"><a href="#重点-4" class="headerlink" title="重点"></a>重点</h4><ul>
+<li>无</li>
+</ul>
+<h2 id="大小写"><a href="#大小写" class="headerlink" title="大小写"></a>大小写</h2><h3 id="方法-5"><a href="#方法-5" class="headerlink" title="方法"></a>方法</h3><table>
+<thead>
+<tr>
+<th>方法名</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>ToLower(s string)string</td>
+<td>将字符串s转换成小写返回</td>
+</tr>
+<tr>
+<td>ToUpper(s string)string</td>
+<td>将字符串s转换成大写返回</td>
+</tr>
+<tr>
+<td>ToTitle(s string)string</td>
+<td>将字符串s转换成大写返回</td>
+</tr>
+<tr>
+<td>ToLowerSpecial(c unicode.SpecialCase,s string)string</td>
+<td>将字符串s中所有字符串按c指定的 映射转换成小写返回</td>
+</tr>
+<tr>
+<td>ToTitleSpecial(c unicode.SpecialCase,s string) string</td>
+<td>将字符串s中所有的字符按c指定的 映射转换成大写返回</td>
+</tr>
+<tr>
+<td>ToUpperSpecial(c unicode.SpecialCase,s string) string</td>
+<td>将字符串s中所有的字符按c指定的 映射转换成大写返回</td>
+</tr>
+</tbody></table>
+<h3 id="demo-4"><a href="#demo-4" class="headerlink" title="demo"></a>demo</h3><h4 id="代码-6"><a href="#代码-6" class="headerlink" title="代码"></a>代码</h4><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">demo</span><span class="params">()</span></span> &#123;</span><br><span class="line">	a := <span class="string">&quot;hElLo _WoRlD !&quot;</span></span><br><span class="line">	fmt.Println(strings.ToLower(a))</span><br><span class="line">	fmt.Println(strings.ToUpper(a))</span><br><span class="line">	fmt.Println(strings.ToTitle(a))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="输出-6"><a href="#输出-6" class="headerlink" title="输出"></a>输出</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">hello _world !</span><br><span class="line">HELLO _WORLD !</span><br><span class="line">HELLO _WORLD !</span><br></pre></td></tr></table></figure>
+
+<h4 id="重点-5"><a href="#重点-5" class="headerlink" title="重点"></a>重点</h4><ul>
+<li>还有个<code>Title</code>方法将每个单词的头部大写，但并不能识别标点，例如<code>_hello</code>的h不能变为大写。已在go1.18删除。</li>
+<li>多数情况下 <code>ToUpper</code> 与 <code>ToTitle</code> 返回值相同，尤其是英语，但在处理某些unicode编码字符则不同。例如<code>&quot;ǳ ǵǵǳǳǳ hello world！&quot;</code></li>
+<li>SpecialCase感觉暂时用不上，有待研究。</li>
+</ul>
+<h2 id="拼接Join和重复Repeat"><a href="#拼接Join和重复Repeat" class="headerlink" title="拼接Join和重复Repeat"></a>拼接Join和重复Repeat</h2><h3 id="方法-6"><a href="#方法-6" class="headerlink" title="方法"></a>方法</h3><table>
+<thead>
+<tr>
+<th>方法名</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Join(elems []string, sep string) string</td>
+<td>将字符串切片elems，使用sep进行拼接</td>
+</tr>
+<tr>
+<td>Repeat(s string, count int) string</td>
+<td>将字符串s,重复count次</td>
+</tr>
+</tbody></table>
+<h3 id="demo-5"><a href="#demo-5" class="headerlink" title="demo"></a>demo</h3><h4 id="代码-7"><a href="#代码-7" class="headerlink" title="代码"></a>代码</h4><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">joinAndRepeatDemo</span><span class="params">()</span></span> &#123;</span><br><span class="line">	a := []<span class="type">string</span>&#123;<span class="string">&quot; &quot;</span>, <span class="string">&quot;hello&quot;</span>, <span class="string">&quot;world&quot;</span>, <span class="string">&quot;!&quot;</span>&#125;</span><br><span class="line">	fmt.Printf(<span class="string">&quot;Join: %q\n&quot;</span>, strings.Join(a, <span class="string">&quot;_&quot;</span>))</span><br><span class="line">	fmt.Printf(<span class="string">&quot;Repeat: %q\n&quot;</span>, strings.Repeat(<span class="string">&quot;#&quot;</span>, <span class="number">10</span>))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="输出-7"><a href="#输出-7" class="headerlink" title="输出"></a>输出</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Join: &quot; _hello_world_!&quot;</span><br><span class="line">Repeat: &quot;##########&quot;</span><br></pre></td></tr></table></figure>
+
+<h4 id="重点-6"><a href="#重点-6" class="headerlink" title="重点"></a>重点</h4><ul>
+<li>无</li>
+</ul>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><blockquote>
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/606710949#">Go推荐包(一):字符串操作(strings) - 知乎 (zhihu.com)</a></p>
+</blockquote>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2023/12/0be9c79d0522/" rel="prev" title="Fyne——基于go的GUI库">
+                  <i class="fa fa-angle-left"></i> Fyne——基于go的GUI库
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2024/01/15d44f407738/" rel="next" title="2-go标准库strconv包">
+                  2-go标准库strconv包 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2024</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Wallnut</span>
+  </div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  <script src="/js/third-party/pace.js"></script>
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"drinkwateronly/comments","issue_term":"pathname","theme":"github-light"}</script>
+<script src="/js/third-party/comments/utterances.js"></script>
+
+</body>
+</html>

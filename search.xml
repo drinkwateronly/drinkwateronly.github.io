@@ -3323,4 +3323,1029 @@ main函数终止，所有goroutine也会一并结束；终止goroutine的最好�
         <category>非标准库包</category>
       </categories>
   </entry>
+  <entry>
+    <title>2-go标准库strconv包</title>
+    <url>/2024/01/15d44f407738/</url>
+    <content><![CDATA[<h1 id="go标准库表strconv"><a href="#go标准库表strconv" class="headerlink" title="go标准库表strconv"></a>go标准库表strconv</h1><h2 id="AtoI和ItoA"><a href="#AtoI和ItoA" class="headerlink" title="AtoI和ItoA"></a>AtoI和ItoA</h2><h2 id="解析Parse"><a href="#解析Parse" class="headerlink" title="解析Parse"></a>解析Parse</h2><h3 id="strconv-ParseInt"><a href="#strconv-ParseInt" class="headerlink" title="strconv.ParseInt"></a>strconv.ParseInt</h3><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">ParseInt</span><span class="params">(s <span class="type">string</span>, base <span class="type">int</span>, bitSize <span class="type">int</span>)</span></span> (i <span class="type">int64</span>, err <span class="type">error</span>)</span><br></pre></td></tr></table></figure>
+
+<p>从字符串中尝试解析出整型，参数如下：</p>
+<ul>
+<li><code>s</code>：要被解析的字符串</li>
+<li><code>base</code>：表示字符串所表示数字的进制，可取值为：<ul>
+<li>2~36。</li>
+<li>0时，则根据字符串前缀判断，<code>0x</code>是16进制，<code>0</code>是8进制，剩余为10进制。</li>
+</ul>
+</li>
+<li><code>bitSize</code>：可以保存字符串所表示数字而不溢出的整型类型，否则出错。可取值为<ul>
+<li><code>0、8、16、32、64</code>分别对应<code>int、int8、int16、int32、int64</code></li>
+</ul>
+</li>
+</ul>
+<h4 id="demo"><a href="#demo" class="headerlink" title="demo"></a>demo</h4><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">parseIntDemo</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="comment">// 9进制的11为10进制的10，解析成功</span></span><br><span class="line">	nInt, err := strconv.ParseInt(<span class="string">&quot;11&quot;</span>, <span class="number">9</span>, <span class="number">8</span>)</span><br><span class="line">	fmt.Println(nInt, err)</span><br><span class="line">	<span class="comment">// 10 &lt;nil&gt;</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">// base指定了字符串为16进制，此时字符串不应该带前缀，解析失败</span></span><br><span class="line">	nInt, err = strconv.ParseInt(<span class="string">&quot;0x01&quot;</span>, <span class="number">16</span>, <span class="number">8</span>)</span><br><span class="line">	fmt.Println(nInt, err)</span><br><span class="line">	<span class="comment">// 0 strconv.ParseInt: parsing &quot;0x01&quot;: invalid syntax</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">// base未指定进制，字符串前缀符合16进制，解析成功</span></span><br><span class="line">	nInt, err = strconv.ParseInt(<span class="string">&quot;0x0f&quot;</span>, <span class="number">0</span>, <span class="number">8</span>)</span><br><span class="line">	fmt.Println(nInt, err)</span><br><span class="line">	<span class="comment">// 15 &lt;nil&gt;</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">// -1024超出了int8的范围，解析失败，此时nInt为int8类型最小值，即-128。</span></span><br><span class="line">	nInt, err = strconv.ParseInt(<span class="string">&quot;-1024&quot;</span>, <span class="number">10</span>, <span class="number">8</span>)</span><br><span class="line">	fmt.Println(nInt, err)</span><br><span class="line">	<span class="comment">// 输出：-128 strconv.ParseInt: parsing &quot;-1024&quot;: value out of range</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">// -111未超出int8的范围，解析成功</span></span><br><span class="line">	nInt, err = strconv.ParseInt(<span class="string">&quot;-111&quot;</span>, <span class="number">10</span>, <span class="number">8</span>)</span><br><span class="line">	fmt.Println(nInt, err)</span><br><span class="line">	<span class="comment">// 输出：-111 &lt;nil&gt;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="strconv-ParseUInt"><a href="#strconv-ParseUInt" class="headerlink" title="strconv.ParseUInt"></a>strconv.ParseUInt</h3><p>尝试解析出无符号整型，与ParseInt参数完全一致。</p>
+<h3 id="strconv-ParseFloat"><a href="#strconv-ParseFloat" class="headerlink" title="strconv.ParseFloat"></a>strconv.ParseFloat</h3><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">ParseFloat</span><span class="params">(s <span class="type">string</span>, bitSize <span class="type">int</span>)</span></span> (<span class="type">float64</span>, <span class="type">error</span>)</span><br></pre></td></tr></table></figure>
+
+<p>从字符串中尝试解析出浮点型，如果s符合规则，那么会返回一个最接近s值的浮点数。参数如下：</p>
+<ul>
+<li><code>bitSize</code>：可以保存字符串所表示数字而不溢出的浮点型，否则出错。可取值为<code>32、64</code>分别对应<code>float32、float64</code></li>
+</ul>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">parseFloatDemo</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="comment">// 32位浮点数最大值位3.4*10^38，40个0溢出，因此解析失败</span></span><br><span class="line">	fmt.Println(strings.Count(<span class="string">&quot;30000000000000000000000000000000000000000&quot;</span>, <span class="string">&quot;0&quot;</span>))</span><br><span class="line">	nFloat, err := strconv.ParseFloat(<span class="string">&quot;30000000000000000000000000000000000000000&quot;</span>, <span class="number">32</span>)</span><br><span class="line">	fmt.Println(nFloat, err)</span><br><span class="line">	<span class="comment">// +Inf strconv.ParseFloat: parsing &quot;30000000000000000000000000000000000000000&quot;: value out of range</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">// 超出32位浮点最小精度，解析成功，但不准确</span></span><br><span class="line">	nFloat, err = strconv.ParseFloat(<span class="string">&quot;0.123456789&quot;</span>, <span class="number">32</span>)</span><br><span class="line">	fmt.Println(nFloat, err)</span><br><span class="line">	<span class="comment">// 0.12345679104328156 &lt;nil&gt;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="strconv-ParseBool"><a href="#strconv-ParseBool" class="headerlink" title="strconv.ParseBool"></a>strconv.ParseBool</h3><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">ParseBool</span><span class="params">(str <span class="type">string</span>)</span></span> (<span class="type">bool</span>, <span class="type">error</span>)</span><br></pre></td></tr></table></figure>
+
+<p>从字符串中尝试解析出整型，只有如下三种情况：</p>
+<table>
+<thead>
+<tr>
+<th align="left">str值</th>
+<th align="left">返回结果</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>1,t,T,True,TRUE,true,</code></td>
+<td align="left">True, nil</td>
+</tr>
+<tr>
+<td align="left"><code>0,f,F,FALSE,false,F</code></td>
+<td align="left">False, nil</td>
+</tr>
+<tr>
+<td align="left">其他值</td>
+<td align="left">false, error: invalid syntax</td>
+</tr>
+</tbody></table>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">parseBoolDemo</span><span class="params">()</span></span> &#123;</span><br><span class="line">    b, err := strconv.ParseBool(<span class="string">&quot;f&quot;</span>)</span><br><span class="line">    fmt.Println(b, err)</span><br><span class="line"></span><br><span class="line">    b, err = strconv.ParseBool(<span class="string">&quot;ff&quot;</span>)</span><br><span class="line">    fmt.Println(b, err)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="格式Format"><a href="#格式Format" class="headerlink" title="格式Format"></a>格式Format</h2><h3 id="strconv-FormatInt"><a href="#strconv-FormatInt" class="headerlink" title="strconv.FormatInt"></a>strconv.FormatInt</h3><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">FormatInt</span><span class="params">(i <span class="type">int64</span>, base <span class="type">int</span>)</span></span> <span class="type">string</span></span><br></pre></td></tr></table></figure>
+
+<p>将整型转为指定进制格式的字符串，参数为</p>
+<ul>
+<li>base：指定字符串的进制，取值2~32</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">formatIntDemo</span><span class="params">()</span></span> &#123;</span><br><span class="line">    fmt.Println(strconv.FormatInt(<span class="number">1023</span>, <span class="number">2</span>))  <span class="comment">// 1111111111</span></span><br><span class="line">    fmt.Println(strconv.FormatInt(<span class="number">1023</span>, <span class="number">10</span>)) <span class="comment">// 1023</span></span><br><span class="line">    fmt.Println(strconv.FormatInt(<span class="number">1023</span>, <span class="number">16</span>)) <span class="comment">// 3ff</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>Note：<code>strconv.Itoa</code>的底层实现就是<code>strconv.FormatInt</code></p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Itoa</span><span class="params">(i <span class="type">int</span>)</span></span> <span class="type">string</span> &#123;</span><br><span class="line"> <span class="keyword">return</span> FormatInt(<span class="type">int64</span>(i), <span class="number">10</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</blockquote>
+<h3 id="strconv-FormatUint"><a href="#strconv-FormatUint" class="headerlink" title="strconv.FormatUint"></a>strconv.FormatUint</h3><p>将无符号整型转为指定进制格式的字符串，用法同上</p>
+<h3 id="strconv-FormatFloat（可深入）"><a href="#strconv-FormatFloat（可深入）" class="headerlink" title="strconv.FormatFloat（可深入）"></a>strconv.FormatFloat（可深入）</h3><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">FormatFloat</span><span class="params">(f <span class="type">float64</span>, fmt <span class="type">byte</span>, prec, bitSize <span class="type">int</span>)</span></span> <span class="type">string</span></span><br><span class="line"><span class="comment">// bitSize: 表示f的来源类型（32:float32 64:float64）,会根据此进行舍入</span></span><br><span class="line"><span class="comment">// fmt: 表示格式标记,（b、e、E、f、g、G）;</span></span><br><span class="line">  <span class="comment">// 格式标记：</span></span><br><span class="line">    <span class="comment">// &#x27;b&#x27; (-ddddp±ddd，二进制指数)</span></span><br><span class="line">    <span class="comment">// &#x27;e&#x27; (-d.dddde±dd，十进制指数)</span></span><br><span class="line">    <span class="comment">// &#x27;E&#x27; (-d.ddddE±dd，十进制指数)</span></span><br><span class="line">    <span class="comment">// &#x27;f&#x27; (-ddd.dddd，没有指数)</span></span><br><span class="line">    <span class="comment">// &#x27;g&#x27; (&#x27;e&#x27;:大指数，&#x27;f&#x27;:其它情况)</span></span><br><span class="line">    <span class="comment">// &#x27;G&#x27; (&#x27;E&#x27;:大指数，&#x27;f&#x27;:其它情况)</span></span><br><span class="line">  <span class="comment">// 如果格式标记为 &#x27;e&#x27;，&#x27;E&#x27;和&#x27;f&#x27;，则 prec 表示小数点后的数字位数</span></span><br><span class="line">  <span class="comment">// 如果格式标记为 &#x27;g&#x27;，&#x27;G&#x27;，则 prec 表示总的数字位数（整数部分+小数部分）</span></span><br><span class="line"><span class="comment">// prec：精度</span></span><br></pre></td></tr></table></figure>
+
+<p>将浮点型转为指定格式的字符串</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">formatFloatDemo</span><span class="params">()</span></span> &#123;</span><br><span class="line">	fmt.Println(strconv.FormatFloat(<span class="number">0.123456789</span>, <span class="string">&#x27;b&#x27;</span>, <span class="number">32</span>, <span class="number">32</span>))</span><br><span class="line">	fmt.Println(strconv.FormatFloat(<span class="number">0.123456789</span>, <span class="string">&#x27;e&#x27;</span>, <span class="number">32</span>, <span class="number">32</span>))</span><br><span class="line">	fmt.Println(strconv.FormatFloat(<span class="number">0.123456789</span>, <span class="string">&#x27;E&#x27;</span>, <span class="number">32</span>, <span class="number">32</span>))</span><br><span class="line">	fmt.Println(strconv.FormatFloat(<span class="number">0.123456789</span>, <span class="string">&#x27;f&#x27;</span>, <span class="number">32</span>, <span class="number">32</span>))</span><br><span class="line">	fmt.Println(strconv.FormatFloat(<span class="number">0.123456789</span>, <span class="string">&#x27;g&#x27;</span>, <span class="number">32</span>, <span class="number">32</span>))</span><br><span class="line">	fmt.Println(strconv.FormatFloat(<span class="number">0.123456789</span>, <span class="string">&#x27;G&#x27;</span>, <span class="number">32</span>, <span class="number">32</span>))</span><br><span class="line">	<span class="comment">//16570090p-27</span></span><br><span class="line">	<span class="comment">//1.23456791043281555175781250000000e-01</span></span><br><span class="line">	<span class="comment">//1.23456791043281555175781250000000E-01</span></span><br><span class="line">	<span class="comment">//0.12345679104328155517578125000000</span></span><br><span class="line">	<span class="comment">//0.12345679104328155517578125</span></span><br><span class="line">	<span class="comment">//0.12345679104328155517578125</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="strconv-FormatBool"><a href="#strconv-FormatBool" class="headerlink" title="strconv.FormatBool"></a>strconv.FormatBool</h3><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">FormatBool</span><span class="params">(b <span class="type">bool</span>)</span></span> <span class="type">string</span></span><br></pre></td></tr></table></figure>
+
+<p>只返回字符串”true”或”false”。</p>
+<h2 id="Ref"><a href="#Ref" class="headerlink" title="Ref"></a>Ref</h2><blockquote>
+<p><a href="https://mp.weixin.qq.com/s/zIJGaSjwJkuxqR6DNUHYHQ">https://mp.weixin.qq.com/s/zIJGaSjwJkuxqR6DNUHYHQ</a></p>
+<p><a href="https://zhuanlan.zhihu.com/p/640243850">Golang 中的 strconv 包详解 - 知乎 (zhihu.com)</a></p>
+<p><a href="https://zhuanlan.zhihu.com/p/343037540">IEEE754标准: 二, 32位浮点数的取值范围 - 知乎 (zhihu.com)</a></p>
+</blockquote>
+]]></content>
+      <categories>
+        <category>go</category>
+        <category>go标准库</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>1-go标准库strings包</title>
+    <url>/2024/01/5d9d2c40ad0a/</url>
+    <content><![CDATA[<h1 id="go标准库表strings"><a href="#go标准库表strings" class="headerlink" title="go标准库表strings"></a>go标准库表strings</h1><h2 id="查找"><a href="#查找" class="headerlink" title="查找"></a>查找</h2><h3 id="方法"><a href="#方法" class="headerlink" title="方法"></a>方法</h3><p>分为两类</p>
+<ul>
+<li>字串包含判断</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>方法名</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Count(s, substr string)int</td>
+<td>返回字符串s包含字符串substr的个数</td>
+</tr>
+<tr>
+<td>Contains(s, substr string)bool</td>
+<td>判断字符串s是否包含substr字符串</td>
+</tr>
+<tr>
+<td>ContainsAny(s, chars string)bool</td>
+<td>判断字符串s是否包含chars字符串中的任意一个字符</td>
+</tr>
+<tr>
+<td>ContainsRune(s string, r rune)bool</td>
+<td>判断字符串s是否包含unicode的码值r</td>
+</tr>
+<tr>
+<td>HasPrefix(s, prefix string)bool</td>
+<td>判断字符串s是否有前缀prefix</td>
+</tr>
+<tr>
+<td>HasSuffix(s, suffix string)bool</td>
+<td>判断字符串s是否有后缀suffix</td>
+</tr>
+</tbody></table>
+<ul>
+<li>获取字串位置</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>方法名</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Index(s, substr string)int</td>
+<td>返回字符串s中字符串substr首次出现的位置</td>
+</tr>
+<tr>
+<td>IndexByte(s string, c byte)int</td>
+<td>返回字符串s中字符c首次出现的位置</td>
+</tr>
+<tr>
+<td>IndexRune(s string, r rune)int</td>
+<td>返回unicode的码值r在字符串s中首次出现的位置</td>
+</tr>
+<tr>
+<td>IndexAny(s, chars string)int</td>
+<td>返回字符串chars中的任意一个字符unicode码值, 在s中首次出现的位置</td>
+</tr>
+<tr>
+<td>IndexFunc(s string, f func(r)bool)int</td>
+<td>返回字符串s中满足函数f(r)&#x3D;&#x3D;true, 字符首次出现的位置</td>
+</tr>
+<tr>
+<td>LastIndex(s, substr string)int</td>
+<td>返回字符串s中字符串substr最后一次出现的位置</td>
+</tr>
+<tr>
+<td>LastIndexByte(s string, c byte)int</td>
+<td>返回字符串s中字符c最后一次出现的位置</td>
+</tr>
+<tr>
+<td>LastIndexAny(s, chars string)int</td>
+<td>返回字符串chars中的任意一个字符unicode码值, 在s中最后一次出现的位置</td>
+</tr>
+<tr>
+<td>LastIndexFunc(s string, f func(r)bool)int</td>
+<td>返回字符串s中满足函数f(r)&#x3D;&#x3D;true , 字符最后一次出现的位置</td>
+</tr>
+</tbody></table>
+<h3 id="demo1"><a href="#demo1" class="headerlink" title="demo1"></a>demo1</h3><h4 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h4><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">containDemo</span><span class="params">()</span></span> &#123;</span><br><span class="line">	a := <span class="string">&quot;hello world 你好! hello world 你好!&quot;</span></span><br><span class="line">	fmt.Println(strings.Count(a, <span class="string">&quot;hello&quot;</span>))</span><br><span class="line">    </span><br><span class="line">	fmt.Println(strings.Contains(a, <span class="string">&quot;hello&quot;</span>))</span><br><span class="line">	fmt.Println(strings.ContainsAny(a, <span class="string">&quot;abcd&quot;</span>)) <span class="comment">// a是否包含“abcd任一字符串”</span></span><br><span class="line">	fmt.Println(strings.ContainsRune(a, <span class="string">&#x27;!&#x27;</span>))</span><br><span class="line">	fmt.Println(strings.HasPrefix(a, <span class="string">&quot;hello&quot;</span>))</span><br><span class="line">	fmt.Println(strings.HasSuffix(a, <span class="string">&quot;你好!&quot;</span>))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="输出"><a href="#输出" class="headerlink" title="输出"></a>输出</h4><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">2</span><br><span class="line">true</span><br><span class="line">true</span><br><span class="line">true</span><br><span class="line">0</span><br></pre></td></tr></table></figure>
+
+<h3 id="demo2"><a href="#demo2" class="headerlink" title="demo2"></a>demo2</h3><h4 id="代码-1"><a href="#代码-1" class="headerlink" title="代码"></a>代码</h4><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">indexDemo</span><span class="params">()</span></span> &#123;</span><br><span class="line">	a := <span class="string">&quot;hello world 你好! hello world 你好!&quot;</span></span><br><span class="line">	fmt.Println(strings.Index(a, <span class="string">&quot;hello&quot;</span>))</span><br><span class="line">	fmt.Println(strings.IndexAny(a, <span class="string">&quot;你好&quot;</span>))</span><br><span class="line">	fmt.Println(strings.IndexRune(a, <span class="string">&#x27;你&#x27;</span>))  </span><br><span class="line">	fmt.Println(strings.IndexByte(a, <span class="string">&#x27;w&#x27;</span>))  <span class="comment">// 如果此时是&#x27;你&#x27;会报错，因为只允许ASCII。</span></span><br><span class="line">	fmt.Println(strings.IndexFunc(a, <span class="function"><span class="keyword">func</span><span class="params">(r <span class="type">rune</span>)</span></span> <span class="type">bool</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> r == <span class="string">&#x27;w&#x27;</span></span><br><span class="line">	&#125;))</span><br><span class="line"></span><br><span class="line">	fmt.Println(strings.LastIndex(a, <span class="string">&quot;hello&quot;</span>))</span><br><span class="line">	fmt.Println(strings.LastIndexAny(a, <span class="string">&quot;你好&quot;</span>))</span><br><span class="line">	<span class="comment">// 没有LastIndexRune</span></span><br><span class="line">	fmt.Println(strings.LastIndexByte(a, <span class="string">&#x27;w&#x27;</span>))</span><br><span class="line">	fmt.Println(strings.LastIndexFunc(a, <span class="function"><span class="keyword">func</span><span class="params">(r <span class="type">rune</span>)</span></span> <span class="type">bool</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> r == <span class="string">&#x27;w&#x27;</span></span><br><span class="line">	&#125;))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="输出-1"><a href="#输出-1" class="headerlink" title="输出"></a>输出</h4><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">0</span><br><span class="line">12</span><br><span class="line">12</span><br><span class="line">6</span><br><span class="line">6</span><br><span class="line">20</span><br><span class="line">35</span><br><span class="line">26</span><br><span class="line">26</span><br></pre></td></tr></table></figure>
+
+<h4 id="重点"><a href="#重点" class="headerlink" title="重点"></a>重点</h4><ul>
+<li>区分Rune和Byte：Byte就是ASCII，8位；Rune是对应的是Unicode字符集，代表utf-8字符，32位。</li>
+<li>除了Rune没有从后index的方法，其他获取子串index都有从前往后、从后往前的方法（非常奇怪的一点）。</li>
+</ul>
+<h2 id="比较"><a href="#比较" class="headerlink" title="比较"></a>比较</h2><h3 id="方法-1"><a href="#方法-1" class="headerlink" title="方法"></a>方法</h3><table>
+<thead>
+<tr>
+<th>方法名</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Compare(a, b string) int</td>
+<td>按字典顺序比较a和b字符串的大小 如果 a &gt; b，返回一个大于 0 的数 如果 a &#x3D;&#x3D; b，返回 0 如果 a &lt; b，返回一个小于 0 的数</td>
+</tr>
+<tr>
+<td>EqualFold(s, t string) bool</td>
+<td>判断s和t两个UTF-8字符串是否相等，忽略大小写</td>
+</tr>
+</tbody></table>
+<h3 id="demo"><a href="#demo" class="headerlink" title="demo"></a>demo</h3><h4 id="代码-2"><a href="#代码-2" class="headerlink" title="代码"></a>代码</h4><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">demo5</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="comment">// a &lt; b &lt; c</span></span><br><span class="line">	a := <span class="string">&quot;hello worlc&quot;</span></span><br><span class="line">	b := <span class="string">&quot;hello world&quot;</span></span><br><span class="line">	c := <span class="string">&quot;hello world !&quot;</span> </span><br><span class="line">	fmt.Println(strings.Compare(a, b)) <span class="comment">// 比较字典顺序</span></span><br><span class="line">	fmt.Println(strings.Compare(b, b)) <span class="comment">// </span></span><br><span class="line">	fmt.Println(strings.Compare(c, b)) <span class="comment">// 先比较字典顺序，后比较了长度</span></span><br><span class="line"></span><br><span class="line">	e := <span class="string">&quot;Hello World !&quot;</span></span><br><span class="line">	fmt.Println(strings.EqualFold(c, e)) <span class="comment">// 忽略大小写</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="输出-2"><a href="#输出-2" class="headerlink" title="输出"></a>输出</h4><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">-1</span><br><span class="line">0</span><br><span class="line">1</span><br><span class="line">true</span><br></pre></td></tr></table></figure>
+
+<h4 id="重点-1"><a href="#重点-1" class="headerlink" title="重点"></a>重点</h4><ul>
+<li><code>Compare</code>按字典序比较，字典序相同时比较长度。</li>
+<li><code>EqualFold</code>忽略大小写。</li>
+</ul>
+<h2 id="分割"><a href="#分割" class="headerlink" title="分割"></a>分割</h2><h3 id="方法-2"><a href="#方法-2" class="headerlink" title="方法"></a>方法</h3><table>
+<thead>
+<tr>
+<th>方法名</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Fields(s string)[]string</td>
+<td>将字符串s以空白字符分割，返回切片</td>
+</tr>
+<tr>
+<td>FieldsFunc(s string, f func(r) bool)[]string</td>
+<td>将字符串s以满足f(r)&#x3D;&#x3D;true的字符分割， 分割后返回切片</td>
+</tr>
+<tr>
+<td>Split(s,sep string)[]string</td>
+<td>将字符串s以sep作为分割符进行分割， 分割后字符最后去掉sep,返回切片</td>
+</tr>
+<tr>
+<td>SplitAfter(s,sep string)[]string</td>
+<td>将字符串s以sep作为分割符进行分割， 分割后字符最后加上sep,返回切片</td>
+</tr>
+<tr>
+<td>SplitAfterN(s,sep string, n int)[]string</td>
+<td>将字符串s以sep作为分割符进行分割， 分割后字符最后加上sep,n决定分割成切片长度</td>
+</tr>
+<tr>
+<td>SplitN(s,sep string, n int)[]string</td>
+<td>将字符串s以sep作为分割符进行分割， 分割后字符最后去掉sep,n决定分割成切片长度</td>
+</tr>
+</tbody></table>
+<h3 id="demo-1"><a href="#demo-1" class="headerlink" title="demo"></a>demo</h3><h4 id="代码-3"><a href="#代码-3" class="headerlink" title="代码"></a>代码</h4><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">splitDemo</span><span class="params">()</span></span> &#123;</span><br><span class="line">	a := <span class="string">&quot;  hello  world !  &quot;</span></span><br><span class="line">	fmt.Printf(<span class="string">&quot;Fields: %q\n&quot;</span>, strings.Fields(a))</span><br><span class="line">	fmt.Printf(<span class="string">&quot;Split: %q\n&quot;</span>, strings.Split(a, <span class="string">&quot; &quot;</span>))</span><br><span class="line">	fmt.Println()</span><br><span class="line"></span><br><span class="line">	a = <span class="string">&quot;__hello__world_!___&quot;</span></span><br><span class="line">	fmt.Printf(<span class="string">&quot;FieldsFunc: %q\n&quot;</span>, strings.FieldsFunc(a, <span class="function"><span class="keyword">func</span><span class="params">(r <span class="type">rune</span>)</span></span> <span class="type">bool</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> r == <span class="string">&#x27;_&#x27;</span></span><br><span class="line">	&#125;))</span><br><span class="line">	fmt.Printf(<span class="string">&quot;Split: %q\n&quot;</span>, strings.Split(a, <span class="string">&quot;_&quot;</span>))</span><br><span class="line">	fmt.Printf(<span class="string">&quot;SplitAfter: %q\n&quot;</span>, strings.SplitAfter(a, <span class="string">&quot;_&quot;</span>))</span><br><span class="line">	fmt.Printf(<span class="string">&quot;SplitN: %q\n&quot;</span>, strings.SplitN(a, <span class="string">&quot;_&quot;</span>, <span class="number">3</span>))</span><br><span class="line">	fmt.Printf(<span class="string">&quot;SplitAfterN: %q\n&quot;</span>, strings.SplitAfterN(a, <span class="string">&quot;_&quot;</span>, <span class="number">3</span>))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="输出-3"><a href="#输出-3" class="headerlink" title="输出"></a>输出</h4><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Fields: [&quot;hello&quot; &quot;world&quot; &quot;!&quot;]</span><br><span class="line">Split: [&quot;&quot; &quot;&quot; &quot;hello&quot; &quot;&quot; &quot;world&quot; &quot;!&quot; &quot;&quot; &quot;&quot;]</span><br><span class="line"></span><br><span class="line">FieldsFunc: [&quot;hello&quot; &quot;world&quot; &quot;!&quot;]</span><br><span class="line">Split: [&quot;&quot; &quot;&quot; &quot;hello&quot; &quot;&quot; &quot;world&quot; &quot;!&quot; &quot;&quot; &quot;&quot; &quot;&quot;]</span><br><span class="line">SplitAfter: [&quot;_&quot; &quot;_&quot; &quot;hello_&quot; &quot;_&quot; &quot;world_&quot; &quot;!_&quot; &quot;_&quot; &quot;_&quot; &quot;&quot;]</span><br><span class="line">SplitN: [&quot;&quot; &quot;&quot; &quot;hello__world_!___&quot;]</span><br><span class="line">SplitAfterN: [&quot;_&quot; &quot;_&quot; &quot;hello__world_!___&quot;]</span><br></pre></td></tr></table></figure>
+
+<h4 id="重点-2"><a href="#重点-2" class="headerlink" title="重点"></a>重点</h4><ul>
+<li>区分<code>Fields</code>和<code>Split</code>方法。例如demo中以空白字符串作为分隔符，Field显然将主字符串<code>s</code>左右两侧的空格全部忽略，并将主字符串<code>s</code>以空白字符串分割，其中这个空白字符串可以是任意长度。而Split只能以固定长度的空白字符串<code>sep</code>分割字符。</li>
+<li>带after的分割方法，以分隔符的右侧（尾部，所以是after）为界，并将分隔符归给左边的字符串。</li>
+<li>带N的字符串分割方法限定了分割后的切片长度，即如果当分割时达到设定的N值，就不再分割。</li>
+</ul>
+<h2 id="替换"><a href="#替换" class="headerlink" title="替换"></a>替换</h2><h3 id="方法-3"><a href="#方法-3" class="headerlink" title="方法"></a>方法</h3><table>
+<thead>
+<tr>
+<th>方法名</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Replace(s, old, new string, n int)string</td>
+<td>将字符串s前n个不重叠old子串都替换为new的新字符串 如果n&lt;0会替换所有old子串。</td>
+</tr>
+<tr>
+<td>ReplaceAll(s, old, new string) string</td>
+<td>将字符串s中的old子串全部替换为new的新字符串</td>
+</tr>
+</tbody></table>
+<h3 id="demo-2"><a href="#demo-2" class="headerlink" title="demo"></a>demo</h3><h4 id="代码-4"><a href="#代码-4" class="headerlink" title="代码"></a>代码</h4><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">replaceDemo</span><span class="params">()</span></span> &#123;</span><br><span class="line">	a := <span class="string">&quot;hello world ! hello world ! hello world !&quot;</span></span><br><span class="line">	fmt.Println(strings.Replace(a, <span class="string">&quot;hello&quot;</span>, <span class="string">&quot;hi&quot;</span>, <span class="number">1</span>))</span><br><span class="line">	fmt.Println(strings.Replace(a, <span class="string">&quot;hello&quot;</span>, <span class="string">&quot;hi&quot;</span>, <span class="number">2</span>))</span><br><span class="line">	fmt.Println(strings.Replace(a, <span class="string">&quot;hello&quot;</span>, <span class="string">&quot;hi&quot;</span>, <span class="number">-100</span>))</span><br><span class="line">	fmt.Println(strings.ReplaceAll(a, <span class="string">&quot;hello&quot;</span>, <span class="string">&quot;hi&quot;</span>))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="输出-4"><a href="#输出-4" class="headerlink" title="输出"></a>输出</h4><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">hi world ! hello world ! hello world !</span><br><span class="line">hi world ! hi world ! hello world !</span><br><span class="line">hi world ! hi world ! hi world !</span><br><span class="line">hi world ! hi world ! hi world !</span><br></pre></td></tr></table></figure>
+
+<h4 id="重点-3"><a href="#重点-3" class="headerlink" title="重点"></a>重点</h4><ul>
+<li>替换所有字串<code>old</code>有3种写法。</li>
+</ul>
+<h2 id="删除"><a href="#删除" class="headerlink" title="删除"></a>删除</h2><h3 id="方法-4"><a href="#方法-4" class="headerlink" title="方法"></a>方法</h3><table>
+<thead>
+<tr>
+<th>方法名</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Trim(s,cutset string)string</td>
+<td>将字符串s首尾包含在cutset中的任一字符去掉</td>
+</tr>
+<tr>
+<td>TrimLeft(s,cutset string)string</td>
+<td>将字符串s左边包含在cutset中的任一字符去掉</td>
+</tr>
+<tr>
+<td>TrimRight(s,cutset string) string</td>
+<td>将字符串s右边包含在cutset中的任一字符去掉</td>
+</tr>
+<tr>
+<td>TrimFunc(s string,f func(r)bool)string</td>
+<td>将字符串s首尾满足函数f(r)&#x3D;&#x3D;true的字符串去掉</td>
+</tr>
+<tr>
+<td>TrimLeftFunc(s string,f func(r)bool) string</td>
+<td>将字符串s左边满足函数f(r)&#x3D;&#x3D;true的字符串去掉</td>
+</tr>
+<tr>
+<td>TrimRightFunc(s string, f func(r) bool) string</td>
+<td>将字符串s右边满足函数f(r)&#x3D;&#x3D;true的字符串去掉</td>
+</tr>
+<tr>
+<td>TrimPrefix(s,prefix string)string</td>
+<td>将字符串s中前缀字符串prefix去掉</td>
+</tr>
+<tr>
+<td>TrimSuffix(s, suffix string) string</td>
+<td>将字符串s中后缀字符串suffix去掉</td>
+</tr>
+<tr>
+<td>TrimSpace(s string) string</td>
+<td>将字符串首尾空白去掉</td>
+</tr>
+</tbody></table>
+<h3 id="demo-3"><a href="#demo-3" class="headerlink" title="demo"></a>demo</h3><h4 id="代码-5"><a href="#代码-5" class="headerlink" title="代码"></a>代码</h4><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">trimDemo</span><span class="params">()</span></span> &#123;</span><br><span class="line">    a := <span class="string">&quot;__hello__world_!___&quot;</span></span><br><span class="line">    <span class="comment">// 基础</span></span><br><span class="line">    fmt.Printf(<span class="string">&quot;Trim: %q\n&quot;</span>, strings.Trim(a, <span class="string">&quot;_&quot;</span>))</span><br><span class="line">    fmt.Printf(<span class="string">&quot;TrimLeft: %q\n&quot;</span>, strings.TrimLeft(a, <span class="string">&quot;_&quot;</span>))</span><br><span class="line">    fmt.Printf(<span class="string">&quot;TrimRight: %q\n&quot;</span>, strings.TrimRight(a, <span class="string">&quot;_&quot;</span>))</span><br><span class="line">    <span class="comment">// Func</span></span><br><span class="line">    delFunc := <span class="function"><span class="keyword">func</span><span class="params">(r <span class="type">rune</span>)</span></span> <span class="type">bool</span> &#123;</span><br><span class="line">       <span class="keyword">return</span> r == <span class="string">&#x27;_&#x27;</span></span><br><span class="line">    &#125;</span><br><span class="line">    fmt.Printf(<span class="string">&quot;TrimFunc: %q\n&quot;</span>, strings.TrimFunc(a, delFunc))</span><br><span class="line">    fmt.Printf(<span class="string">&quot;TrimLeftFunc: %q\n&quot;</span>, strings.TrimLeftFunc(a, delFunc))</span><br><span class="line">    fmt.Printf(<span class="string">&quot;TrimRightFunc: %q\n&quot;</span>, strings.TrimRightFunc(a, delFunc))</span><br><span class="line">    <span class="comment">// 前后缀</span></span><br><span class="line">    fmt.Printf(<span class="string">&quot;TrimPrefix: %q\n&quot;</span>, strings.TrimPrefix(a, <span class="string">&quot;__h&quot;</span>))</span><br><span class="line">    fmt.Printf(<span class="string">&quot;TrimSuffix: %q\n&quot;</span>, strings.TrimSuffix(a, <span class="string">&quot;_!___&quot;</span>))</span><br><span class="line">    <span class="comment">// 特殊</span></span><br><span class="line">    a = <span class="string">&quot;  hello  world !   &quot;</span></span><br><span class="line">    fmt.Printf(<span class="string">&quot;TrimSpace: %q\n&quot;</span>, strings.TrimSpace(a))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="输出-5"><a href="#输出-5" class="headerlink" title="输出"></a>输出</h4><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Trim: &quot;hello__world_!&quot;</span><br><span class="line">TrimLeft: &quot;hello__world_!___&quot;</span><br><span class="line">TrimRight: &quot;__hello__world_!&quot;</span><br><span class="line">TrimFunc: &quot;hello__world_!&quot;</span><br><span class="line">TrimLeftFunc: &quot;hello__world_!___&quot;</span><br><span class="line">TrimRightFunc: &quot;__hello__world_!&quot;</span><br><span class="line">TrimPrefix: &quot;ello__world_!___&quot;</span><br><span class="line">TrimSuffix: &quot;__hello__world&quot;</span><br><span class="line">TrimSpace: &quot;hello  world !&quot;</span><br></pre></td></tr></table></figure>
+
+<h4 id="重点-4"><a href="#重点-4" class="headerlink" title="重点"></a>重点</h4><ul>
+<li>无</li>
+</ul>
+<h2 id="大小写"><a href="#大小写" class="headerlink" title="大小写"></a>大小写</h2><h3 id="方法-5"><a href="#方法-5" class="headerlink" title="方法"></a>方法</h3><table>
+<thead>
+<tr>
+<th>方法名</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>ToLower(s string)string</td>
+<td>将字符串s转换成小写返回</td>
+</tr>
+<tr>
+<td>ToUpper(s string)string</td>
+<td>将字符串s转换成大写返回</td>
+</tr>
+<tr>
+<td>ToTitle(s string)string</td>
+<td>将字符串s转换成大写返回</td>
+</tr>
+<tr>
+<td>ToLowerSpecial(c unicode.SpecialCase,s string)string</td>
+<td>将字符串s中所有字符串按c指定的 映射转换成小写返回</td>
+</tr>
+<tr>
+<td>ToTitleSpecial(c unicode.SpecialCase,s string) string</td>
+<td>将字符串s中所有的字符按c指定的 映射转换成大写返回</td>
+</tr>
+<tr>
+<td>ToUpperSpecial(c unicode.SpecialCase,s string) string</td>
+<td>将字符串s中所有的字符按c指定的 映射转换成大写返回</td>
+</tr>
+</tbody></table>
+<h3 id="demo-4"><a href="#demo-4" class="headerlink" title="demo"></a>demo</h3><h4 id="代码-6"><a href="#代码-6" class="headerlink" title="代码"></a>代码</h4><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">demo</span><span class="params">()</span></span> &#123;</span><br><span class="line">	a := <span class="string">&quot;hElLo _WoRlD !&quot;</span></span><br><span class="line">	fmt.Println(strings.ToLower(a))</span><br><span class="line">	fmt.Println(strings.ToUpper(a))</span><br><span class="line">	fmt.Println(strings.ToTitle(a))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="输出-6"><a href="#输出-6" class="headerlink" title="输出"></a>输出</h4><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">hello _world !</span><br><span class="line">HELLO _WORLD !</span><br><span class="line">HELLO _WORLD !</span><br></pre></td></tr></table></figure>
+
+<h4 id="重点-5"><a href="#重点-5" class="headerlink" title="重点"></a>重点</h4><ul>
+<li>还有个<code>Title</code>方法将每个单词的头部大写，但并不能识别标点，例如<code>_hello</code>的h不能变为大写。已在go1.18删除。</li>
+<li>多数情况下 <code>ToUpper</code> 与 <code>ToTitle</code> 返回值相同，尤其是英语，但在处理某些unicode编码字符则不同。例如<code>&quot;ǳ ǵǵǳǳǳ hello world！&quot;</code></li>
+<li>SpecialCase感觉暂时用不上，有待研究。</li>
+</ul>
+<h2 id="拼接Join和重复Repeat"><a href="#拼接Join和重复Repeat" class="headerlink" title="拼接Join和重复Repeat"></a>拼接Join和重复Repeat</h2><h3 id="方法-6"><a href="#方法-6" class="headerlink" title="方法"></a>方法</h3><table>
+<thead>
+<tr>
+<th>方法名</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Join(elems []string, sep string) string</td>
+<td>将字符串切片elems，使用sep进行拼接</td>
+</tr>
+<tr>
+<td>Repeat(s string, count int) string</td>
+<td>将字符串s,重复count次</td>
+</tr>
+</tbody></table>
+<h3 id="demo-5"><a href="#demo-5" class="headerlink" title="demo"></a>demo</h3><h4 id="代码-7"><a href="#代码-7" class="headerlink" title="代码"></a>代码</h4><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">joinAndRepeatDemo</span><span class="params">()</span></span> &#123;</span><br><span class="line">	a := []<span class="type">string</span>&#123;<span class="string">&quot; &quot;</span>, <span class="string">&quot;hello&quot;</span>, <span class="string">&quot;world&quot;</span>, <span class="string">&quot;!&quot;</span>&#125;</span><br><span class="line">	fmt.Printf(<span class="string">&quot;Join: %q\n&quot;</span>, strings.Join(a, <span class="string">&quot;_&quot;</span>))</span><br><span class="line">	fmt.Printf(<span class="string">&quot;Repeat: %q\n&quot;</span>, strings.Repeat(<span class="string">&quot;#&quot;</span>, <span class="number">10</span>))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="输出-7"><a href="#输出-7" class="headerlink" title="输出"></a>输出</h4><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Join: &quot; _hello_world_!&quot;</span><br><span class="line">Repeat: &quot;##########&quot;</span><br></pre></td></tr></table></figure>
+
+<h4 id="重点-6"><a href="#重点-6" class="headerlink" title="重点"></a>重点</h4><ul>
+<li>无</li>
+</ul>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><blockquote>
+<p><a href="https://zhuanlan.zhihu.com/p/606710949#">Go推荐包(一):字符串操作(strings) - 知乎 (zhihu.com)</a></p>
+</blockquote>
+]]></content>
+      <categories>
+        <category>go</category>
+        <category>go标准库</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>3-go标准库encoding/json包</title>
+    <url>/2024/01/b9e6055d4300/</url>
+    <content><![CDATA[<h1 id="go标准库表encoding-json"><a href="#go标准库表encoding-json" class="headerlink" title="go标准库表encoding&#x2F;json"></a>go标准库表encoding&#x2F;json</h1><p>channel、function、complex、循环引用的数据类型不能被json.Marshal序列</p>
+<h2 id="json基本数据格式"><a href="#json基本数据格式" class="headerlink" title="json基本数据格式"></a>json基本数据格式</h2><ol>
+<li>字符串（Strings）：由<strong>双引号包围</strong>的一串Unicode字符。例如：”小明”。</li>
+<li>数字（Numbers）：可以是整数（如25）或浮点数（如3.14）。在JSON中不区分整型和浮点型，都使用IEEE-754双精度浮点格式表示。</li>
+<li>布尔值（Booleans）：只有两个值，分别是true和false。</li>
+<li>空值（Null）：用来表示没有任何值的字段。</li>
+<li>对象（Objects）：由花括号{}包围的无序键值对集合。每个对象可以包含零个或多个键值对，每个键值对之间使用逗号分隔。</li>
+<li>数组（Arrays）：有序的值集合，使用方括ets围起来。每个数组项可以是任何JSON数据类型。</li>
+</ol>
+<p>例如</p>
+<figure class="highlight json"><table><tr><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;123&quot;</span><span class="punctuation">,</span> <span class="comment">// 字符串</span></span><br><span class="line">    <span class="attr">&quot;age&quot;</span><span class="punctuation">:</span> <span class="number">123</span><span class="punctuation">,</span> <span class="comment">// 数字</span></span><br><span class="line">    <span class="attr">&quot;sex1&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">false</span></span><span class="punctuation">,</span>  <span class="comment">// 布尔值</span></span><br><span class="line">    <span class="attr">&quot;sex2&quot;</span><span class="punctuation">:</span> <span class="string">&quot;false&quot;</span><span class="punctuation">,</span>  <span class="comment">// 字符串</span></span><br><span class="line">    <span class="attr">&quot;height1&quot;</span><span class="punctuation">:</span> <span class="number">180.12</span><span class="punctuation">,</span> <span class="comment">// 数字</span></span><br><span class="line">    <span class="attr">&quot;height2&quot;</span><span class="punctuation">:</span> <span class="string">&quot;180.12&quot;</span><span class="comment">// 字符串</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>可见，虽然某些字段的想表达的类型可能是数字或布尔值，但由于被双引号包围，因此它们在json中仍属于字符串。后续在反序列化需要对这种字符串形数据解析出它们所表达的类型时，需要特殊处理。</p>
+<h2 id="go结构体Tag"><a href="#go结构体Tag" class="headerlink" title="go结构体Tag"></a>go结构体Tag</h2><p>Tag是结构体的元信息，可以在运行时通过反射机制读取，格式为</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="string">`key1:&quot;value1&quot; key2&quot;value2&quot;`</span></span><br></pre></td></tr></table></figure>
+
+<p>例如使用<code>json</code>这个Tag指定进行json序列化时的字段名称。</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">type</span> Person <span class="keyword">struct</span>&#123;</span><br><span class="line">    Name <span class="type">string</span> <span class="string">`json:&quot;name&quot;`</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="json中常用的value"><a href="#json中常用的value" class="headerlink" title="json中常用的value"></a>json中常用的value</h3><ul>
+<li><code>json:&quot;name&quot;</code>，指定字段名</li>
+<li><code>json:&quot;-&quot;</code>，序列化&#x2F;反序列化时忽略某字段</li>
+<li><code>json:&quot;name,omitempty&quot;</code>，需要和指定字段名使用，在序列化，字段若为空则忽略。而在反序列化时不忽略。</li>
+<li><code>json:&quot;name,string&quot;</code>，需要和指定字段名使用，序列化&#x2F;反序列化时，该字段以字符串形式解析。</li>
+</ul>
+<h4 id="demo1"><a href="#demo1" class="headerlink" title="demo1"></a>demo1</h4><p>该demo展示了tag中不同的value的使用情况</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">demo1</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">type</span> Partner <span class="keyword">struct</span> &#123;</span><br><span class="line">		Name <span class="type">string</span> <span class="string">`json:&quot;firstName&quot;`</span></span><br><span class="line">		Age  <span class="type">uint</span>   <span class="string">`json:&quot;age&quot;`</span></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">type</span> Person <span class="keyword">struct</span> &#123;</span><br><span class="line">		FirstName <span class="type">string</span>  <span class="string">`json:&quot;firstName&quot;`</span>       <span class="comment">// 指定字段名</span></span><br><span class="line">		LastName  <span class="type">string</span>  <span class="string">`json:&quot;-&quot;`</span>               <span class="comment">// 序列化/反序列化时，忽略该字段</span></span><br><span class="line">		Email     <span class="type">string</span>  <span class="string">`json:&quot;email,omitempty&quot;`</span> <span class="comment">// &quot;omitempty&quot; 忽略空值字段，需要和指定字段名搭配使用</span></span><br><span class="line">		Age       <span class="type">uint</span>    <span class="string">`json:&quot;age&quot;`</span>             <span class="comment">// 反序列化时，若为负值，解析失败。</span></span><br><span class="line">		Height    <span class="type">float64</span> <span class="string">`json:&quot;height,string&quot;`</span>   <span class="comment">// 序列化/反序列化时，该数字以字符串形式解析。若不是字符串形式，解析失败。</span></span><br><span class="line">		Sex       <span class="type">bool</span>    <span class="string">`json:&quot;sex&quot;`</span>             <span class="comment">// 反序列化时，只能是true或false</span></span><br><span class="line">		IsNative  <span class="type">bool</span>    <span class="string">`json:&quot;isNative,string&quot;`</span> <span class="comment">// 反序列化时，只能是&quot;true&quot;或&quot;false&quot;</span></span><br><span class="line"></span><br><span class="line">		PartnerA Partner  <span class="string">`json:&quot;partnerA&quot;`</span>           <span class="comment">// 嵌套结构体</span></span><br><span class="line">		PartnerB *Partner <span class="string">`json:&quot;partnerB,omitempty&quot;`</span> <span class="comment">// 只有嵌套结构体是指针时，才能被忽略空值</span></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 序列化</span></span><br><span class="line">	p := Person&#123;</span><br><span class="line">		FirstName: <span class="string">&quot;John&quot;</span>,</span><br><span class="line">		LastName:  <span class="string">&quot;Smith&quot;</span>,</span><br><span class="line">		Email:     <span class="string">&quot;john@example.com&quot;</span>,</span><br><span class="line">		Age:       <span class="number">11</span>,</span><br><span class="line">		Height:    <span class="number">180.01</span>,</span><br><span class="line">		Sex:       <span class="literal">true</span>,</span><br><span class="line">		IsNative:  <span class="literal">false</span>,</span><br><span class="line"></span><br><span class="line">		PartnerA: Partner&#123;</span><br><span class="line">			Name: <span class="string">&quot;&quot;</span>,</span><br><span class="line">			Age:  <span class="number">0</span>,</span><br><span class="line">		&#125;,</span><br><span class="line">		PartnerB: <span class="literal">nil</span>,</span><br><span class="line">	&#125;</span><br><span class="line">	b, err := json.Marshal(p)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Println(<span class="string">&quot;Marshal fail: &quot;</span>, err)</span><br><span class="line">	&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">		fmt.Printf(<span class="string">&quot;Marshal success: %v\n&quot;</span>, <span class="type">string</span>(b))</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 反序列化</span></span><br><span class="line">	s := <span class="string">`&#123;</span></span><br><span class="line"><span class="string">		&quot;firstName&quot;:&quot;John&quot;,</span></span><br><span class="line"><span class="string">		&quot;lastName&quot;:&quot;Smith&quot;,</span></span><br><span class="line"><span class="string">		&quot;email&quot;:&quot;john@example.com&quot;,</span></span><br><span class="line"><span class="string">		&quot;age&quot;:11,</span></span><br><span class="line"><span class="string">		&quot;height&quot;:&quot;180.01&quot;,</span></span><br><span class="line"><span class="string">		&quot;sex&quot;:true,</span></span><br><span class="line"><span class="string">		&quot;isNative&quot;:&quot;false&quot;,</span></span><br><span class="line"><span class="string">		&quot;partnerA&quot;:&#123;</span></span><br><span class="line"><span class="string">			&quot;firstName&quot;:&quot;&quot;,</span></span><br><span class="line"><span class="string">			&quot;age&quot;:0</span></span><br><span class="line"><span class="string">		&#125;</span></span><br><span class="line"><span class="string">	&#125;`</span></span><br><span class="line">	<span class="keyword">var</span> p2 Person</span><br><span class="line">	err = json.Unmarshal([]<span class="type">byte</span>(s), &amp;p2)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Println(<span class="string">&quot;Unmarshal fail: &quot;</span>, err)</span><br><span class="line">	&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">		fmt.Printf(<span class="string">&quot;Unmarshal success: %+v\n&quot;</span>, p2)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="输出"><a href="#输出" class="headerlink" title="输出"></a>输出</h4><blockquote>
+<p>Marshal success: {“firstName”:”John”,”email”:”<a href="mailto:&#x6a;&#111;&#104;&#110;&#x40;&#x65;&#x78;&#x61;&#109;&#112;&#108;&#x65;&#x2e;&#99;&#x6f;&#x6d;">&#x6a;&#111;&#104;&#110;&#x40;&#x65;&#x78;&#x61;&#109;&#112;&#108;&#x65;&#x2e;&#99;&#x6f;&#x6d;</a>“,”age”:11,”height”:”180.01”,”sex”:true,”isNative”:”false”,”partnerA”:{“firstName”:””,”age”:0}}<br>Unmarshal success: {FirstName:John LastName: Email:<a href="mailto:&#106;&#111;&#x68;&#110;&#64;&#101;&#120;&#x61;&#109;&#112;&#x6c;&#101;&#46;&#x63;&#111;&#x6d;">&#106;&#111;&#x68;&#110;&#64;&#101;&#120;&#x61;&#109;&#112;&#x6c;&#101;&#46;&#x63;&#111;&#x6d;</a> Age:11 Height:180.01 Sex:true IsNative:false PartnerA:{Name: Age:0} PartnerB:<nil>}</p>
+</blockquote>
+<h4 id="关键点"><a href="#关键点" class="headerlink" title="关键点"></a>关键点</h4><ul>
+<li><p><code>-</code>在序列化和反序列化时忽略字段。</p>
+</li>
+<li><p><code>omitempty</code>只在序列化时有用。</p>
+</li>
+<li><p><strong>由于结构体并不是原生类型，所以没有默认值（零值），因此<code>omitempty</code>忽略嵌套结构体会失效。想要实现，就要嵌套结构体指针，此时<code>omitempty</code>实际上是忽略了指针的零值，当且仅当这个结构体指针为nil时才会被忽略，如果是<code>&amp;StructExample&#123;&#125;</code>执行了默认初始化后的结构体的指针，则不能被忽略。</strong></p>
+</li>
+<li><p>注意处理json中字符串形的数字&#x2F;布尔型。</p>
+</li>
+</ul>
+<h2 id="数字解析"><a href="#数字解析" class="headerlink" title="数字解析"></a>数字解析</h2><h3 id="问题：序列化-反序列化时问题"><a href="#问题：序列化-反序列化时问题" class="headerlink" title="问题：序列化&#x2F;反序列化时问题"></a>问题：序列化&#x2F;反序列化时问题</h3><p>由于json中没有浮点和整型的区别，统称number。在将数据反序列化为<code>map[string]interface&#123;&#125;</code>时，在这些number被反序列都会默认变成<code>float64</code>。如果想要将number反序列化为int，应当使用<code>json.Decoder</code>进行反序列化为<code>json.Number</code>类型，再调用<code>json.Number</code>实现的方法即可。</p>
+<h4 id="demo：使用Unmarshal和Decoder反序列化的流程"><a href="#demo：使用Unmarshal和Decoder反序列化的流程" class="headerlink" title="demo：使用Unmarshal和Decoder反序列化的流程"></a>demo：使用Unmarshal和Decoder反序列化的流程</h4><p>此时应当使用decoder反序列化。</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">parseNumbersDemo</span><span class="params">()</span></span> &#123;</span><br><span class="line">	s := <span class="string">`&#123;&quot;name&quot;:&quot;John&quot;, &quot;age&quot;:123, &quot;height&quot;: 1234567890&#125;`</span></span><br><span class="line">	<span class="keyword">var</span> m1 <span class="keyword">map</span>[<span class="type">string</span>]<span class="keyword">interface</span>&#123;&#125;</span><br><span class="line">    <span class="keyword">var</span> m2 <span class="keyword">map</span>[<span class="type">string</span>]<span class="keyword">interface</span>&#123;&#125;</span><br><span class="line">    </span><br><span class="line">	<span class="comment">// 常用的Unmarshal反序列化，number解析到m1中会成为float64类型</span></span><br><span class="line">	err := json.Unmarshal([]<span class="type">byte</span>(s), &amp;m1)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Println(<span class="string">&quot;Unmarshal fail: &quot;</span>, err)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">	fmt.Printf(<span class="string">&quot;value: %#v, type:%T\n&quot;</span>, m1[<span class="string">&quot;name&quot;</span>], m1[<span class="string">&quot;name&quot;</span>])</span><br><span class="line">	fmt.Printf(<span class="string">&quot;value: %#v, type:%T\n&quot;</span>, m1[<span class="string">&quot;age&quot;</span>], m1[<span class="string">&quot;age&quot;</span>])</span><br><span class="line">	fmt.Printf(<span class="string">&quot;value: %#v, type:%T\n&quot;</span>, m1[<span class="string">&quot;height&quot;</span>], m1[<span class="string">&quot;height&quot;</span>])</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 使用decoder反序列化，指定使用number类型，此时number解析到m2中会成为json.Number类型</span></span><br><span class="line">	decoder := json.NewDecoder(bytes.NewReader([]<span class="type">byte</span>(s)))</span><br><span class="line">	decoder.UseNumber()</span><br><span class="line">	err = decoder.Decode(&amp;m2)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Println(<span class="string">&quot;Decode fail: &quot;</span>, err)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">	fmt.Printf(<span class="string">&quot;value: %#v, type:%T\n&quot;</span>, m2[<span class="string">&quot;name&quot;</span>], m2[<span class="string">&quot;name&quot;</span>])</span><br><span class="line">	fmt.Printf(<span class="string">&quot;value: %#v, type:%T\n&quot;</span>, m2[<span class="string">&quot;age&quot;</span>], m2[<span class="string">&quot;age&quot;</span>])</span><br><span class="line">	fmt.Printf(<span class="string">&quot;value: %#v, type:%T\n&quot;</span>, m2[<span class="string">&quot;height&quot;</span>], m2[<span class="string">&quot;height&quot;</span>])</span><br><span class="line"></span><br><span class="line">    age, err := m2[<span class="string">&quot;age&quot;</span>].(json.Number).Int64()  <span class="comment">// 类型断言，并调用json.Number实现的Int64()方法</span></span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Println(<span class="string">&quot;parse to int64 fail: &quot;</span>, err)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">	fmt.Printf(<span class="string">&quot;value: %#v, type:%T\n&quot;</span>, age, age)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="输出-1"><a href="#输出-1" class="headerlink" title="输出"></a>输出</h4><blockquote>
+<p>value: “John”, type:string<br>value: 123, type:float64<br>value: 1.23456789e+09, type:float64</p>
+<p>value: “John”, type:string<br>value: “123”, type:json.Number<br>value: “1234567890”, type:json.Number</p>
+<p>value: 123, type:int64</p>
+</blockquote>
+<h4 id="关键点-1"><a href="#关键点-1" class="headerlink" title="关键点"></a>关键点</h4><ul>
+<li><p>使用decoder反序列化后，都变成了json.Number类型，共有3中方法可以转为想要的类型，底层都是strconv。</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// A Number represents a JSON number literal.</span></span><br><span class="line"><span class="keyword">type</span> Number <span class="type">string</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// String returns the literal text of the number.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(n Number)</span></span> String() <span class="type">string</span> &#123; <span class="keyword">return</span> <span class="type">string</span>(n) &#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Float64 returns the number as a float64.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(n Number)</span></span> Float64() (<span class="type">float64</span>, <span class="type">error</span>) &#123;</span><br><span class="line">	<span class="keyword">return</span> strconv.ParseFloat(<span class="type">string</span>(n), <span class="number">64</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Int64 returns the number as an int64.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(n Number)</span></span> Int64() (<span class="type">int64</span>, <span class="type">error</span>) &#123;</span><br><span class="line">	<span class="keyword">return</span> strconv.ParseInt(<span class="type">string</span>(n), <span class="number">10</span>, <span class="number">64</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h2 id="时间解析"><a href="#时间解析" class="headerlink" title="时间解析"></a>时间解析</h2><h3 id="问题：json解析的时间格式处理"><a href="#问题：json解析的时间格式处理" class="headerlink" title="问题：json解析的时间格式处理"></a>问题：json解析的时间格式处理</h3><p>Go标准库的json包使用<code>RFC3339</code>标准定义的时间格式：</p>
+<blockquote>
+<p>RFC3339格式：“{年}-{月}-{日}T{时}:{分}:{秒}.{毫秒}{时区}”；<br>其中的年要用零补齐为4位，月日时分秒则补齐为2位。毫秒部分是可选的。<br>最后一部分是时区，例如 Z 其实是零时区 Zulu 的缩写，它也可能是 +08:00 或 -08:00 等；<br>2017-12-08T00:00:00.00Z<br>2017-12-08T08:00:00.00+08:00<br>都代表所在时区的本地时间。</p>
+</blockquote>
+<p>因此json通常无法反序列化常用的时间字符串。而在序列化时也只能得到RFC3339标准的字符串。</p>
+<p>例如<code>&quot;2006-01-02 15:04:05&quot;</code>。</p>
+<h4 id="demo：json解析特定格式时间字符串"><a href="#demo：json解析特定格式时间字符串" class="headerlink" title="demo：json解析特定格式时间字符串"></a>demo：json解析特定格式时间字符串</h4><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">parseTimeInDefaultDemo</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">type</span> Times <span class="keyword">struct</span> &#123;</span><br><span class="line">		CreatedAt time.Time <span class="string">`json:&quot;createdAt&quot;`</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">// 反序列化</span></span><br><span class="line">	str := <span class="string">`&#123;&quot;createdAt&quot;: &quot;2024-01-25 01:23:45&quot;&#125;`</span></span><br><span class="line">	<span class="keyword">var</span> times Times</span><br><span class="line">	err := json.Unmarshal([]<span class="type">byte</span>(str), &amp;times)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="comment">// parsing time &quot;2024-01-25 01:23:45&quot; as &quot;2006-01-02T15:04:05Z07:00&quot;: cannot parse &quot; 01:23:45&quot; as &quot;T&quot;</span></span><br><span class="line">		fmt.Println(<span class="string">&quot;unmarshal error:&quot;</span>, err)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 序列化</span></span><br><span class="line">	b, err := json.Marshal(Times&#123;CreatedAt: time.Now()&#125;)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="comment">// 不会err</span></span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">	fmt.Println(<span class="type">string</span>(b))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="输出-2"><a href="#输出-2" class="headerlink" title="输出"></a>输出</h4><blockquote>
+<p>unmarshal error: parsing time “2024-01-25 01:23:45” as “2006-01-02T15:04:05Z07:00”: cannot parse “ 01:23:45” as “T”<br>{“createdAt”:”2024-01-26T00:12:45.5037411+08:00”}</p>
+</blockquote>
+<h3 id="自定义解析时间字段"><a href="#自定义解析时间字段" class="headerlink" title="自定义解析时间字段"></a>自定义解析时间字段</h3><p>只需要对结构体实现 <code>json.Marshaler</code>&#x2F;<code>json.Unmarshaler</code> 接口，即可实现自定义的事件格式解析。</p>
+<h4 id="demo"><a href="#demo" class="headerlink" title="demo"></a>demo</h4><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">type</span> Order <span class="keyword">struct</span> &#123;</span><br><span class="line">	Id        <span class="type">string</span>    <span class="string">`json:&quot;id&quot;`</span></span><br><span class="line">	CreatedAt time.Time <span class="string">`json:&quot;createdAt&quot;`</span> </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> layout = <span class="string">&quot;2006-01-02 15:04:05&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 实现json.Marshaler</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(o *Order)</span></span> MarshalJSON() ([]<span class="type">byte</span>, <span class="type">error</span>) &#123;</span><br><span class="line">	<span class="keyword">type</span> TempOrder Order <span class="comment">// 定义与Order字段一致的新类型</span></span><br><span class="line">	ot := <span class="keyword">struct</span> &#123;</span><br><span class="line">		CreatedAt  <span class="type">string</span> <span class="string">`json:&quot;createdAt&quot;`</span> <span class="comment">// 和原Order的CreatedAt同名</span></span><br><span class="line">		*TempOrder        <span class="comment">// 匿名字段。避免直接嵌套Order进入死循环</span></span><br><span class="line">	&#125;&#123;</span><br><span class="line">		CreatedAt: o.CreatedAt.Format(layout),</span><br><span class="line">		TempOrder: (*TempOrder)(o), <span class="comment">// 类型转换，虽然TempOrder也有CreatedAt，但编译器会直接使用当前作用域已有的CreatedAt</span></span><br><span class="line">	&#125;</span><br><span class="line">	fmt.Println(<span class="string">&quot;MarshalJSON: &quot;</span>, ot.CreatedAt)</span><br><span class="line">	<span class="keyword">return</span> json.Marshal(ot)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 实现json.Unmarshaler</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(o *Order)</span></span> UnmarshalJSON(data []<span class="type">byte</span>) <span class="type">error</span> &#123;</span><br><span class="line">	<span class="keyword">type</span> TempOrder Order <span class="comment">// 定义与Order字段一致的新类型</span></span><br><span class="line">	ot := <span class="keyword">struct</span> &#123;</span><br><span class="line">		CreatedAt  <span class="type">string</span> <span class="string">`json:&quot;createdAt&quot;`</span> <span class="comment">// 和原Order的CreatedAt同名</span></span><br><span class="line">		*TempOrder        <span class="comment">// 避免直接嵌套Order进入死循环</span></span><br><span class="line">	&#125;&#123;</span><br><span class="line">		TempOrder: (*TempOrder)(o), <span class="comment">// 类型转换，虽然TempOrder也有CreatedAt，但编译器会直接使用当前作用域已有的CreatedAt，也就是空值str</span></span><br><span class="line">	&#125;</span><br><span class="line">	fmt.Println(<span class="string">&quot;ot created: &quot;</span>, ot.CreatedAt) <span class="comment">// 目前os.CreatedAt为空值字符串</span></span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> err := json.Unmarshal(data, &amp;ot); err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> err</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">var</span> err <span class="type">error</span></span><br><span class="line">	o.CreatedAt, err = time.Parse(layout, ot.CreatedAt)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> err</span><br><span class="line">	&#125;</span><br><span class="line">	fmt.Println(<span class="string">&quot;UnmarshalJSON: &quot;</span>, ot.CreatedAt)</span><br><span class="line">	<span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">parseTimeInCustomDemo</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="comment">// 反序列化</span></span><br><span class="line">	str := <span class="string">`&#123;&quot;id&quot;:&quot;123&quot;,&quot;createdAt&quot;: &quot;2024-01-25 01:23:45&quot;&#125;`</span></span><br><span class="line">	<span class="keyword">var</span> order Order</span><br><span class="line">	err := json.Unmarshal([]<span class="type">byte</span>(str), &amp;order)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Println(<span class="string">&quot;unmarshal error: &quot;</span>, err)</span><br><span class="line">	&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">		fmt.Printf(<span class="string">&quot;unmarshal success: %+v\n&quot;</span>, order)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 序列化</span></span><br><span class="line">	b, err := json.Marshal(&amp;Order&#123;CreatedAt: time.Now(), Id: <span class="string">&quot;123&quot;</span>&#125;)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Println(<span class="string">&quot;marshal error:&quot;</span>, err)</span><br><span class="line">	&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">		fmt.Println(<span class="string">&quot;marshal success: &quot;</span> + <span class="type">string</span>(b))</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="输出-3"><a href="#输出-3" class="headerlink" title="输出"></a>输出</h4><blockquote>
+<p>ot created:<br>UnmarshalJSON:  2024-01-25 01:23:45<br>unmarshal success: {Id:123 CreatedAt:2024-01-25 01:23:45 +0000 UTC}<br>MarshalJSON:  2024-01-26 10:15:29<br>marshal success: {“createdAt”:”2024-01-26 10:15:29”,”id”:”123”}</p>
+</blockquote>
+<h4 id="关键点-2"><a href="#关键点-2" class="headerlink" title="关键点"></a>关键点</h4><ul>
+<li>需要实现的两个方法的参数和返回值</li>
+<li>原理都是新建一个新的结构体，该结构体和原来结构体的时间字段不一致（分别是string和time.Time），其他字段完全一致，因此在序列化和反序列化时，额外对这个新结构体的string类型的时间字段进行修改即可完成。</li>
+<li>匿名字段：如何使得新结构体和原结构体的其他字段完全一样，而只有时间字段不一样？直接使用指针匿名字段即可，而新结构体的时间字段修改为string类型，并和原结构体同名同tag。</li>
+</ul>
+<h1 id="Ref"><a href="#Ref" class="headerlink" title="Ref"></a>Ref</h1><blockquote>
+<p><a href="https://www.jianshu.com/p/b8eb352bbd77">时间格式 ISO8601 &#x2F; RFC3339 - 简书 (jianshu.com)</a></p>
+<p><a href="https://www.liwenzhou.com/posts/Go/json-tricks/#c-0-0-0">你需要知道的那些go语言json技巧 | 李文周的博客 (liwenzhou.com)</a></p>
+</blockquote>
+]]></content>
+      <categories>
+        <category>go</category>
+        <category>go标准库</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>4-go标准库time包</title>
+    <url>/2024/01/7d6e633c1e61/</url>
+    <content><![CDATA[<h1 id="go标准库time"><a href="#go标准库time" class="headerlink" title="go标准库time"></a>go标准库time</h1><h2 id="时间概念："><a href="#时间概念：" class="headerlink" title="时间概念："></a>时间概念：</h2><ol>
+<li><strong>秒（Second）：</strong> 秒是国际单位制中最基本的时间单位。</li>
+<li><strong>毫秒（Millisecond）：</strong> 一毫秒等于一秒的千分之一，即 0.001 秒。</li>
+<li><strong>微秒（Microsecond）：</strong> 一微秒等于一秒的百万分之一，即 0.000001 秒。</li>
+<li><strong>纳秒（Nanosecond）：</strong> 一纳秒等于一秒的十亿分之一，即 0.000000001 秒。</li>
+</ol>
+<h2 id="time包中几个重要的类型"><a href="#time包中几个重要的类型" class="headerlink" title="time包中几个重要的类型"></a>time包中几个重要的类型</h2><h3 id="时间time-Time"><a href="#时间time-Time" class="headerlink" title="时间time.Time"></a>时间time.Time</h3><p>直接打印time.Time</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line">fmt.Println(time.Now())</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>2024-01-27 16:54:00.820804 +0800 CST m&#x3D;+0.001517601</p>
+</blockquote>
+<ol>
+<li><strong>日期：</strong>  “2024-01-27”</li>
+<li><strong>时间：</strong>  “16:54:00”</li>
+<li><strong>毫秒：</strong> “.820804” 表示毫秒部分，即 0.820804秒。</li>
+<li><strong>时区：</strong> “+0800 CST” 表示时区为中国标准时间 (CST)，偏移量为 +08:00。</li>
+</ol>
+<p>“m&#x3D;+0.001517601” 是 Go 语言中的一个时间戳增量（timestamp increment）部分。它通常出现在 Go 的时间字符串中，表示时间相对于某个基准时间的增量。</p>
+<p>在这个增量部分中：</p>
+<ul>
+<li>“m&#x3D;” 表示这是一个时间戳增量的标识。</li>
+<li>“+0.001517601” 表示时间戳相对于某个基准时间增加了 0.001653801 秒。</li>
+</ul>
+<p>因此，整个时间戳字符串表示的是在基准时间<code>2024-01-27 16:54:00.820804 +0800 CST</code>上增加了约 0.001517601 秒的时间点。这在某些应用中用于测量事件的时间差或计时。</p>
+<h4 id="demo1：通过Time类型实现的方法获取当前的年月日时分秒等信息"><a href="#demo1：通过Time类型实现的方法获取当前的年月日时分秒等信息" class="headerlink" title="demo1：通过Time类型实现的方法获取当前的年月日时分秒等信息"></a>demo1：通过Time类型实现的方法获取当前的年月日时分秒等信息</h4><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">timeDemo</span><span class="params">()</span></span> &#123;</span><br><span class="line">	now := time.Now()</span><br><span class="line">	fmt.Println(now)</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 都返回int</span></span><br><span class="line">	year := now.Year()                 <span class="comment">// 年</span></span><br><span class="line">	month := now.Month()               <span class="comment">// 月</span></span><br><span class="line">	day := now.Day()                   <span class="comment">// 日</span></span><br><span class="line">	hour := now.Hour()                 <span class="comment">// 时</span></span><br><span class="line">	minute := now.Minute()             <span class="comment">// 分</span></span><br><span class="line">	second := now.Second()             <span class="comment">// 秒</span></span><br><span class="line">	hour, minute, second = now.Clock() <span class="comment">// 同时获得时分秒</span></span><br><span class="line">	fmt.Printf(<span class="string">&quot;%d-%02d-%02d %02d:%02d:%02d\n&quot;</span>, year, month, day, hour, minute, second)</span><br><span class="line"></span><br><span class="line">	yearDay := now.YearDay() <span class="comment">// 当年的第几天</span></span><br><span class="line">	fmt.Println(yearDay)</span><br><span class="line"></span><br><span class="line">	year, week := now.ISOWeek() <span class="comment">// 第几年的第几周</span></span><br><span class="line">	fmt.Println(year, week)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="输出"><a href="#输出" class="headerlink" title="输出"></a>输出</h4><blockquote>
+<p>2024-01-27 19:43:42.6785304 +0800 CST m&#x3D;+0.001528201<br>2024-01-27 19:43:42<br>27<br>2024 4</p>
+</blockquote>
+<h3 id="时间戳-int64"><a href="#时间戳-int64" class="headerlink" title="时间戳 int64"></a>时间戳 int64</h3><p>时间戳是自1970年1月1日（08:00:00GMT）至当前时间的<strong>总毫秒数&#x2F;总纳秒数</strong>。因此毫秒时间戳和纳秒时间戳本质上是int64类型。</p>
+<p>主要处理的是Time对象和int64时间戳的相互转换。</p>
+<p><img src="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/image/image-20230904202005254.png" alt="image-20230904202005254"></p>
+<h4 id="demo：-Time和时间戳的相互转换"><a href="#demo：-Time和时间戳的相互转换" class="headerlink" title="demo： Time和时间戳的相互转换"></a>demo： Time和时间戳的相互转换</h4><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">timeStampDemo</span><span class="params">()</span></span> &#123;</span><br><span class="line">    now := time.Now() <span class="comment">//获取当前时间</span></span><br><span class="line">    <span class="comment">// -------Time对象转化为时间戳，即int64</span></span><br><span class="line">    timestamp1 := now.Unix()     <span class="comment">//时间戳</span></span><br><span class="line">    timestamp2 := now.UnixNano() <span class="comment">//纳秒时间戳</span></span><br><span class="line">    fmt.Printf(<span class="string">&quot;current timestamp1: %v\n&quot;</span>, timestamp1)</span><br><span class="line">    fmt.Printf(<span class="string">&quot;current timestamp2: %v\n&quot;</span>, timestamp2)</span><br><span class="line"></span><br><span class="line">    <span class="comment">// ------Unix()将时间戳转化为Time对象</span></span><br><span class="line">    timeObj := time.Unix(timestamp1, <span class="number">0</span>) <span class="comment">// 0表示纳秒部分为0</span></span><br><span class="line">    fmt.Println(timeObj)</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 但纳秒时间戳不能被Unix()转化为Time对象，因为也是int64可以调用，但结果有错</span></span><br><span class="line">    timeObj2 := time.Unix(timestamp2, <span class="number">0</span>) <span class="comment">// 0表示纳秒部分为0</span></span><br><span class="line">    fmt.Println(timeObj2)                <span class="comment">// 有错</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="输出-1"><a href="#输出-1" class="headerlink" title="输出"></a>输出</h4><blockquote>
+<p>current timestamp1: 1706346896<br>current timestamp2: 1706346896333444600<br>2024-01-27 17:14:56 +0800 CST<br>54071982569-10-27 00:23:20 +0800 CST  &#x2F;&#x2F; 显然出错</p>
+</blockquote>
+<h3 id="时间间隔-time-Duration"><a href="#时间间隔-time-Duration" class="headerlink" title="时间间隔 time.Duration"></a>时间间隔 time.Duration</h3><p>time.Duration本质也是一个int64类型，但有很多可调用的方法（而同为int64的时间戳没有），表示两个时间点之间经过的时间，<strong>以纳秒为单位</strong>。</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">type</span> Duration <span class="type">int64</span> <span class="comment">// 实际上就是int64类型，因此最长时间间隔可以表示到290年</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> (</span><br><span class="line">    Nanosecond  Duration = <span class="number">1</span></span><br><span class="line">    Microsecond          = <span class="number">1000</span> * Nanosecond</span><br><span class="line">    Millisecond          = <span class="number">1000</span> * Microsecond</span><br><span class="line">    Second               = <span class="number">1000</span> * Millisecond</span><br><span class="line">    Minute               = <span class="number">60</span> * Second</span><br><span class="line">    Hour                 = <span class="number">60</span> * Minute</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="计时器-time-Ticker"><a href="#计时器-time-Ticker" class="headerlink" title="计时器 time.Ticker"></a>计时器 time.Ticker</h3><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">type</span> Ticker <span class="keyword">struct</span> &#123;</span><br><span class="line">	C &lt;-<span class="keyword">chan</span> Time <span class="comment">// The channel on which the ticks are delivered.</span></span><br><span class="line">	r runtimeTimer</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="延迟执行-time-Timeer"><a href="#延迟执行-time-Timeer" class="headerlink" title="延迟执行 time.Timeer"></a>延迟执行 time.Timeer</h3><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">type</span> Timer <span class="keyword">struct</span> &#123;</span><br><span class="line">    C &lt;-<span class="keyword">chan</span> Time</span><br><span class="line">    r runtimeTimer</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="时间操作"><a href="#时间操作" class="headerlink" title="时间操作"></a>时间操作</h2><p>使用时间类型<code>time.Time</code>所调用的方法来操作时间。</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span></span> </span><br><span class="line"><span class="comment">// 增减</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(t Time)</span></span> Add(d Duration) Time</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(t Time)</span></span> Sub(u Time) Duration   </span><br><span class="line"><span class="comment">// 比较</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(t Time)</span></span> Equal(u Time) <span class="type">bool</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(t Time)</span></span> Before(u Time) <span class="type">bool</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(t Time)</span></span> After(u Time) <span class="type">bool</span></span><br></pre></td></tr></table></figure>
+
+<p>需要注意的点是：</p>
+<ul>
+<li>加和减的参数和返回值完全相反，注意使用目的：<ul>
+<li>如果想获得Time对象减去d的Time对象，直接调用<code>Add(-d)</code>即可</li>
+</ul>
+</li>
+<li>Sub中，如果结果超过Duration的最大值&#x2F;最小值，那么结果就是最大值&#x2F;最小值。</li>
+</ul>
+<h4 id="demo"><a href="#demo" class="headerlink" title="demo"></a>demo</h4><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">timeOperation</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="comment">// 创建时间</span></span><br><span class="line">	t1 := time.Date(<span class="number">2024</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, time.Local)</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 时间加减</span></span><br><span class="line">	t2 := t1.Add(time.Hour)</span><br><span class="line">	fmt.Println(t2.Format(<span class="string">&quot;2006-01-02 15:04:05&quot;</span>))</span><br><span class="line">	subDuration := t2.Sub(t1)</span><br><span class="line">	fmt.Println(subDuration)</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 时间比较</span></span><br><span class="line">	fmt.Println(<span class="string">&quot;equal?: &quot;</span>, t1.Equal(t2))</span><br><span class="line">	fmt.Println(<span class="string">&quot;before?: &quot;</span>, t1.Before(t2))</span><br><span class="line">	fmt.Println(<span class="string">&quot;after?: &quot;</span>, t1.After(t2))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="输出-2"><a href="#输出-2" class="headerlink" title="输出"></a>输出</h4><blockquote>
+<p>2024-01-01 01:00:00<br>1h0m0s<br>equal?:  false<br>before?:  true<br>after?:  false</p>
+</blockquote>
+<h2 id="格式化时间"><a href="#格式化时间" class="headerlink" title="格式化时间"></a>格式化时间</h2><p>格式化中，有两种情况：</p>
+<ul>
+<li>Time以某个格式转为字符串</li>
+<li>以某个时间格式的时间字符串转为Time</li>
+</ul>
+<p>因此，这种<strong>格式</strong>需要有一个模板来告知，例如<code>2006-01-02 15:04:05.000 Mon Jan PM</code></p>
+<p>其中：</p>
+<ul>
+<li>2006或06表示年份，4位和2位的区别。</li>
+<li>15或3时表示小时，并且15表示24小时制，3表示12小时制。</li>
+<li>.000表示秒后多少位</li>
+<li>Jan为月份英文缩写。</li>
+<li>Mon表示星期的英文缩写。</li>
+<li>PM指上午或下午</li>
+</ul>
+<p>time包给出的时间模板</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> (</span><br><span class="line">	Layout      = <span class="string">&quot;01/02 03:04:05PM &#x27;06 -0700&quot;</span> <span class="comment">// The reference time, in numerical order.</span></span><br><span class="line">	ANSIC       = <span class="string">&quot;Mon Jan _2 15:04:05 2006&quot;</span></span><br><span class="line">	UnixDate    = <span class="string">&quot;Mon Jan _2 15:04:05 MST 2006&quot;</span></span><br><span class="line">	RubyDate    = <span class="string">&quot;Mon Jan 02 15:04:05 -0700 2006&quot;</span></span><br><span class="line">	RFC822      = <span class="string">&quot;02 Jan 06 15:04 MST&quot;</span></span><br><span class="line">	RFC822Z     = <span class="string">&quot;02 Jan 06 15:04 -0700&quot;</span> <span class="comment">// RFC822 with numeric zone</span></span><br><span class="line">	RFC850      = <span class="string">&quot;Monday, 02-Jan-06 15:04:05 MST&quot;</span></span><br><span class="line">	RFC1123     = <span class="string">&quot;Mon, 02 Jan 2006 15:04:05 MST&quot;</span></span><br><span class="line">	RFC1123Z    = <span class="string">&quot;Mon, 02 Jan 2006 15:04:05 -0700&quot;</span> <span class="comment">// RFC1123 with numeric zone</span></span><br><span class="line">	RFC3339     = <span class="string">&quot;2006-01-02T15:04:05Z07:00&quot;</span></span><br><span class="line">	RFC3339Nano = <span class="string">&quot;2006-01-02T15:04:05.999999999Z07:00&quot;</span></span><br><span class="line">	Kitchen     = <span class="string">&quot;3:04PM&quot;</span></span><br><span class="line">	<span class="comment">// Handy time stamps.</span></span><br><span class="line">	Stamp      = <span class="string">&quot;Jan _2 15:04:05&quot;</span></span><br><span class="line">	StampMilli = <span class="string">&quot;Jan _2 15:04:05.000&quot;</span></span><br><span class="line">	StampMicro = <span class="string">&quot;Jan _2 15:04:05.000000&quot;</span></span><br><span class="line">	StampNano  = <span class="string">&quot;Jan _2 15:04:05.000000000&quot;</span></span><br><span class="line">	DateTime   = <span class="string">&quot;2006-01-02 15:04:05&quot;</span></span><br><span class="line">	DateOnly   = <span class="string">&quot;2006-01-02&quot;</span></span><br><span class="line">	TimeOnly   = <span class="string">&quot;15:04:05&quot;</span></span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="demo-Time-字符串-和-字符串-Time"><a href="#demo-Time-字符串-和-字符串-Time" class="headerlink" title="demo: Time-&gt;字符串 和 字符串-&gt;Time"></a>demo: Time-&gt;字符串 和 字符串-&gt;Time</h4><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">formatDemo</span><span class="params">()</span></span> &#123;</span><br><span class="line">	now := time.Now()</span><br><span class="line">	<span class="comment">// ----------Time-&gt;字符串</span></span><br><span class="line">	fmt.Println(now.Format(<span class="string">&quot;2006-01-02 15:04:05.000000 Mon PM Jan&quot;</span>))</span><br><span class="line">	fmt.Println(now.Format(<span class="string">&quot;2006-1-2 3:04:05.000000&quot;</span>))</span><br><span class="line">	fmt.Println(now.Format(<span class="string">&quot;03:04 06/01/02&quot;</span>))</span><br><span class="line"></span><br><span class="line">	<span class="comment">// ----------字符串-&gt;Time</span></span><br><span class="line">	<span class="comment">// 使用默认Parse</span></span><br><span class="line">	timeObj, err := time.Parse(<span class="string">&quot;2006/01/02 15:04:05&quot;</span>, <span class="string">&quot;2023/09/12 15:04:05&quot;</span>)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(err)</span><br><span class="line">	&#125;</span><br><span class="line">	fmt.Println(timeObj, timeObj.Location())</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 使用ParseInLocation</span></span><br><span class="line">	<span class="comment">// 加载时区</span></span><br><span class="line">	<span class="comment">// loc := time.Local</span></span><br><span class="line">	loc, err := time.LoadLocation(<span class="string">&quot;Asia/Shanghai&quot;</span>)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Println(err)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">// 按照指定时区和指定格式解析字符串时间</span></span><br><span class="line">	timeObj, err = time.ParseInLocation(<span class="string">&quot;2006/01/02 15:04:05&quot;</span>, <span class="string">&quot;2023/09/12 15:04:05&quot;</span>, loc)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Println(err)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">	fmt.Println(timeObj, timeObj.Location())</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="输出-3"><a href="#输出-3" class="headerlink" title="输出"></a>输出</h4><blockquote>
+<p>2024-01-27 20:19:46.756028 Sat PM Jan<br>2024-1-27 8:19:46.756028<br>08:19 24&#x2F;01&#x2F;27<br>2023-09-12 15:04:05 +0000 UTC UTC<br>2023-09-12 15:04:05 +0800 CST Asia&#x2F;Shanghai</p>
+</blockquote>
+<h4 id="关键点"><a href="#关键点" class="headerlink" title="关键点"></a>关键点</h4><ul>
+<li>要注意模板中01或1的区别，01时，表示解析出来的月份要2位，不足两位要补0。而1时，解析出来的月份则不需要满足2位。</li>
+<li>parse的问题是，默认Parse返回的时间是美国时区，因此可以使用ParseInLocation指定时区。</li>
+</ul>
+<h2 id="定时与延迟执行"><a href="#定时与延迟执行" class="headerlink" title="定时与延迟执行"></a>定时与延迟执行</h2><h3 id="定时器"><a href="#定时器" class="headerlink" title="定时器"></a>定时器</h3><p>个人觉得定时器这个翻译不太好，ticker有心脏的意思，意味着ticker是一直跳动的，翻译成定时器后给我的感觉像是闹钟，只会响一次。定时器的本质是每隔一定时间往通道C里放<code>time.now()</code></p>
+<p>创建计时器有两种方式：</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">NewTicker</span><span class="params">(d Duration)</span></span> *Ticker </span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Tick</span><span class="params">(d Duration)</span></span> &lt;-<span class="keyword">chan</span> Time &#123;</span><br><span class="line">	<span class="keyword">if</span> d &lt;= <span class="number">0</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> NewTicker(d).C</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>可见，<code>NewTicker</code>返回<code>*Ticker</code>，而<code>Tick</code>直接返回产生定时作用的通道C，</p>
+<h4 id="demo：定时器"><a href="#demo：定时器" class="headerlink" title="demo：定时器"></a>demo：定时器</h4><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">tickerDemo</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">		ticker := time.NewTicker(time.Second)</span><br><span class="line">		<span class="keyword">for</span> i := <span class="keyword">range</span> ticker.C &#123; <span class="comment">// 每秒往通道里放当前Time对象</span></span><br><span class="line">			fmt.Println(<span class="string">&quot;NewTicker: &quot;</span>, i)</span><br><span class="line"></span><br><span class="line">		&#125;</span><br><span class="line">	&#125;()</span><br><span class="line"></span><br><span class="line">	<span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">		tickerChan := time.Tick(time.Second) <span class="comment">// 返回通道</span></span><br><span class="line">		<span class="keyword">for</span> i := <span class="keyword">range</span> tickerChan &#123;          <span class="comment">// 每秒往通道里放当前Time对象</span></span><br><span class="line">			fmt.Println(<span class="string">&quot;Tick: &quot;</span>, i)</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;()</span><br><span class="line">	time.Sleep(time.Second * <span class="number">3</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="输出-4"><a href="#输出-4" class="headerlink" title="输出"></a>输出</h4><blockquote>
+<p>NewTicker:  2024-01-27 20:34:35.992855 +0800 CST m&#x3D;+1.015519701<br>Tick:  2024-01-27 20:34:35.992855 +0800 CST m&#x3D;+1.015519701<br>NewTicker:  2024-01-27 20:34:36.9878244 +0800 CST m&#x3D;+2.010439701<br>Tick:  2024-01-27 20:34:36.9878244 +0800 CST m&#x3D;+2.010439701</p>
+</blockquote>
+<h3 id="延迟执行"><a href="#延迟执行" class="headerlink" title="延迟执行"></a>延迟执行</h3><p>与定时器不同，延迟执行像闹钟，只会往通道放一次<code>time.now()</code>作为”午时已到”的信号。</p>
+<p>同样有两种方式，分别返回<code>*Timer</code>和通道</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">NewTimer</span><span class="params">(d Duration)</span></span> *Timer </span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">After</span><span class="params">(d Duration)</span></span> &lt;-<span class="keyword">chan</span> Time &#123;</span><br><span class="line">	<span class="keyword">return</span> NewTimer(d).C</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>可见，<code>NewTicker</code>返回Ticker对象，而<code>Tick</code>直接返回产生定时作用的通道C，</p>
+<h4 id="demo：延迟执行"><a href="#demo：延迟执行" class="headerlink" title="demo：延迟执行"></a>demo：延迟执行</h4><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">delayDemo</span><span class="params">()</span></span> &#123;</span><br><span class="line">	fmt.Println(time.Now())</span><br><span class="line">	<span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">		timer := time.NewTimer(time.Second * <span class="number">3</span>)</span><br><span class="line">		<span class="keyword">for</span> i := <span class="keyword">range</span> timer.C &#123;</span><br><span class="line">			fmt.Println(<span class="string">&quot;after 3 second: &quot;</span>, i)</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;()</span><br><span class="line"></span><br><span class="line">	<span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">		C := time.After(time.Second * <span class="number">2</span>)</span><br><span class="line">		<span class="keyword">for</span> i := <span class="keyword">range</span> C &#123;</span><br><span class="line">			fmt.Println(<span class="string">&quot;after 2 second: &quot;</span>, i)</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;()</span><br><span class="line"></span><br><span class="line">	time.Sleep(time.Second * <span class="number">4</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="输出-5"><a href="#输出-5" class="headerlink" title="输出"></a>输出</h4><blockquote>
+<p>after 2 second:  2024-01-27 20:43:00.630604 +0800 CST m&#x3D;+2.018875701<br>after 3 second:  2024-01-27 20:43:01.6330493 +0800 CST m&#x3D;+3.021285301</p>
+</blockquote>
+]]></content>
+      <categories>
+        <category>go</category>
+        <category>go标准库</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>5-go标准库io包</title>
+    <url>/2024/01/d253896ad3da/</url>
+    <content><![CDATA[<h1 id="go标准库io包"><a href="#go标准库io包" class="headerlink" title="go标准库io包"></a>go标准库io包</h1><h2 id="接口"><a href="#接口" class="headerlink" title="接口"></a>接口</h2><p>输入和输出是针对go程序而言的。</p>
+<h3 id="基础接口"><a href="#基础接口" class="headerlink" title="基础接口"></a>基础接口</h3><h4 id="io-Reader"><a href="#io-Reader" class="headerlink" title="io.Reader"></a>io.Reader</h4><p>定义了从输入设备读取的方法，实现了对输入设备的抽象</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">type</span> Reader <span class="keyword">interface</span> &#123;</span><br><span class="line">    Read(p []<span class="type">byte</span>) (n <span class="type">int</span>, err <span class="type">error</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>Read</code>方法有如下关键点</p>
+<ul>
+<li>它期望从reader中读到<code>len(p)</code>长度的数据，并放到<code>p</code>中；而实际读到的长度由返回的<code>n</code>给出，可能少于期望长度。</li>
+<li>若读到数据，<code>n&gt;0 且 err == nil</code>。</li>
+<li>若读到空数据，<code>n==0且 err == io.EOF</code>。</li>
+<li>根据定义，若当前读到了n&gt;0的数据且读完，它可能即返回<code>io.EO</code>F又返回<code>nil</code>。</li>
+</ul>
+<h4 id="io-Writer"><a href="#io-Writer" class="headerlink" title="io.Writer"></a>io.Writer</h4><p>定义了向输出设备写的操作，实现了对输出设备的抽象，可以向writer写输出</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">type</span> Writer <span class="keyword">interface</span> &#123;</span><br><span class="line">   Write(p []<span class="type">byte</span>) (n <span class="type">int</span>, err <span class="type">error</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>关键点</p>
+<ul>
+<li><p>将<code>p</code>写到writer中，返回实际写入的字节长度。</p>
+</li>
+<li><p>若全部写入，<code>err == nil</code></p>
+</li>
+<li><p>若只写入一部分，<code>err != nil</code></p>
+</li>
+</ul>
+<h4 id="io-Seeker"><a href="#io-Seeker" class="headerlink" title="io.Seeker"></a>io.Seeker</h4><p>定义了读写光标的移动操作</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">type</span> Seeker <span class="keyword">interface</span> &#123;</span><br><span class="line">	Seek(offset <span class="type">int64</span>, whence <span class="type">int</span>) (<span class="type">int64</span>, <span class="type">error</span>) </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="io-Closer"><a href="#io-Closer" class="headerlink" title="io.Closer"></a>io.Closer</h4><p>定义了关闭数据流的方法</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">type</span> Closer <span class="keyword">interface</span> &#123;</span><br><span class="line">	Close() <span class="type">error</span>  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="demo"><a href="#demo" class="headerlink" title="demo"></a>demo</h4><p>将文件打开并</p>
+<p><strong>注意 os.File同时实现了Reader接口和Writer接口。</strong></p>
+<p>假设文件内容为</p>
+<blockquote>
+<p>12345</p>
+</blockquote>
+<p>以io的形式读取文件，读三次，而切片bs长度为3，因此每次最多读3个字节的数据。</p>
+<ul>
+<li>第一次读了3个字节，err为nil，n&#x3D;3，bs切片存放了123</li>
+<li>第二次读了2个字节，err为nil，n&#x3D;2，bs切片存放了453，这意味着切片的数据在被真正读取时才会改变。</li>
+<li>第三次读时，文件已经读完，产生了EOF。</li>
+</ul>
+<p><strong>可以看出每次read，内部有个读写指针在运作。</strong></p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line">filename := <span class="string">&quot;io-demo/file-for-io.txt&quot;</span></span><br><span class="line">file, err := os.Open(filename) <span class="comment">// 只读</span></span><br><span class="line"><span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">    <span class="keyword">return</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">defer</span> file.Close()</span><br><span class="line"><span class="comment">// 读取数据</span></span><br><span class="line">bs := <span class="built_in">make</span>([]<span class="type">byte</span>, <span class="number">3</span>, <span class="number">3</span>)</span><br><span class="line">n, err := file.Read(bs)</span><br><span class="line">fmt.Println(err, n, <span class="type">string</span>(bs)) <span class="comment">// &lt;nil&gt; 3 123</span></span><br><span class="line">n, err = file.Read(bs)</span><br><span class="line">fmt.Println(err, n, <span class="type">string</span>(bs)) <span class="comment">//&lt;nil&gt; 2 453</span></span><br><span class="line">n, err = file.Read(bs)</span><br><span class="line">fmt.Println(err, n, <span class="type">string</span>(bs)) <span class="comment">// EOF 0 453</span></span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h3 id="组合接口"><a href="#组合接口" class="headerlink" title="组合接口"></a>组合接口</h3><p>即将上述4种接口的 组合</p>
+<ul>
+<li>io.ReadWriter接</li>
+<li>io.ReadCloser接</li>
+<li>io.WriteCloser接</li>
+<li>io.ReadWriteCloser接</li>
+<li>io.ReadSeeker接</li>
+<li>io.WriteSeeker接</li>
+<li>io.ReadWriteSeeker接</li>
+</ul>
+<h3 id="指定偏移量读写"><a href="#指定偏移量读写" class="headerlink" title="指定偏移量读写"></a>指定偏移量读写</h3><p>适合并行读写同一个数据源的场景</p>
+<h4 id="io-ReaderAt"><a href="#io-ReaderAt" class="headerlink" title="io.ReaderAt"></a>io.ReaderAt</h4><p>将Reader中指定偏移的内容写进store中</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">type</span> ReaderAt <span class="keyword">interface</span> &#123;</span><br><span class="line">    ReadAt(store []<span class="type">byte</span>, off <span class="type">int64</span>) (n <span class="type">int</span>, err <span class="type">error</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>忽略数据的读写指针，从数据的<strong>起始位置的偏移</strong> off 处开始读取</p>
+</li>
+<li><p>如果对象的数据流只有部分可用，不足以填满 store， 则 ReadAt 将等待所有数据可用之后，继续向 store 中写入直到将 store 填满后再返回，在这点上 ReadAt 要比 Read 更严格</p>
+</li>
+<li><p>返回读取的字节数 n 和读取时遇到的错误</p>
+<ul>
+<li>n &lt; len(store)，则需要返回一个 err 值来说明为什么没有将 p 填满（比如 EOF）</li>
+<li>n &#x3D; len(store)，而且对象的数据没有全部读完，则err 将返回 nil</li>
+<li>n &#x3D; len(store)，而且对象的数据刚好全部读完，则err 将返回 EOF 或者 nil（不确定）</li>
+</ul>
+</li>
+<li><p>例程</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">readAtDemo</span><span class="params">()</span></span> &#123;</span><br><span class="line">	byteReader := bytes.NewReader([]<span class="type">byte</span>(<span class="string">&quot;0123456789&quot;</span>))</span><br><span class="line">	store := <span class="built_in">make</span>([]<span class="type">byte</span>, <span class="number">5</span>)</span><br><span class="line">	n, err := byteReader.ReadAt(store, <span class="number">4</span>)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Println(err, n, <span class="type">string</span>(store))</span><br><span class="line">	&#125;</span><br><span class="line">	fmt.Println(err, n, <span class="type">string</span>(store))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>结果</p>
+<blockquote>
+<p><nil> 5 45678</p>
+</blockquote>
+</li>
+</ul>
+<h4 id="io-WriterAt"><a href="#io-WriterAt" class="headerlink" title="io.WriterAt"></a>io.WriterAt</h4><p>从Writer的指定偏移位置中写入</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">type</span> WriterAt <span class="keyword">interface</span> &#123;</span><br><span class="line">    WriteAt(store []<span class="type">byte</span>, off <span class="type">int64</span>) (n <span class="type">int</span>, err <span class="type">error</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>忽略数据的读写指针，从数据的<strong>起始的位置偏移</strong> off 处开始写入</p>
+</li>
+<li><p>返回写入的字节数和写入时遇到的错误</p>
+</li>
+<li><p>如果 n &lt; len(p)，则必须返回一个 err 值来说明为什么没有将 p 完全写入</p>
+</li>
+<li><p>如果偏移off要比输出设备的长度要大，也能写入，但会补充对应数量的全0字节。</p>
+</li>
+<li><p>例程1</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">writeAtDemo1</span><span class="params">()</span></span> &#123;</span><br><span class="line">	f, _ := os.OpenFile(<span class="string">&quot;./io-demo/file-for-io.txt&quot;</span>, os.O_RDWR, <span class="number">0775</span>)</span><br><span class="line">	<span class="keyword">defer</span> f.Close()</span><br><span class="line">	f.WriteString(<span class="string">&quot;01234567890&quot;</span>)</span><br><span class="line">	n, err := f.WriteAt([]<span class="type">byte</span>(<span class="string">&quot;从第3个位置写入&quot;</span>), <span class="number">3</span>)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Println(<span class="string">&quot;WriteAt error: &quot;</span>, err)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">	fmt.Println(n) <span class="comment">// 2</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>结果</p>
+<blockquote>
+<p>运行完毕后文件内容：012从第3个位置写入置写入</p>
+</blockquote>
+</li>
+<li><p>例程2</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">writeAtDemo2</span><span class="params">()</span></span> &#123;</span><br><span class="line">	f, _ := os.OpenFile(<span class="string">&quot;./io-demo/file-for-io.txt&quot;</span>, os.O_RDWR, <span class="number">0775</span>)</span><br><span class="line">	<span class="keyword">defer</span> f.Close()</span><br><span class="line">	n, err := f.WriteAt([]<span class="type">byte</span>(<span class="string">&quot;从第3个位置写入&quot;</span>), <span class="number">30</span>)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Println(<span class="string">&quot;WriteAt error: &quot;</span>, err)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">	fmt.Println(n)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>结果</p>
+<p>运行完毕后文件内容：</p>
+<p><img src="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/iimage/image-20240128164757866.png" alt="image-20240128164757866"></p>
+<p>其中，文件前面补充了30个ASCII中的空字符，即全0字节。</p>
+</li>
+</ul>
+<h3 id="指定读写器接口"><a href="#指定读写器接口" class="headerlink" title="指定读写器接口"></a>指定读写器接口</h3><h4 id="io-ReaderFrom"><a href="#io-ReaderFrom" class="headerlink" title="io.ReaderFrom"></a>io.ReaderFrom</h4><p>定义了直接从另一个reader读取数据的方法，而不需要经过byte数组</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">type</span> ReaderFrom <span class="keyword">interface</span> &#123;</span><br><span class="line">	ReadFrom(r Reader) (n <span class="type">int64</span>, err <span class="type">error</span>)		</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>会从另一个reader读到Eof或出错</li>
+</ul>
+<h4 id="io-WriterTo"><a href="#io-WriterTo" class="headerlink" title="io.WriterTo"></a>io.WriterTo</h4><p>定义了直接向另一个writer写入数据的方法，而不需要经过byte数组。</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">type</span> WriterTo <span class="keyword">interface</span> &#123;</span><br><span class="line">	WriteTo(w Writer) (n <span class="type">int64</span>, err <span class="type">error</span>)		</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>会向另一个writer写完本writer的所有内容直到EOF，或出错</li>
+</ul>
+<h4 id="demo："><a href="#demo：" class="headerlink" title="demo："></a>demo：</h4><p>使用WriterTo&#x2F;ReadFrom将标准输入直接写到标准输出中</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">writeToDemo</span><span class="params">()</span></span> &#123;</span><br><span class="line">	stdReader := bufio.NewReader(os.Stdin)</span><br><span class="line">	stdWriter := bufio.NewWriter(os.Stdout)</span><br><span class="line">	<span class="comment">// 将从os.Stdin读到数据直接写到os.Stdout中</span></span><br><span class="line">	n, err := stdReader.WriteTo(stdWriter)</span><br><span class="line">	fmt.Println(n)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">readFromDemo</span><span class="params">()</span></span> &#123;</span><br><span class="line">	stdReader := bufio.NewReader(os.Stdin)</span><br><span class="line">	stdWriter := bufio.NewWriter(os.Stdout)</span><br><span class="line">	<span class="comment">// 将从os.Stdin读到数据直接写到os.Stdout中</span></span><br><span class="line">	n, err := stdWriter.ReadFrom(stdReader)</span><br><span class="line">	fmt.Println(n)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="demo：-1"><a href="#demo：-1" class="headerlink" title="demo："></a>demo：</h4><p>将文件全部读到标准输出中</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">readFromFileDemo</span><span class="params">()</span></span> &#123;</span><br><span class="line">	f, _ := os.Open(<span class="string">&quot;./io-demo/file-for-io.txt&quot;</span>)</span><br><span class="line">    <span class="keyword">defer</span> f.Close()</span><br><span class="line">	stdWriter := bufio.NewWriter(os.Stdout)</span><br><span class="line">	<span class="comment">// 将从os.Stdin读到数据直接写到os.Stdout中</span></span><br><span class="line">	n, err := stdWriter.ReadFrom(f)</span><br><span class="line">	fmt.Println(<span class="string">&quot;\n&quot;</span>, n)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="byte读写接口"><a href="#byte读写接口" class="headerlink" title="byte读写接口"></a>byte读写接口</h3><p>该io中，每次的操作只有一个字节。</p>
+<h4 id="io-ByteReader"><a href="#io-ByteReader" class="headerlink" title="io.ByteReader"></a>io.ByteReader</h4><p>定义了读取一个字节的方法</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">type</span> ByteReader <span class="keyword">interface</span> &#123;</span><br><span class="line">    ReadByte() (c <span class="type">byte</span>, err <span class="type">error</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="io-ByteWriter"><a href="#io-ByteWriter" class="headerlink" title="io.ByteWriter"></a>io.ByteWriter</h4><p>定义了写入一个字节的方法</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">type</span> ByteWriter <span class="keyword">interface</span> &#123;</span><br><span class="line">    WriteByte(c <span class="type">byte</span>) <span class="type">error</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="io-ByteScanner"><a href="#io-ByteScanner" class="headerlink" title="io.ByteScanner"></a>io.ByteScanner</h4><p>不仅定义了读取一个字节的方法，还有回退上一次因ReadByte的读操作导致的指针右移</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">type</span> ByteScanner <span class="keyword">interface</span> &#123;</span><br><span class="line">    ByteReader                    <span class="comment">// ByteReader接口</span></span><br><span class="line">    UnreadByte() <span class="type">error</span>           </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="Rune读写接口"><a href="#Rune读写接口" class="headerlink" title="Rune读写接口"></a>Rune读写接口</h3><p>几乎用不上，略</p>
+<h3 id="字符串写接口"><a href="#字符串写接口" class="headerlink" title="字符串写接口"></a>字符串写接口</h3><h4 id="io-StringWriter"><a href="#io-StringWriter" class="headerlink" title="io.StringWriter"></a>io.StringWriter</h4><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">type</span> StringWriter <span class="keyword">interface</span> &#123;</span><br><span class="line">   WriteString(s <span class="type">string</span>) (n <span class="type">int</span>, err <span class="type">error</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>直接往数据源写字符串。</p>
+<h2 id="IO工具"><a href="#IO工具" class="headerlink" title="IO工具"></a>IO工具</h2><p><img src="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/iimage/v2-6a4e875953da37edee80a82473f21199_720w.webp" alt="img"></p>
+<h3 id="结构体"><a href="#结构体" class="headerlink" title="结构体"></a>结构体</h3><h4 id="LimitedReader"><a href="#LimitedReader" class="headerlink" title="LimitedReader"></a>LimitedReader</h4><p>限制读取的数据长度，至多读取 n 个字节</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">type</span> LimitedReader <span class="keyword">struct</span> &#123;</span><br><span class="line">	R Reader <span class="comment">// underlying reader</span></span><br><span class="line">	N <span class="type">int64</span>  <span class="comment">// max bytes remaining</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="PipeReader"><a href="#PipeReader" class="headerlink" title="PipeReader"></a>PipeReader</h4><h4 id="PipeWriter"><a href="#PipeWriter" class="headerlink" title="PipeWriter"></a>PipeWriter</h4><h4 id="SectionReader"><a href="#SectionReader" class="headerlink" title="SectionReader"></a>SectionReader</h4><h3 id="方法"><a href="#方法" class="headerlink" title="方法"></a>方法</h3><h4 id="复制"><a href="#复制" class="headerlink" title="复制"></a>复制</h4><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Copy</span><span class="params">(dst Writer, src Reader)</span></span> (written <span class="type">int64</span>, err <span class="type">error</span>)</span><br></pre></td></tr></table></figure>
+
+<p>将副本从src复制到dst，直到在src上达到EOF或发生错误。类似ReadFrom和WriteTo。</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">CopyBuffer</span><span class="params">(dst Writer, src Reader, buf []<span class="type">byte</span>)</span></span> (written <span class="type">int64</span>, err <span class="type">error</span>)</span><br></pre></td></tr></table></figure>
+
+<p>与copy类似，但带缓冲</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">CopyN</span><span class="params">(dst Writer, src Reader, n <span class="type">int64</span>)</span></span> (written <span class="type">int64</span>, err <span class="type">error</span>)</span><br></pre></td></tr></table></figure>
+
+<p>CopyN将n个字节（或直到出错）从src复制到dst。</p>
+<h5 id="demo：使用copy将文件io复制到标准输出"><a href="#demo：使用copy将文件io复制到标准输出" class="headerlink" title="demo：使用copy将文件io复制到标准输出"></a>demo：使用copy将文件io复制到标准输出</h5><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">copyFromFileDemo</span><span class="params">()</span></span> &#123;</span><br><span class="line">	f, _ := os.Open(<span class="string">&quot;./io-demo/file-for-io.txt&quot;</span>)</span><br><span class="line">	n, err := io.Copy(os.Stdout, f)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Println(<span class="string">&quot;Copy fail: &quot;</span>, err)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">	fmt.Println(<span class="string">&quot;\nn: &quot;</span>, n)</span><br><span class="line">	f.Close()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="读取"><a href="#读取" class="headerlink" title="读取"></a>读取</h4><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">ReadAtLeast</span><span class="params">(r Reader, buf []<span class="type">byte</span>, min <span class="type">int</span>)</span></span> (n <span class="type">int</span>, err <span class="type">error</span>)</span><br></pre></td></tr></table></figure>
+
+<p>至少将min个字节读到buf中，如果buf长度小于min，则error。</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">ReadAll</span><span class="params">(r Reader)</span></span> ([]<span class="type">byte</span>, <span class="type">error</span>)</span><br></pre></td></tr></table></figure>
+
+<p>ReadAll从r读取，直到出现错误或EOF。<strong>由于ReadAll定义为从src读取直到EOF，因此它不会将读取的EOF视为要报告的错误。</strong></p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">ReadFull</span><span class="params">(r Reader, buf []<span class="type">byte</span>)</span></span> (n <span class="type">int</span>, err <span class="type">error</span>) &#123;</span><br><span class="line">	<span class="keyword">return</span> ReadAtLeast(r, buf, <span class="built_in">len</span>(buf))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>读取直到buf填满。</p>
+<h5 id="demo-1"><a href="#demo-1" class="headerlink" title="demo"></a>demo</h5><p>ReadAtLeast和ReadFull区别。</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">readDemo</span><span class="params">()</span></span> &#123;</span><br><span class="line">	strReader := strings.NewReader(<span class="string">&quot;01234567890&quot;</span>)</span><br><span class="line">	b1 := <span class="built_in">make</span>([]<span class="type">byte</span>, <span class="number">10</span>)</span><br><span class="line">	n, err := io.ReadAtLeast(strReader, b1, <span class="number">5</span>)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Println(<span class="string">&quot;ReadAtLeast fail: &quot;</span>, err)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">	fmt.Println(<span class="string">&quot;ReadAtLeast: &quot;</span>, <span class="type">string</span>(b1), n)</span><br><span class="line"></span><br><span class="line">	strReader = strings.NewReader(<span class="string">&quot;01234567890&quot;</span>)</span><br><span class="line">	b2 := <span class="built_in">make</span>([]<span class="type">byte</span>, <span class="number">6</span>)</span><br><span class="line">	n, err = io.ReadFull(strReader, b2)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Println(<span class="string">&quot;ReadFull fail: &quot;</span>, err)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">	fmt.Println(<span class="string">&quot;ReadFull: &quot;</span>, <span class="type">string</span>(b2), n)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="输出"><a href="#输出" class="headerlink" title="输出"></a>输出</h5><blockquote>
+<p>ReadAtLeast:  0123456789 10<br>ReadFull:  012345 6</p>
+</blockquote>
+<p>可见，ReadAtLeast可能会读更多内容。</p>
+<h4 id="写"><a href="#写" class="headerlink" title="写"></a>写</h4><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">WriteString</span><span class="params">(w Writer, s <span class="type">string</span>)</span></span> (n <span class="type">int</span>, err <span class="type">error</span>)</span><br></pre></td></tr></table></figure>
+
+<p>不需要实现io.StringWriter即可直接WriteString</p>
+<h1 id="io包之间的关系"><a href="#io包之间的关系" class="headerlink" title="io包之间的关系"></a>io包之间的关系</h1><p><img src="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/image/image-20230907211612801.png" alt="image-20230907211612801"></p>
+<p><img src="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/iimage/7b0b0e891b4c2184c459b31b2354fcfe.png" alt="7b0b0e891b4c2184c459b31b2354fcfe"></p>
+<h1 id="Ref"><a href="#Ref" class="headerlink" title="Ref"></a>Ref</h1><p><a href="https://www.lifelmy.cn/post/2021_12_25_go_io_source/">Go语言 io包源码解读 - CodePlayer (lifelmy.cn)</a></p>
+<p><a href="https://zhuanlan.zhihu.com/p/525137132">Go中常用I&#x2F;O说明 - 知乎 (zhihu.com)</a></p>
+<p><a href="https://cloud.tencent.com/developer/article/2318444">一图掌握golang中IO包的关系-腾讯云开发者社区-腾讯云 (tencent.com)</a></p>
+]]></content>
+      <categories>
+        <category>go</category>
+        <category>go标准库</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>6-go标准库bufio包</title>
+    <url>/2024/02/17d8a4ccd7fc/</url>
+    <content><![CDATA[<h1 id="Go标准库bufio包"><a href="#Go标准库bufio包" class="headerlink" title="Go标准库bufio包"></a>Go标准库bufio包</h1><p>bufio为io操作提供了缓冲区（内存），降低访问磁盘次数，以提高文件读写的效率。例如，有多次写入同一个文件时，可以先多次写到内存，再一次性写入磁盘，减少io系统调用次数。</p>
+<p><img src="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/image/image-20240201150001486.png" alt="image-20240201150001486"></p>
+<p>bufio封装<code>io.Writer</code>和<code>io.Reader</code>接口的对象，并返回一个也实现该接口的对象</p>
+<ul>
+<li>写时要注意<code>Flush</code>的使用</li>
+</ul>
+<h2 id="使用bufio读"><a href="#使用bufio读" class="headerlink" title="使用bufio读"></a>使用bufio读</h2><h3 id="bufio-Reader"><a href="#bufio-Reader" class="headerlink" title="bufio.Reader"></a>bufio.Reader</h3><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">type</span> Reader <span class="keyword">struct</span> &#123;</span><br><span class="line">	buf          []<span class="type">byte</span>    <span class="comment">// 缓存</span></span><br><span class="line">	rd           io.Reader <span class="comment">// 底层的io.Reader</span></span><br><span class="line">	r, w         <span class="type">int</span>       <span class="comment">// buf read and write positions</span></span><br><span class="line">	err          <span class="type">error</span></span><br><span class="line">	lastByte     <span class="type">int</span> <span class="comment">// last byte read for UnreadByte; -1 means invalid</span></span><br><span class="line">	lastRuneSize <span class="type">int</span> <span class="comment">// size of last rune read for UnreadRune; -1 means invalid</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="bufio-NewReaderSize"><a href="#bufio-NewReaderSize" class="headerlink" title="bufio.NewReaderSize"></a>bufio.NewReaderSize</h3><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">bufio</span>.<span class="title">NewReaderSize</span><span class="params">(rd io.Reader, size <span class="type">int</span>)</span></span> *bufio.Reader</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>将<code>io.Reader</code>对象<code>rd</code>封装为缓存大小为<code>size</code>的<code>*bufio.Reader</code>对象</li>
+<li><code>size</code>小于16时会被设置为16</li>
+</ul>
+<h3 id="bufio-NewReader"><a href="#bufio-NewReader" class="headerlink" title="bufio.NewReader"></a>bufio.NewReader</h3><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> (</span><br><span class="line">	defaultBufSize = <span class="number">4096</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">NewReader</span><span class="params">(rd io.Reader)</span></span> *Reader &#123;</span><br><span class="line">	<span class="keyword">return</span> NewReaderSize(rd, defaultBufSize)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>创建<code>size</code>为4096默认大小的<code>*bufio.Reader</code>对象。</li>
+</ul>
+<h3 id="reader-Read"><a href="#reader-Read" class="headerlink" title="reader.Read"></a>reader.Read</h3><p>为<code>bufio.Reader</code>对象可调用方法</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(b *Reader)</span></span> Read(p []<span class="type">byte</span>) (n <span class="type">int</span>, err <span class="type">error</span>) </span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>从<code>b</code>中读取长度为<code>len(p)</code>的内容，存放到<code>p</code>中</li>
+<li>情况1：当缓冲区<code>buf</code>有内容时，将缓冲区内容全部填入<code>p</code>并刷新缓冲</li>
+<li>情况2：当缓冲区<code>buf</code>没内容时<ul>
+<li><code>len(p)&gt;len(buf)</code>，即读取的内容大小&gt;缓冲大小，直接读文件。</li>
+<li><code>len(p)&lt;len(buf)</code>，即读取的内容大小&lt;缓冲大小，文件内容被读到缓冲中。随后，将缓冲中长度<code>len(p)</code>的数据读到<code>p</code>中，此时缓冲有剩余<code>len(buf)-len(p)</code>内容，可供下次读取（即情况1）。</li>
+</ul>
+</li>
+</ul>
+<p>这意味着，在情况2中，若读取的内容比较大时，bufio会将部分内容读进缓冲（预读），后续进行多次从缓冲中读取即可，直到读空缓冲，缓冲再装填。</p>
+<h3 id="reader-Peek"><a href="#reader-Peek" class="headerlink" title="reader.Peek"></a>reader.Peek</h3><p>为<code>bufio.Reader</code>对象可调用方法</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(b *Reader)</span></span> Peek(n <span class="type">int</span>) ([]<span class="type">byte</span>, <span class="type">error</span>)</span><br></pre></td></tr></table></figure>
+
+<p><code>Peek</code>会返回缓存中前<code>n</code>个字节，但不会像<code>reader.Read</code>那样消费缓存中的数据。</p>
+<ul>
+<li>若<code>n&gt;len(buf)</code>，即读取内容比缓存小，返回<code>bufio.ErrBufferFull</code></li>
+<li>若<code>n&lt;=len(buf)</code>，<ul>
+<li>若peek中不包含<code>EOF</code>，返回<code>n</code>个字节。</li>
+<li>若peek中还包含<code>EOF</code>，返回<code>EOF</code>前的所有字节，error会返回<code>EOF</code>。</li>
+</ul>
+</li>
+</ul>
+<h3 id="reader-ReadSlice"><a href="#reader-ReadSlice" class="headerlink" title="reader.ReadSlice"></a>reader.ReadSlice</h3><p><code>bufio.Reader</code>对象可调用方法</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(b *Reader)</span></span> ReadSlice(delim <span class="type">byte</span>) (line []<span class="type">byte</span>, err <span class="type">error</span>) 	</span><br></pre></td></tr></table></figure>
+
+<p>从<code>b</code>的缓冲区中读取数据到<code>line</code>，直到遇到第一个<code>byte</code>类型<code>delim</code>。读取的过程会消耗缓存。</p>
+<ul>
+<li>情况1：在缓存内遇到了<code>delim</code>，返回<code>line</code>和<code>nil</code></li>
+<li>情况2：读完缓存了，没遇到EOF，也没遇到<code>delim</code>，返回<code>line</code>和<code>EOF</code>错误</li>
+<li>情况3：遇到了EOF都没遇到<code>delim</code>，返回<code>line</code>和<code>io.ErrBufferFull</code>错误</li>
+</ul>
+<blockquote>
+<p>注意：</p>
+<p><code>ReadSlice</code>返回的是原始缓存中的内容，如果针对缓存作并发操作，则返回的内容有可能被其他操作覆盖。因此在官方注释里面有写，建议使用<code>ReadBytes</code>或<code>ReadString</code>。但<code>ReadBytes</code>和<code>ReadString</code>涉及内存申请和拷贝，因此会影响性能。在追求高性能的场景下，建议外部使用<code>sync.pool</code>来提供缓存。</p>
+</blockquote>
+<h3 id="reader-ReadBytes"><a href="#reader-ReadBytes" class="headerlink" title="reader.ReadBytes"></a>reader.ReadBytes</h3><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(b *Reader)</span></span> ReadBytes(delim <span class="type">byte</span>) ([]<span class="type">byte</span>, <span class="type">error</span>)</span><br></pre></td></tr></table></figure>
+
+<p>与<code>ReadSlice</code>类似，不同之处在于</p>
+<ol>
+<li>返回<code>[]byte</code>是新的切片，适用于高并发时，而<code>ReadSlice</code>返回原始缓存的切片（众所周知，原始切片被修改后，从其切出来的切片也会被修改）。</li>
+<li>会从缓存中一直读，缓存也一直刷新，直到找到了或<code>EOF</code></li>
+</ol>
+<h3 id="reader-ReadLine"><a href="#reader-ReadLine" class="headerlink" title="reader.ReadLine"></a>reader.ReadLine</h3><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(b *Reader)</span></span> ReadLine() (line []<span class="type">byte</span>, isPrefix <span class="type">bool</span>, err <span class="type">error</span>)</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>从缓存读取一行，底层使用了<code>ReadSlice(&#39;\n&#39;)</code>，并移除该行<code>\n</code>或<code>\r\n</code>。</li>
+<li>如果没有遇到换行符，也不会<code>EOF</code>或<code>io.ErrBufferFull</code>，而是将<code>isPrefix</code>置为真。</li>
+</ul>
+<h3 id="reader-Buffered"><a href="#reader-Buffered" class="headerlink" title="reader.Buffered"></a>reader.Buffered</h3><p><code>bufio.Reader</code>对象可调用方法</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(b *Reader)</span></span> Buffered() <span class="type">int</span> &#123; <span class="keyword">return</span> b.w - b.r &#125;</span><br></pre></td></tr></table></figure>
+
+<p>返回<code>b</code>的缓冲区的剩余的字节数。</p>
+<h3 id="demo1：Read和Buffered"><a href="#demo1：Read和Buffered" class="headerlink" title="demo1：Read和Buffered"></a>demo1：Read和Buffered</h3><h4 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h4><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">bufioReaderDemo</span><span class="params">()</span></span> &#123;</span><br><span class="line">	str := <span class="string">&quot;01234567890123456789012345678901234567890123&quot;</span> <span class="comment">// len(str) = 44</span></span><br><span class="line">	strReader := strings.NewReader(str)                   <span class="comment">// io.Reader</span></span><br><span class="line">	reader := bufio.NewReaderSize(strReader, <span class="number">25</span>)          <span class="comment">// bufio.Reader</span></span><br><span class="line"></span><br><span class="line">	res := <span class="built_in">make</span>([]<span class="type">byte</span>, <span class="number">5</span>)</span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="number">10</span>; i++ &#123;</span><br><span class="line">		n, err := reader.Read(res)</span><br><span class="line">		<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">			fmt.Printf(<span class="string">&quot;the %d-th read fail: %s&quot;</span>, i+<span class="number">1</span>, err)</span><br><span class="line">			<span class="keyword">return</span></span><br><span class="line">		&#125;</span><br><span class="line">		fmt.Printf(<span class="string">&quot;%d) read content：%s; res: %s ;buffer remains：%2d B\n&quot;</span>,</span><br><span class="line">			i+<span class="number">1</span>, <span class="type">string</span>(res[:n]), res, reader.Buffered())</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>此demo将长度为44的字符串转为缓存大小为25的<code>bufio.Reader</code>对象<code>reader</code>。</li>
+<li>随后使用将循环10次，每次从<code>reader</code>中读取5字节到<code>res</code>中</li>
+<li>从输出可以看出，每次读取对应字节后，<code>reader</code>中缓存的数据越来越少。</li>
+<li>再第5次读取后，<code>reader</code>的缓存读完了，因此第6次读取时<code>reader</code>重新填充了缓存。</li>
+<li>第9次读取时，缓存中应该只剩下<code>0123</code>。将数据放到<code>res</code>后，<code>res</code>中第5个位置已经有个9，所以<code>res</code>是<code>01239</code>。</li>
+<li>第9次读完后，同样缓存内容再次读完，同时字符串已经读完，因此第10次读时返回了<code>EOF</code>。</li>
+</ul>
+<h4 id="输出"><a href="#输出" class="headerlink" title="输出"></a>输出</h4><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">1) read content：01234; res: 01234 ;buffer remains：20 B</span><br><span class="line">2) read content：56789; res: 56789 ;buffer remains：15 B</span><br><span class="line">3) read content：01234; res: 01234 ;buffer remains：10 B</span><br><span class="line">4) read content：56789; res: 56789 ;buffer remains： 5 B</span><br><span class="line">5) read content：01234; res: 01234 ;buffer remains： 0 B</span><br><span class="line">6) read content：56789; res: 56789 ;buffer remains：14 B</span><br><span class="line">7) read content：01234; res: 01234 ;buffer remains： 9 B</span><br><span class="line">8) read content：56789; res: 56789 ;buffer remains： 4 B</span><br><span class="line">9) read content：0123; res: 01239 ;buffer remains： 0 B</span><br><span class="line">the 10-th read fail: EOF</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h3 id="demo2：ReadSlice和ReadBytes"><a href="#demo2：ReadSlice和ReadBytes" class="headerlink" title="demo2：ReadSlice和ReadBytes"></a>demo2：ReadSlice和ReadBytes</h3><h4 id="代码-1"><a href="#代码-1" class="headerlink" title="代码"></a>代码</h4><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">readSliceDemo</span><span class="params">()</span></span> &#123;</span><br><span class="line">	str := <span class="string">&quot;abcdefghijklmnopqrstuvwxyz1234567890&quot;</span> <span class="comment">// len(str) = 44</span></span><br><span class="line">	strReader := strings.NewReader(str)           <span class="comment">// io.Reader</span></span><br><span class="line">	reader := bufio.NewReaderSize(strReader, <span class="number">16</span>)  <span class="comment">// bufio.Reader</span></span><br><span class="line"></span><br><span class="line">	b, err := reader.ReadSlice(<span class="string">&#x27;q&#x27;</span>) <span class="comment">// 第17个字母</span></span><br><span class="line">	fmt.Println(<span class="string">&quot;b:&quot;</span>, <span class="type">string</span>(b), <span class="string">&quot; error:&quot;</span>, err)</span><br><span class="line"></span><br><span class="line">	b, err = reader.ReadSlice(<span class="string">&#x27;5&#x27;</span>) <span class="comment">// 更换为ReadBytes</span></span><br><span class="line">	fmt.Println(<span class="string">&quot;b:&quot;</span>, <span class="type">string</span>(b), <span class="string">&quot; error:&quot;</span>, err)</span><br><span class="line"></span><br><span class="line">	b, err = reader.ReadSlice(<span class="string">&#x27;a&#x27;</span>)  <span class="comment">// 更换为ReadBytes</span></span><br><span class="line">	fmt.Println(<span class="string">&quot;b:&quot;</span>, <span class="type">string</span>(b), <span class="string">&quot; error:&quot;</span>, err)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>将字符串转为缓存大小大小16的<code>bufio.Reader</code></li>
+<li>第一次使用<code>ReadSlice</code>找第17个字符<code>q</code>，显然在缓存中找不到。此时为情况3，返回了长度为16的<code>b</code>和<code>io.ErrBufferFull</code>错误。</li>
+<li>第二次使用<code>ReadSlice</code>找到了字符<code>5</code>。此时为情况1，返回了长度为15的<code>b</code>。</li>
+<li>第三次使用<code>ReadSlice</code>，显然找不到字符<code>a</code>，且字符串已读完。此时为情况2，因此返回了长度为5的<code>b</code>和<code>EOF</code>错误。</li>
+</ul>
+<h4 id="输出-1"><a href="#输出-1" class="headerlink" title="输出"></a>输出</h4><blockquote>
+<p>b: abcdefghijklmnop  error: bufio: buffer full<br>b: qrstuvwxyz12345  error: <nil><br>b: 67890  error: EOF</p>
+</blockquote>
+<h4 id="输出2：将所有的ReadSlice换为ReadBytes"><a href="#输出2：将所有的ReadSlice换为ReadBytes" class="headerlink" title="输出2：将所有的ReadSlice换为ReadBytes"></a>输出2：将所有的<code>ReadSlice</code>换为<code>ReadBytes</code></h4><blockquote>
+<p>b: abcdefghijklmnopq  error: <nil><br>b: rstuvwxyz12345  error: <nil><br>b: 67890  error: EOF</p>
+</blockquote>
+<h2 id="使用bufio写"><a href="#使用bufio写" class="headerlink" title="使用bufio写"></a>使用bufio写</h2><h3 id="bufio-Writer"><a href="#bufio-Writer" class="headerlink" title="bufio.Writer"></a>bufio.Writer</h3><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">type</span> Writer <span class="keyword">struct</span> &#123;</span><br><span class="line">	err <span class="type">error</span>     <span class="comment">// 可能出现的错误</span></span><br><span class="line">	buf []<span class="type">byte</span>    <span class="comment">// 缓存</span></span><br><span class="line">	n   <span class="type">int</span>       <span class="comment">// 缓存内部当前的操作位</span></span><br><span class="line">	wr  io.Writer <span class="comment">// 底层io.Writer</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>对<code>bufio.Writer</code>写入时，不再直接写入<code>wr</code>，而是先写入缓存<code>buf</code>，当缓存写满或使用了<code>flush</code>后再写入<code>wr</code>。减少了多次写。</li>
+</ul>
+<h3 id="bufio-NewWriterSize"><a href="#bufio-NewWriterSize" class="headerlink" title="bufio.NewWriterSize"></a>bufio.NewWriterSize</h3><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">NewWriterSize</span><span class="params">(w io.Writer, size <span class="type">int</span>)</span></span> *bufio.Writer </span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>将<code>io.Writer</code>对象<code>w</code>封装为缓存大小为<code>size</code>的<code>*bufio.Writer</code>对象</li>
+<li><code>size</code>大于0即可</li>
+</ul>
+<h3 id="bufio-NewWriter"><a href="#bufio-NewWriter" class="headerlink" title="bufio.NewWriter"></a>bufio.NewWriter</h3><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">NewWriter</span><span class="params">(w io.Writer)</span></span> *bufio.Writer &#123;</span><br><span class="line">	<span class="keyword">return</span> NewWriterSize(w, defaultBufSize)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>将<code>io.Writer</code>对象<code>w</code>封装为缓存大小为<code>4096</code>的<code>*bufio.Writer</code>对象</li>
+</ul>
+<h3 id="writer-Write"><a href="#writer-Write" class="headerlink" title="writer.Write"></a>writer.Write</h3><p><code>bufio.Writer</code>对象可调用方法</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(b *bufio.Writer)</span></span> Write(p []<span class="type">byte</span>) (nn <span class="type">int</span>, err <span class="type">error</span>)</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>将<code>p</code>中内容向<code>b</code>中写入</li>
+<li>情况1：<code>len(p)&gt;len(buf)</code>，即写入的内容大小&gt;缓冲大小，直接写磁盘而不写入缓存。</li>
+<li>情况2：<code>len(p)&lt;len(buf)</code>，即写入的内容大小&lt;缓冲大小<ul>
+<li>当缓冲区<code>buf</code>满时，将缓冲区内容内容写入磁盘</li>
+<li>当缓冲区<code>buf</code>仍有空间时，不会写入磁盘，除非调用<code>Flush</code></li>
+</ul>
+</li>
+</ul>
+<h3 id="writer-Buffered"><a href="#writer-Buffered" class="headerlink" title="writer.Buffered"></a>writer.Buffered</h3><p>为<code>bufio.Writer</code>对象可调用方法</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(b *Writer)</span></span> Buffered() <span class="type">int</span> &#123; <span class="keyword">return</span> b.n &#125;</span><br></pre></td></tr></table></figure>
+
+<p>返回<code>b</code>的缓冲区的已存入的字节数。</p>
+<h3 id="writer-Available"><a href="#writer-Available" class="headerlink" title="writer.Available"></a>writer.Available</h3><p>为<code>bufio.Writer</code>对象可调用方法</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(b *Writer)</span></span> Available() <span class="type">int</span> &#123; <span class="keyword">return</span> <span class="built_in">len</span>(b.buf) - b.n &#125;</span><br></pre></td></tr></table></figure>
+
+<p>返回<code>b</code>的缓冲区的剩余可存入的字节数。</p>
+<h3 id="demo"><a href="#demo" class="headerlink" title="demo"></a>demo</h3><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">bufioWriterDemo</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="comment">// 打开可写文件</span></span><br><span class="line">	file, _ := os.OpenFile(<span class="string">&quot;./6-bufio_demo/file.txt&quot;</span>, os.O_WRONLY, <span class="number">0777</span>)</span><br><span class="line">	<span class="keyword">defer</span> file.Close()</span><br><span class="line">	writer := bufio.NewWriterSize(file, <span class="number">5</span>) <span class="comment">// io.Writer</span></span><br><span class="line">	<span class="comment">// 第一次写</span></span><br><span class="line">	_, err := writer.Write([]<span class="type">byte</span>(<span class="string">&quot;123456&quot;</span>)) <span class="comment">// bufio.Writer</span></span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Println(<span class="string">&quot;bufio writer failed:&quot;</span>, err)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">	fmt.Println(<span class="string">&quot;Buffered:&quot;</span>, writer.Buffered(), <span class="string">&quot;; Available:&quot;</span>, writer.Available())</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 第二次写</span></span><br><span class="line">	_, err = writer.Write([]<span class="type">byte</span>(<span class="string">&quot;12345&quot;</span>)) <span class="comment">// bufio.Writer</span></span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Println(<span class="string">&quot;bufio writer failed:&quot;</span>, err)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">	fmt.Println(<span class="string">&quot;Buffered:&quot;</span>, writer.Buffered(), <span class="string">&quot;; Available:&quot;</span>, writer.Available())</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 第三次写</span></span><br><span class="line">	_, err = writer.Write([]<span class="type">byte</span>(<span class="string">&quot;6789&quot;</span>)) <span class="comment">// bufio.Writer</span></span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Println(<span class="string">&quot;bufio writer failed:&quot;</span>, err)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">	fmt.Println(<span class="string">&quot;Buffered:&quot;</span>, writer.Buffered(), <span class="string">&quot;; Available:&quot;</span>, writer.Available())</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 由于缓冲未满，如果不flush，则不会写入文件中</span></span><br><span class="line">	err = writer.Flush()</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Println(<span class="string">&quot;flush failed:&quot;</span>, err)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">	fmt.Println(<span class="string">&quot;Buffered:&quot;</span>, writer.Buffered(), <span class="string">&quot;; Available:&quot;</span>, writer.Available())</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>此demo打开了可写的文件，并转为了缓冲区大小为5的<code>bufio.writer</code>对象<code>writer</code>。</li>
+<li>第一次往<code>writer</code>中写入了长度为6的字符串，直接写入文件。因此Buffered为0。（情况1）</li>
+<li>第二次往<code>writer</code>中写入了长度为5的字符串，虽然缓冲容量也为5，但显然写入后，Buffered仍为5，即没有刷新，此时数据并未写入文件中。对应情况2中buf未满。</li>
+<li>第二次往<code>writer</code>中写入了长度为4的字符串，由于此时缓冲满了（情况2中buf已满），先将缓冲的数据写入到文件中，随后将4字节字符串写入到缓冲。因此Buffered: 4。</li>
+<li>若直接运行上述代码，最后4字节的字符串将会在缓冲中，由于缓冲未满，而不会被写入到文件（情况2中buf未满）。若取消注释，则调用了<code>Flush()</code>，才会被写入到文件。</li>
+</ul>
+<h3 id="结果"><a href="#结果" class="headerlink" title="结果"></a>结果</h3><h4 id="1、调用了Flush"><a href="#1、调用了Flush" class="headerlink" title="1、调用了Flush"></a>1、调用了Flush</h4><p>输出：</p>
+<blockquote>
+<p>Buffered: 0 ; Available: 5<br>Buffered: 5 ; Available: 0<br>Buffered: 4 ; Available: 1<br>Buffered: 0 ; Available: 5 </p>
+</blockquote>
+<p>文件内容：</p>
+<blockquote>
+<p>123456123456789</p>
+</blockquote>
+<h4 id="2、未调用Flush"><a href="#2、未调用Flush" class="headerlink" title="2、未调用Flush"></a>2、未调用Flush</h4><p>输出</p>
+<blockquote>
+<p>Buffered: 0 ; Available: 5<br>Buffered: 5 ; Available: 0<br>Buffered: 4 ; Available: 1</p>
+</blockquote>
+<p>文件内容</p>
+<blockquote>
+<p>12345612345</p>
+</blockquote>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// ReadWriter stores pointers to a Reader and a Writer.</span></span><br><span class="line"><span class="comment">// It implements io.ReadWriter.</span></span><br><span class="line"><span class="keyword">type</span> ReadWriter <span class="keyword">struct</span> &#123;</span><br><span class="line">	*Reader</span><br><span class="line">	*Writer</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// NewReadWriter allocates a new ReadWriter that dispatches to r and w.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">NewReadWriter</span><span class="params">(r *Reader, w *Writer)</span></span> *ReadWriter &#123;</span><br><span class="line">	<span class="keyword">return</span> &amp;ReadWriter&#123;r, w&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h2 id="例程：逐行读取某个文件"><a href="#例程：逐行读取某个文件" class="headerlink" title="例程：逐行读取某个文件"></a>例程：逐行读取某个文件</h2><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">    <span class="string">&quot;bufio&quot;</span></span><br><span class="line">    <span class="string">&quot;fmt&quot;</span></span><br><span class="line">    <span class="string">&quot;os&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="comment">// 打开一个文本文件</span></span><br><span class="line">    file, err := os.Open(<span class="string">&quot;example.txt&quot;</span>)</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        fmt.Println(<span class="string">&quot;无法打开文件:&quot;</span>, err)</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">defer</span> file.Close()</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 创建一个 Scanner 对象，将文件作为输入源</span></span><br><span class="line">    scanner := bufio.NewScanner(file)</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 逐行读取文本文件并输出</span></span><br><span class="line">    <span class="keyword">for</span> scanner.Scan() &#123;</span><br><span class="line">        line := scanner.Text()</span><br><span class="line">        fmt.Println(<span class="string">&quot;行内容:&quot;</span>, line)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 检查扫描是否发生错误</span></span><br><span class="line">    <span class="keyword">if</span> err := scanner.Err(); err != <span class="literal">nil</span> &#123;</span><br><span class="line">        fmt.Println(<span class="string">&quot;扫描错误:&quot;</span>, err)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h1 id="Ref"><a href="#Ref" class="headerlink" title="Ref"></a>Ref</h1><blockquote>
+<p><a href="https://zhuanlan.zhihu.com/p/73690883">https://zhuanlan.zhihu.com/p/73690883</a></p>
+<p><a href="https://www.jianshu.com/p/04aebd42b762">https://www.jianshu.com/p/04aebd42b762</a></p>
+<p><a href="https://www.jb51.net/article/245382.htm">https://www.jb51.net/article/245382.htm</a></p>
+</blockquote>
+]]></content>
+      <categories>
+        <category>go</category>
+        <category>go标准库</category>
+      </categories>
+  </entry>
 </search>
