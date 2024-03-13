@@ -150,13 +150,13 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">34</span>
+          <span class="site-state-item-count">35</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
           <a href="/categories/">
-        <span class="site-state-item-count">15</span>
+        <span class="site-state-item-count">16</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
   </nav>
@@ -178,6 +178,155 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://drinkwateronly.github.io/2023/11/861a8f3c4257/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Wallnut">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Wallnut">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Wallnut">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2023/11/861a8f3c4257/" class="post-title-link" itemprop="url">ch17-HTTP编程</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2023-11-17 00:00:00 / 修改时间：19:48:54" itemprop="dateCreated datePublished" datetime="2023-11-17T00:00:00+08:00">2023-11-17</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Golang/" itemprop="url" rel="index"><span itemprop="name">Golang</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Golang/Go%E5%9F%BA%E7%A1%80/" itemprop="url" rel="index"><span itemprop="name">Go基础</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="17-HTTP编程"><a href="#17-HTTP编程" class="headerlink" title="17 HTTP编程"></a>17 HTTP编程</h1><ul>
+<li>HTTP基于TCP协议上建立</li>
+<li>当建立在TLS或SSL协议上时，协议变成了加密HTTPS协议</li>
+</ul>
+<h3 id="17-1-2-URL地址"><a href="#17-1-2-URL地址" class="headerlink" title="17.1.2 URL地址"></a>17.1.2 URL地址</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">协议://主机地址/路径?查询</span><br><span class="line">https://www.baidu.com/s?wd=Go语言</span><br><span class="line"></span><br><span class="line">协议://用户名:密码@子域名.域名.顶级域名:端口号/目录/文件名.文件后缀?参数=值#标志</span><br><span class="line">http://admin:password@ceshi.baidu.com:8080/dir/test.php?id=1#flag=1</span><br></pre></td></tr></table></figure>
+
+<h2 id="17-2-HTTP客户端"><a href="#17-2-HTTP客户端" class="headerlink" title="17.2 HTTP客户端"></a>17.2 HTTP客户端</h2><p>RESTful风格路由 Representational State Transfer </p>
+<ul>
+<li>GET（READ）：从服务器取出资源（一项或多项）。</li>
+<li>POST（CREATE）：在服务器新建一个资源。</li>
+<li>PUT（UPDATE）：在服务器更新资源（客户端提供完整资源数据）。</li>
+<li>PATCH（UPDATE）：在服务器更新资源（客户端提供需要修改的资源数据）。</li>
+<li>DELETE（DELETE）：从服务器删除资源。</li>
+</ul>
+<p>对客户端请求用得最多的两个：GET和POST</p>
+<ul>
+<li>GET 从指定的资源请求数据</li>
+<li>POST 向指定的资源提交要被处理的数据</li>
+</ul>
+<p>1、GET用来从服务器获取数据，POST用来向服务器传输数据<br>2、GET不安全，请求会被放在URL，Header和data一起发出。而POST的操作对用户不可见，浏览器会先发送Header，服务器响应100后，再发送data。<br>3、GET传输数据量小，受URL长度限制，Form表单数据集的值必须是ASCII；POST可以传大量数据，且支持整个ISO 10646字符集。</p>
+<h1 id="三个重要的结构体"><a href="#三个重要的结构体" class="headerlink" title="三个重要的结构体"></a>三个重要的结构体</h1><h2 id="1、Client结构体"><a href="#1、Client结构体" class="headerlink" title="1、Client结构体"></a>1、Client结构体</h2><p>Client结构体类型主要充当浏览器角色，创建时结构体成员可以是默认值（无特殊需求基本是默认值）</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Client <span class="keyword">struct</span> &#123;</span><br><span class="line">    Transport RoundTripper</span><br><span class="line">    CheckRedirect <span class="function"><span class="keyword">func</span></span> &#123;req *Request, via []*Request) <span class="type">error</span></span><br><span class="line">    Jar CookieJar</span><br><span class="line">    Timeout time.Duration</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>Transport指定执行独立、单次HTTP请求机制。若为nil，则是DefaultTransport</li>
+<li>CheckRedirect指定重定向策略。如果为nil，采用默认策略连续10次请求后停止。</li>
+<li>Jar指定Cookie管理器。若为nil，请求和回复cookie都忽略。</li>
+<li>Timeout指定请求时间限制，包括连接时间、重定向、读取回复主体的时间。0表示不设置超时。</li>
+</ul>
+<p>拥有如下方法对资源增删改查，其中最重要的是<code>Do</code>方法，其他方法都是对do方法的封装。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *Clinet)</span></span> Do(req *Request) (resp *Response, err <span class="type">error</span>)</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *Clinet)</span></span> Head(url *<span class="type">string</span>) (resp *Response, err <span class="type">error</span>)</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *Clinet)</span></span> Get(url *<span class="type">string</span>) (resp *Response, err <span class="type">error</span>)</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *Clinet)</span></span> Post(url *<span class="type">string</span>, bodyType <span class="type">string</span>, body io.Reader) (resp *Response, err <span class="type">error</span>)</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *Clinet)</span></span> PostForm(url *<span class="type">string</span>, data url.Values) (resp *Response, err <span class="type">error</span>)</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h2 id="2、Request结构体："><a href="#2、Request结构体：" class="headerlink" title="2、Request结构体："></a>2、Request结构体：</h2><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">NewRequest</span><span class="params">(method, urlStr <span class="type">string</span>, body io.Reader)</span></span> (*Request,<span class="type">error</span>)</span><br></pre></td></tr></table></figure>
+
+<p>返回Request结构体指针，指定方法、访问url以及io.Reader接口的body，当method为GET时，body&#x3D;nil即可。</p>
+<p>如果参数body实现了的io.ReadCloser接口</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Request <span class="keyword">struct</span> &#123;</span><br><span class="line">	Method           <span class="type">string</span>               <span class="comment">// 请求方法</span></span><br><span class="line">	URL              *url.URL             <span class="comment">// 请求地址</span></span><br><span class="line">	Proto            <span class="type">string</span>               <span class="comment">// 协议版本，&quot;HTTP/1.0&quot;</span></span><br><span class="line">	ProtoMajor       <span class="type">int</span>                  <span class="comment">// 协议主版本号，“1”</span></span><br><span class="line">	ProtoMinor       <span class="type">int</span>                  <span class="comment">// 协议主副版本号，“0”</span></span><br><span class="line">	Header           Header               <span class="comment">// 请求头</span></span><br><span class="line">	Body             io.ReadCloser        <span class="comment">// 请求的Body</span></span><br><span class="line">	ContentLength    <span class="type">int64</span>                <span class="comment">// ContentLength记录相关内容的长度</span></span><br><span class="line">	TransferEncoding []<span class="type">string</span>             <span class="comment">// TransferEncoding按从最外到最里的顺序列出传输编码</span></span><br><span class="line">	Close            <span class="type">bool</span>                 <span class="comment">// Close在服务端指定是否在回复请求后关闭连接，在客户端指定是否在发送请求后关闭连接</span></span><br><span class="line">	Host             <span class="type">string</span>               <span class="comment">// Host指定URL会在其上寻找资源的主机</span></span><br><span class="line">	Form             url.Values           <span class="comment">// Form是解析好的表单数据，包括URL字段的query参数和POST或PUT的表单数据</span></span><br><span class="line">	PostForm         url.Values           <span class="comment">// PostForm是解析好的POST或PUT的表单数据</span></span><br><span class="line">	MultipartForm    *multipart.Form      <span class="comment">// MultipartForm是解析好的多部件表单，包括上传的文件</span></span><br><span class="line">	Trailer          Header               <span class="comment">// Trailer指定了会在请求主体之后发送的额外的头域</span></span><br><span class="line">	RemoteAddr       <span class="type">string</span>               <span class="comment">// RemoteAddr允许HTTP服务器和其他软件记录该请求的来源地址，一般用于日志</span></span><br><span class="line">	RequestURI       <span class="type">string</span>               <span class="comment">// RequestURI是被客户端发送到服务端的请求中未修改的URI</span></span><br><span class="line">	TLS              *tls.ConnectionState <span class="comment">// TLS字段允许HTTP服务器和其他软件记录接收到该请求的TLS连接的信息</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="3、Response结构体"><a href="#3、Response结构体" class="headerlink" title="3、Response结构体"></a>3、Response结构体</h2><p>请求都会返回Response结构体</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Response <span class="keyword">struct</span> &#123;</span><br><span class="line">    Status           <span class="type">string</span>               <span class="comment">//表示HTTP响应的状态行中的状态码和原因短语，例如&quot;200 OK&quot;</span></span><br><span class="line">    StatusCode       <span class="type">int</span>                  <span class="comment">//表示HTTP响应的状态码，例如200</span></span><br><span class="line">    Proto            <span class="type">string</span>               <span class="comment">//表示使用的HTTP协议版本，例如&quot;HTTP/1.1&quot;</span></span><br><span class="line">    ProtoMajor       <span class="type">int</span>                  <span class="comment">//表示使用的HTTP协议版本的主版本号，例如1</span></span><br><span class="line">    ProtoMinor       <span class="type">int</span>                  <span class="comment">//表示使用的HTTP协议版本的副版本号，例如1</span></span><br><span class="line">    Header           Header               <span class="comment">//表示HTTP响应的头部信息，是一个Header类型的映射</span></span><br><span class="line">    Body             io.ReadCloser        <span class="comment">//表示HTTP响应的主体，是一个io.ReadCloser类型的接口，可以读取响应的数据</span></span><br><span class="line">    ContentLength    <span class="type">int64</span>                <span class="comment">//表示HTTP响应的主体的长度，如果长度未知则为-1</span></span><br><span class="line">    TransferEncoding []<span class="type">string</span>             <span class="comment">//表示HTTP响应的传输编码，例如&quot;chunked&quot;，如果未设置则为nil</span></span><br><span class="line">    Close            <span class="type">bool</span>                 <span class="comment">//表示HTTP响应是否需要关闭连接</span></span><br><span class="line">    Uncompressed     <span class="type">bool</span>                 <span class="comment">//表示HTTP响应是否已经解压缩</span></span><br><span class="line">    Trailer          Header               <span class="comment">//表示HTTP响应的头部信息中未确定的部分</span></span><br><span class="line">    Request          *Request             <span class="comment">//表示发送HTTP请求的Request结构体，如果未设置则为nil</span></span><br><span class="line">    TLS              *tls.ConnectionState <span class="comment">//表示HTTP响应的TLS连接信息，如果未使用TLS则为nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>需要注意的是，Request结构体和Response结构体中的Body都是io.ReadCloser类型，需要使用io.ReadAll读取，同时，需要主动去close()。</strong></p>
+<h2 id="发起请求的两种方式"><a href="#发起请求的两种方式" class="headerlink" title="发起请求的两种方式"></a>发起请求的两种方式</h2><h3 id="1、创建客户端结构体、请求结构体进行请求"><a href="#1、创建客户端结构体、请求结构体进行请求" class="headerlink" title="1、创建客户端结构体、请求结构体进行请求"></a>1、创建客户端结构体、请求结构体进行请求</h3><h4 id="优点：可以定制request的细节。"><a href="#优点：可以定制request的细节。" class="headerlink" title="优点：可以定制request的细节。"></a>优点：可以定制request的细节。</h4><h4 id="流程："><a href="#流程：" class="headerlink" title="流程："></a>流程：</h4><ol>
+<li>创建 客户端结构体 http.Client{} </li>
+<li>NewRequest生成 请求结构体</li>
+<li>设置请求结构体的内容，如header、cookie</li>
+<li>客户端结构体调用请求方法</li>
+</ol>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">NewRequest</span><span class="params">(method, urlStr <span class="type">string</span>, body io.Reader)</span></span> (*Request, <span class="type">error</span>)</span><br></pre></td></tr></table></figure>
+<p>NewRequest输入访问的类型、url 以及 body，返回一个<strong>Request结构体</strong>地址。</p>
+<p>POST请求需要用到body。</p>
+<h4 id="例程"><a href="#例程" class="headerlink" title="例程"></a>例程</h4><p>使用Request结构体的Do方法，所以要先用NewRequest创建请求结构体。GET方法不需要body字段，所以NewRequest中body为nil。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="comment">// 创建client</span></span><br><span class="line">	client := &amp;http.Client&#123;&#125;</span><br><span class="line">    <span class="comment">// 新建请求request结构体</span></span><br><span class="line">	request, err := http.NewRequest(<span class="string">&quot;GET&quot;</span>, <span class="string">&quot;http://www.baidu.com&quot;</span>, <span class="literal">nil</span>)</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 设置request结构体的Header模仿浏览器（非必要）</span></span><br><span class="line">	request.Header.Set(<span class="string">&quot;Accept&quot;</span>, <span class="string">&quot;text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8&quot;</span>)</span><br><span class="line">	request.Header.Set(<span class="string">&quot;Accept-Charset&quot;</span>, <span class="string">&quot;GBK,utf-8;q=0.7,*;q=0.3&quot;</span>)</span><br><span class="line">	request.Header.Set(<span class="string">&quot;Accept-Encoding&quot;</span>, <span class="string">&quot;gzip,deflate,sdch&quot;</span>)</span><br><span class="line">	request.Header.Set(<span class="string">&quot;Accept-Language&quot;</span>, <span class="string">&quot;zh-CN,zh;q=0.8&quot;</span>)</span><br><span class="line">	request.Header.Set(<span class="string">&quot;Cache-Control&quot;</span>, <span class="string">&quot;max-age=0&quot;</span>)</span><br><span class="line">	request.Header.Set(<span class="string">&quot;Connection&quot;</span>, <span class="string">&quot;keep-alive&quot;</span>)</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 添加cookie两种方式，模拟登录（非必要） [userId=12345 session=YWRtaW4=]</span></span><br><span class="line">	cookie := &amp;http.Cookie&#123;Name: <span class="string">&quot;userID&quot;</span>, Value: strconv.Itoa(<span class="number">12345</span>)&#125; <span class="comment">// 新建</span></span><br><span class="line">    <span class="comment">// 为request添加cookie</span></span><br><span class="line">	request.AddCookie(cookie)</span><br><span class="line">	request.AddCookie(&amp;http.Cookie&#123;Name: <span class="string">&quot;session&quot;</span>, Value: <span class="string">&quot;YWRtaW4=&quot;</span>&#125;) </span><br><span class="line"></span><br><span class="line">	<span class="comment">// 使用Do请求</span></span><br><span class="line">	response, err := client.Do(request)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Println(err)</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	fmt.Println(response.StatusCode) <span class="comment">// 打印响应状态码</span></span><br><span class="line">	fmt.Println(response.Request.Header) <span class="comment">// 打印请求头</span></span><br><span class="line">	fmt.Println(response.Request.Cookies()) <span class="comment">// 打印cookie</span></span><br><span class="line">	</span><br><span class="line">	<span class="comment">// 打印响应体</span></span><br><span class="line">	responseBody, err := io.ReadAll(response.Body)</span><br><span class="line">	fmt.Println(<span class="type">string</span>(responseBody))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<h3 id="2、http包直接请求"><a href="#2、http包直接请求" class="headerlink" title="2、http包直接请求"></a>2、http包直接请求</h3><p>例如使用http包的<code>GET()</code>，可以快速发起一个GET请求。底层就是调用Client结构体的GET方法，底层的GET方法是对DO方法的封装。不需要NewRequest创建结构体，直接请求url。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">response, err := http.Get(<span class="string">&quot;http://www.baidu.com&quot;</span>)</span><br><span class="line"><span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">    fmt.Println(err)</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">defer</span> response.Body.Close()  </span><br><span class="line">body, _ := ioutil.ReadAll(response.Body)</span><br><span class="line">fmt.Println(<span class="type">string</span>(body))</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="17-2-3-发起POST请求"><a href="#17-2-3-发起POST请求" class="headerlink" title="17.2.3 发起POST请求"></a>17.2.3 发起POST请求</h2><p>POST要用到Body字段，所以使用NewRequest时需要设置。io.Closer接口若被实现，会被Client类型的Do、Post和PostForm方法以及Transport.RoundTrip方法关闭。</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1818,153 +1967,6 @@ main函数终止，所有goroutine也会一并结束；终止goroutine的最好�
 <li>在发送大文件时，缓冲区也会很快被填满然后发送，不会无端增加数据包数量，不使用Nagle算法会更快。</li>
 <li><strong>TCP套接字默认使用Nagle算法</strong>，未判断数据特性时，不应禁用Nagle算法。</li>
 </ul>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://drinkwateronly.github.io/2023/04/a9dd82130ebb/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="Wallnut">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Wallnut">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Wallnut">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2023/04/a9dd82130ebb/" class="post-title-link" itemprop="url">ch3-基于UDP的服务器实现</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2023-04-20 00:00:00" itemprop="dateCreated datePublished" datetime="2023-04-20T00:00:00+08:00">2023-04-20</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2023-11-17 20:08:14" itemprop="dateModified" datetime="2023-11-17T20:08:14+08:00">2023-11-17</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/C/" itemprop="url" rel="index"><span itemprop="name">C++</span></a>
-        </span>
-          ，
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/C/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">网络编程</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="一、UDP"><a href="#一、UDP" class="headerlink" title="一、UDP"></a>一、UDP</h1><ul>
-<li>UDP不会像TCP那样发送ACK，或者对包进行SEQ排序，可靠性虽然不及TCP，但在性能有时会更好，因为数据损毁的情况并没有想象中那么容易发生。所以在追求性能而非可靠性时UDP是更好的选择。</li>
-<li>TCP为了提供可靠性，在不可靠的IP层进行<strong>流控制</strong>；UDP正是缺少流控制机制。这也是区分它们的重要标志。</li>
-<li>UDP最重要的作用是根据端口号，将传输到目标主机的数据包交付给最终的UDP套接字。而主机A到主机B的传送由IP层完成。</li>
-<li>TCP不存在数据边界：即数据传输过程中调用I&#x2F;O次数不具有任何意义；UDP数据边界：输入函数的调用次数和输出函数调用次数完全一致。</li>
-</ul>
-<h1 id="二、实现UDP服务器-客户端"><a href="#二、实现UDP服务器-客户端" class="headerlink" title="二、实现UDP服务器&#x2F;客户端"></a>二、实现UDP服务器&#x2F;客户端</h1><p>UDP服务器没有TCP的<code>listen</code>和<code>accept</code>，即没有连接过程，<strong>只有创建socket和数据交换过程。</strong></p>
-<p>TCP服务器中套接字应该是一对一，除了监听的那个套接字，若要向10个客户端提供服务，还需要10个套接字。UDP中服务器只需要一个套接字，收发都是通过这个套接字。</p>
-<p>某种意义上，无法区分TCP服务器和客户端。</p>
-<h2 id="2-1基于UDP的IO函数"><a href="#2-1基于UDP的IO函数" class="headerlink" title="2.1基于UDP的IO函数"></a>2.1基于UDP的IO函数</h2><h3 id="2-1-1-sendto"><a href="#2-1-1-sendto" class="headerlink" title="2.1.1 sendto()"></a>2.1.1 sendto()</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/socket.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="type">ssize_t</span> <span class="title">sendto</span><span class="params">(<span class="type">int</span> sock, <span class="type">void</span> *buff, <span class="type">size_t</span> nbytes, <span class="type">int</span> flags,</span></span></span><br><span class="line"><span class="params"><span class="function">                     <span class="keyword">struct</span> sockaddr *to, <span class="type">socklen_t</span> addrlen)</span></span></span><br></pre></td></tr></table></figure>
-<ul>
-<li>功能：向目标IP的端口以UDP方式传输数据</li>
-<li>参数：<ul>
-<li>sock：客户端套接字</li>
-<li>buff：待传输数据的缓冲区地址</li>
-<li>nbytes：待传输数据的字节数</li>
-<li>flags：可选参数，暂未深入，设为0即可</li>
-<li>to：目标的sockaddr结构体地址</li>
-<li>addrlen：目标的sockaddr结构体的字节长度</li>
-</ul>
-</li>
-<li>返回值：失败返回-1，成功返回发送的字节数</li>
-</ul>
-<h3 id="2-1-2-recvfrom"><a href="#2-1-2-recvfrom" class="headerlink" title="2.1.2 recvfrom()"></a>2.1.2 recvfrom()</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/socket.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="type">ssize_t</span> <span class="title">recvfrom</span><span class="params">(<span class="type">int</span> sock, <span class="type">void</span> *buff, <span class="type">size_t</span> nbytes, <span class="type">int</span> flags,</span></span></span><br><span class="line"><span class="params"><span class="function">                     <span class="keyword">struct</span> sockaddr *to, <span class="type">socklen_t</span> *addrlen)</span></span></span><br></pre></td></tr></table></figure>
-<ul>
-<li>功能：接收UDP方式传来的数据，并获取发送方地址信息的sockaddr结构体</li>
-<li>参数：<ul>
-<li>sock：客户端套接字</li>
-<li>buff：接收数据的缓冲区地址</li>
-<li>nbytes：缓冲区的字节数</li>
-<li>flags：可选参数，暂未深入，设为0即可</li>
-<li>from：来自发送方的sockaddr结构体（额外存放，并非接收方的sockaddr结构体）</li>
-<li>addrlen：存放来自发送方的sockaddr结构体长度的地址</li>
-</ul>
-</li>
-<li>返回值：失败返回-1，成功返回接收的字节数</li>
-</ul>
-<h2 id="2-2-回声服务器-客户端例程"><a href="#2-2-回声服务器-客户端例程" class="headerlink" title="2.2 回声服务器&#x2F;客户端例程"></a>2.2 回声服务器&#x2F;客户端例程</h2><h3 id="2-2-1-服务器"><a href="#2-2-1-服务器" class="headerlink" title="2.2.1 服务器"></a>2.2.1 服务器</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;arpa/inet.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/socket.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> BUF_SIZE 20</span></span><br><span class="line"><span class="type">void</span> <span class="title function_">error_handling</span><span class="params">(<span class="type">char</span> *message)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">fputs</span>(message,<span class="built_in">stderr</span>);</span><br><span class="line">    fputc(<span class="string">&#x27;\n&#x27;</span>,<span class="built_in">stderr</span>);</span><br><span class="line">    <span class="built_in">exit</span>(<span class="number">1</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> *argv[])</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">int</span> serv_sock;</span><br><span class="line">    <span class="type">char</span> message[BUF_SIZE];</span><br><span class="line">    <span class="type">int</span> str_len;</span><br><span class="line"></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">sockaddr_in</span> <span class="title">serv_adr</span>, <span class="title">clnt_adr</span>;</span></span><br><span class="line">    <span class="type">socklen_t</span> clnt_adr_sz;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span>(argc!=<span class="number">2</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;Usage : %s &lt;port&gt;\n&quot;</span>, argv[<span class="number">0</span>]);</span><br><span class="line">        <span class="built_in">exit</span>(<span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 注意是生成UDP的socket</span></span><br><span class="line">    serv_sock = socket(PF_INET, SOCK_DGRAM, <span class="number">0</span>);</span><br><span class="line">    <span class="keyword">if</span>(serv_sock == <span class="number">-1</span>) </span><br><span class="line">        error_handling(<span class="string">&quot;socket() error&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="built_in">memset</span>(&amp;serv_adr, <span class="number">0</span>, <span class="keyword">sizeof</span>(serv_adr));</span><br><span class="line">    serv_adr.sin_family = AF_INET;</span><br><span class="line">    serv_adr.sin_addr.s_addr = htonl(INADDR_ANY);</span><br><span class="line">    serv_adr.sin_port = htons(atoi(argv[<span class="number">1</span>]));</span><br><span class="line">	<span class="comment">// 有bind()</span></span><br><span class="line">    <span class="keyword">if</span>(bind(serv_sock, (<span class="keyword">struct</span> sockaddr*)&amp;serv_adr, <span class="keyword">sizeof</span>(serv_adr))==<span class="number">-1</span>)</span><br><span class="line">        error_handling(<span class="string">&quot;bind() error&quot;</span>);</span><br><span class="line">    <span class="comment">// 数据交换</span></span><br><span class="line">    <span class="keyword">while</span>(<span class="number">1</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        clnt_adr_sz = <span class="keyword">sizeof</span>(clnt_adr);</span><br><span class="line">        <span class="comment">// recvfrom</span></span><br><span class="line">        str_len = recvfrom(serv_sock, message, BUF_SIZE, <span class="number">0</span>, </span><br><span class="line">                    (<span class="keyword">struct</span> sockaddr*)&amp;clnt_adr, &amp;clnt_adr_sz);</span><br><span class="line">        <span class="comment">// sendto</span></span><br><span class="line">        sendto(serv_sock, message, str_len,<span class="number">0</span>,</span><br><span class="line">                    (<span class="keyword">struct</span> sockaddr*)&amp;clnt_adr, clnt_adr_sz);</span><br><span class="line">    &#125;</span><br><span class="line">    close(serv_sock);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="2-2-2-客户端"><a href="#2-2-2-客户端" class="headerlink" title="2.2.2 客户端"></a>2.2.2 客户端</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;arpa/inet.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/socket.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> BUF_SIZE 30</span></span><br><span class="line"><span class="type">void</span> <span class="title function_">error_handling</span><span class="params">(<span class="type">char</span> *message)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">fputs</span>(message,<span class="built_in">stderr</span>);</span><br><span class="line">    fputc(<span class="string">&#x27;\n&#x27;</span>,<span class="built_in">stderr</span>);</span><br><span class="line">    <span class="built_in">exit</span>(<span class="number">1</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> *argv[])</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">int</span> sock;</span><br><span class="line">    <span class="type">char</span> message[BUF_SIZE];</span><br><span class="line">    <span class="type">int</span> str_len;</span><br><span class="line"></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">sockaddr_in</span> <span class="title">serv_adr</span>, <span class="title">from_adr</span>;</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span>(argc!=<span class="number">3</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;Usage : %s &lt;IP&gt; &lt;port&gt;\n&quot;</span>, argv[<span class="number">0</span>]);</span><br><span class="line">        <span class="built_in">exit</span>(<span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    sock = socket(PF_INET, SOCK_DGRAM, <span class="number">0</span>);</span><br><span class="line">    <span class="keyword">if</span>(sock == <span class="number">-1</span>) </span><br><span class="line">        error_handling(<span class="string">&quot;socket() error&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="built_in">memset</span>(&amp;serv_adr, <span class="number">0</span>, <span class="keyword">sizeof</span>(serv_adr));</span><br><span class="line">    serv_adr.sin_family = AF_INET;</span><br><span class="line">    serv_adr.sin_addr.s_addr = inet_addr(argv[<span class="number">1</span>]);</span><br><span class="line">    serv_adr.sin_port = htons(atoi(argv[<span class="number">2</span>]));</span><br><span class="line"></span><br><span class="line">    <span class="type">socklen_t</span> from_adr_len;</span><br><span class="line">    <span class="keyword">while</span>(<span class="number">1</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">fputs</span>(<span class="string">&quot;Input message Q to quit: &quot;</span>,<span class="built_in">stdout</span>);</span><br><span class="line">        fgets(message, BUF_SIZE, <span class="built_in">stdin</span>);</span><br><span class="line">        <span class="comment">// printf(&quot;%d&quot;, strlen(message));</span></span><br><span class="line">        <span class="keyword">if</span>(!<span class="built_in">strcmp</span>(message,<span class="string">&quot;q\n&quot;</span>)||!<span class="built_in">strcmp</span>(message,<span class="string">&quot;Q\n&quot;</span>))</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        sendto(sock, message, <span class="keyword">sizeof</span>(message),<span class="number">0</span>,</span><br><span class="line">                    (<span class="keyword">struct</span> sockaddr *)&amp;serv_adr, <span class="keyword">sizeof</span>(serv_adr));</span><br><span class="line"></span><br><span class="line">        from_adr_len = <span class="keyword">sizeof</span>(from_adr);</span><br><span class="line">        str_len = recvfrom(sock,message, BUF_SIZE, <span class="number">0</span>,</span><br><span class="line">                    (<span class="keyword">struct</span> sockaddr *)&amp;from_adr, &amp;from_adr_len);</span><br><span class="line">        </span><br><span class="line">        message[str_len] = <span class="number">0</span>;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;Message from server: %s&quot;</span>, message);</span><br><span class="line">    &#125;</span><br><span class="line">    close(sock);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="2-3-sendto-中的地址分配与注册"><a href="#2-3-sendto-中的地址分配与注册" class="headerlink" title="2.3 sendto()中的地址分配与注册"></a>2.3 sendto()中的地址分配与注册</h2><h3 id="2-3-1-本机套接字地址分配"><a href="#2-3-1-本机套接字地址分配" class="headerlink" title="2.3.1 本机套接字地址分配"></a>2.3.1 本机套接字地址分配</h3><p>可以看到UDP服务器使用了<code>bind</code>分配<strong>本机</strong>的IP和端口（必须指定，否则客户端无法访问），而<code>bind</code>不区分TCP和UDP。而UDP客户端没有。</p>
-<p>在UDP，如果在<code>sendto()</code>时，发现没有分配地址信息，则在首次调用<code>sendto</code>时自动给套接字分配本机IP和端口直到程序结束（自动完成，和TCP客户端的<code>connect()</code>一样）。</p>
-<h3 id="2-3-2目标套接字地址注册"><a href="#2-3-2目标套接字地址注册" class="headerlink" title="2.3.2目标套接字地址注册"></a>2.3.2目标套接字地址注册</h3><h4 id="未连接套接字（默认）"><a href="#未连接套接字（默认）" class="headerlink" title="未连接套接字（默认）"></a>未连接套接字（默认）</h4><p>UDP套接字socket无需<strong>注册</strong>目标IP和端口号，也就是一个套接字并不和一个目标地址绑定，每次传输是一个新的socket，因为<code>sendto</code>的内部传输过程为三步</p>
-<ol>
-<li>向UDP套接字注册目标IP和端口号</li>
-<li>传输数据</li>
-<li>删除UDP套接字中的目标地址信息</li>
-</ol>
-<p>每次调用<code>sendto</code>都会重复上述过程，因此可以<strong>只用一个套接字向不同目标传输数据</strong>。这种套接字称为<strong>未连接套接字</strong>。</p>
-<h4 id="已连接套接字"><a href="#已连接套接字" class="headerlink" title="已连接套接字"></a>已连接套接字</h4><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/socket.h&gt;</span></span></span><br><span class="line"><span class="type">int</span> <span class="title function_">connect</span><span class="params">(<span class="type">int</span> sockfd, <span class="type">const</span> <span class="keyword">struct</span> sockaddr* server_addr, <span class="type">socklen_t</span> addrlen)</span></span><br></pre></td></tr></table></figure>
-
-<p>但如果只向一个目标发送数据，每次都重复上述的过程显得低效，所以可以使用<code>connect</code>建立<strong>有连接套接字</strong>。</p>
-<blockquote>
-<p>注意，这里的有连接并不是指UDP是有连接的，只是针对套接字而言是有连接。</p>
-</blockquote>
-<p>此时可以用<code>write</code>和<code>read</code>代替<code>sendto</code>和<code>recvfrom</code>。</p>
 
       
     </div>

@@ -3413,7 +3413,7 @@ main函数终止，所有goroutine也会一并结束；终止goroutine的最好�
 </blockquote>
 ]]></content>
       <categories>
-        <category>go</category>
+        <category>Golang</category>
         <category>go标准库</category>
       </categories>
   </entry>
@@ -3723,7 +3723,7 @@ main函数终止，所有goroutine也会一并结束；终止goroutine的最好�
 </blockquote>
 ]]></content>
       <categories>
-        <category>go</category>
+        <category>Golang</category>
         <category>go标准库</category>
       </categories>
   </entry>
@@ -3761,7 +3761,7 @@ main函数终止，所有goroutine也会一并结束；终止goroutine的最好�
 <figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">demo1</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">type</span> Partner <span class="keyword">struct</span> &#123;</span><br><span class="line">		Name <span class="type">string</span> <span class="string">`json:&quot;firstName&quot;`</span></span><br><span class="line">		Age  <span class="type">uint</span>   <span class="string">`json:&quot;age&quot;`</span></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">type</span> Person <span class="keyword">struct</span> &#123;</span><br><span class="line">		FirstName <span class="type">string</span>  <span class="string">`json:&quot;firstName&quot;`</span>       <span class="comment">// 指定字段名</span></span><br><span class="line">		LastName  <span class="type">string</span>  <span class="string">`json:&quot;-&quot;`</span>               <span class="comment">// 序列化/反序列化时，忽略该字段</span></span><br><span class="line">		Email     <span class="type">string</span>  <span class="string">`json:&quot;email,omitempty&quot;`</span> <span class="comment">// &quot;omitempty&quot; 忽略空值字段，需要和指定字段名搭配使用</span></span><br><span class="line">		Age       <span class="type">uint</span>    <span class="string">`json:&quot;age&quot;`</span>             <span class="comment">// 反序列化时，若为负值，解析失败。</span></span><br><span class="line">		Height    <span class="type">float64</span> <span class="string">`json:&quot;height,string&quot;`</span>   <span class="comment">// 序列化/反序列化时，该数字以字符串形式解析。若不是字符串形式，解析失败。</span></span><br><span class="line">		Sex       <span class="type">bool</span>    <span class="string">`json:&quot;sex&quot;`</span>             <span class="comment">// 反序列化时，只能是true或false</span></span><br><span class="line">		IsNative  <span class="type">bool</span>    <span class="string">`json:&quot;isNative,string&quot;`</span> <span class="comment">// 反序列化时，只能是&quot;true&quot;或&quot;false&quot;</span></span><br><span class="line"></span><br><span class="line">		PartnerA Partner  <span class="string">`json:&quot;partnerA&quot;`</span>           <span class="comment">// 嵌套结构体</span></span><br><span class="line">		PartnerB *Partner <span class="string">`json:&quot;partnerB,omitempty&quot;`</span> <span class="comment">// 只有嵌套结构体是指针时，才能被忽略空值</span></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 序列化</span></span><br><span class="line">	p := Person&#123;</span><br><span class="line">		FirstName: <span class="string">&quot;John&quot;</span>,</span><br><span class="line">		LastName:  <span class="string">&quot;Smith&quot;</span>,</span><br><span class="line">		Email:     <span class="string">&quot;john@example.com&quot;</span>,</span><br><span class="line">		Age:       <span class="number">11</span>,</span><br><span class="line">		Height:    <span class="number">180.01</span>,</span><br><span class="line">		Sex:       <span class="literal">true</span>,</span><br><span class="line">		IsNative:  <span class="literal">false</span>,</span><br><span class="line"></span><br><span class="line">		PartnerA: Partner&#123;</span><br><span class="line">			Name: <span class="string">&quot;&quot;</span>,</span><br><span class="line">			Age:  <span class="number">0</span>,</span><br><span class="line">		&#125;,</span><br><span class="line">		PartnerB: <span class="literal">nil</span>,</span><br><span class="line">	&#125;</span><br><span class="line">	b, err := json.Marshal(p)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Println(<span class="string">&quot;Marshal fail: &quot;</span>, err)</span><br><span class="line">	&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">		fmt.Printf(<span class="string">&quot;Marshal success: %v\n&quot;</span>, <span class="type">string</span>(b))</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 反序列化</span></span><br><span class="line">	s := <span class="string">`&#123;</span></span><br><span class="line"><span class="string">		&quot;firstName&quot;:&quot;John&quot;,</span></span><br><span class="line"><span class="string">		&quot;lastName&quot;:&quot;Smith&quot;,</span></span><br><span class="line"><span class="string">		&quot;email&quot;:&quot;john@example.com&quot;,</span></span><br><span class="line"><span class="string">		&quot;age&quot;:11,</span></span><br><span class="line"><span class="string">		&quot;height&quot;:&quot;180.01&quot;,</span></span><br><span class="line"><span class="string">		&quot;sex&quot;:true,</span></span><br><span class="line"><span class="string">		&quot;isNative&quot;:&quot;false&quot;,</span></span><br><span class="line"><span class="string">		&quot;partnerA&quot;:&#123;</span></span><br><span class="line"><span class="string">			&quot;firstName&quot;:&quot;&quot;,</span></span><br><span class="line"><span class="string">			&quot;age&quot;:0</span></span><br><span class="line"><span class="string">		&#125;</span></span><br><span class="line"><span class="string">	&#125;`</span></span><br><span class="line">	<span class="keyword">var</span> p2 Person</span><br><span class="line">	err = json.Unmarshal([]<span class="type">byte</span>(s), &amp;p2)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Println(<span class="string">&quot;Unmarshal fail: &quot;</span>, err)</span><br><span class="line">	&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">		fmt.Printf(<span class="string">&quot;Unmarshal success: %+v\n&quot;</span>, p2)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <h4 id="输出"><a href="#输出" class="headerlink" title="输出"></a>输出</h4><blockquote>
-<p>Marshal success: {“firstName”:”John”,”email”:”<a href="mailto:&#x6a;&#111;&#104;&#110;&#x40;&#x65;&#x78;&#x61;&#109;&#112;&#108;&#x65;&#x2e;&#99;&#x6f;&#x6d;">&#x6a;&#111;&#104;&#110;&#x40;&#x65;&#x78;&#x61;&#109;&#112;&#108;&#x65;&#x2e;&#99;&#x6f;&#x6d;</a>“,”age”:11,”height”:”180.01”,”sex”:true,”isNative”:”false”,”partnerA”:{“firstName”:””,”age”:0}}<br>Unmarshal success: {FirstName:John LastName: Email:<a href="mailto:&#106;&#111;&#x68;&#110;&#64;&#101;&#120;&#x61;&#109;&#112;&#x6c;&#101;&#46;&#x63;&#111;&#x6d;">&#106;&#111;&#x68;&#110;&#64;&#101;&#120;&#x61;&#109;&#112;&#x6c;&#101;&#46;&#x63;&#111;&#x6d;</a> Age:11 Height:180.01 Sex:true IsNative:false PartnerA:{Name: Age:0} PartnerB:<nil>}</p>
+<p>Marshal success: {“firstName”:”John”,”email”:”<a href="mailto:&#x6a;&#111;&#x68;&#110;&#64;&#x65;&#x78;&#97;&#109;&#112;&#108;&#101;&#x2e;&#x63;&#111;&#109;">&#x6a;&#111;&#x68;&#110;&#64;&#x65;&#x78;&#97;&#109;&#112;&#108;&#101;&#x2e;&#x63;&#111;&#109;</a>“,”age”:11,”height”:”180.01”,”sex”:true,”isNative”:”false”,”partnerA”:{“firstName”:””,”age”:0}}<br>Unmarshal success: {FirstName:John LastName: Email:<a href="mailto:&#x6a;&#x6f;&#x68;&#110;&#x40;&#101;&#120;&#97;&#x6d;&#112;&#108;&#x65;&#x2e;&#99;&#x6f;&#x6d;">&#x6a;&#x6f;&#x68;&#110;&#x40;&#101;&#120;&#97;&#x6d;&#112;&#108;&#x65;&#x2e;&#99;&#x6f;&#x6d;</a> Age:11 Height:180.01 Sex:true IsNative:false PartnerA:{Name: Age:0} PartnerB:<nil>}</p>
 </blockquote>
 <h4 id="关键点"><a href="#关键点" class="headerlink" title="关键点"></a>关键点</h4><ul>
 <li><p><code>-</code>在序列化和反序列化时忽略字段。</p>
@@ -3814,7 +3814,7 @@ main函数终止，所有goroutine也会一并结束；终止goroutine的最好�
 </blockquote>
 ]]></content>
       <categories>
-        <category>go</category>
+        <category>Golang</category>
         <category>go标准库</category>
       </categories>
   </entry>
@@ -3937,7 +3937,7 @@ main函数终止，所有goroutine也会一并结束；终止goroutine的最好�
 </blockquote>
 ]]></content>
       <categories>
-        <category>go</category>
+        <category>Golang</category>
         <category>go标准库</category>
       </categories>
   </entry>
@@ -4143,7 +4143,7 @@ main函数终止，所有goroutine也会一并结束；终止goroutine的最好�
 <p><a href="https://cloud.tencent.com/developer/article/2318444">一图掌握golang中IO包的关系-腾讯云开发者社区-腾讯云 (tencent.com)</a></p>
 ]]></content>
       <categories>
-        <category>go</category>
+        <category>Golang</category>
         <category>go标准库</category>
       </categories>
   </entry>
@@ -4344,7 +4344,57 @@ main函数终止，所有goroutine也会一并结束；终止goroutine的最好�
 </blockquote>
 ]]></content>
       <categories>
-        <category>go</category>
+        <category>Golang</category>
+        <category>go标准库</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>7-go标准库math包</title>
+    <url>/2024/03/0c11414048d7/</url>
+    <content><![CDATA[<h1 id="Go标准库math包"><a href="#Go标准库math包" class="headerlink" title="Go标准库math包"></a>Go标准库math包</h1><p><font size=5><strong>注意：参与math包运算的输入与结果全为float64！</strong></font></p>
+<h2 id="1、绝对值与取整"><a href="#1、绝对值与取整" class="headerlink" title="1、绝对值与取整"></a>1、绝对值与取整</h2><ul>
+<li><code>Abs(x float64) float64</code>：返回x的绝对值</li>
+<li><code>Ceil(x float64) float64</code>：返回不小于x的最小整数值。</li>
+<li><code>Floor(x float64) float64</code>：返回不大于x的最大整数值。</li>
+<li><code>Round(x float64) float64</code>：返回四舍五入到最接近的整数值。</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/image/image-20240313120211549.png" alt="image-20240313120211549"></p>
+<blockquote>
+<p><a href="https://frameimage.org/">Ceil And Floor In Python W3schools | Viewfloor.co (frameimage.org)</a></p>
+</blockquote>
+<p>对于负值而言，五入是向下入，相当于floor，即入了后数值更小；正数则是向上入，相当于ceil，即入了后数值更大。</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">demo1</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="comment">// 绝对值与取整</span></span><br><span class="line">	x := <span class="number">-1234.567</span></span><br><span class="line">	<span class="comment">// 返回x绝对值</span></span><br><span class="line">	fmt.Println(math.Abs(x)) <span class="comment">// 1234.567</span></span><br><span class="line">	<span class="comment">// 返回不小于x的最小正整数</span></span><br><span class="line">	fmt.Println(math.Ceil(x)) <span class="comment">// -1234</span></span><br><span class="line">	<span class="comment">// 返回不大于x的最大正整数</span></span><br><span class="line">	fmt.Println(math.Floor(x)) <span class="comment">// -1235</span></span><br><span class="line">	<span class="comment">// 返回四舍五入最接近的整数</span></span><br><span class="line">	fmt.Println(math.Round(x)) <span class="comment">// -1235</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="2、次方"><a href="#2、次方" class="headerlink" title="2、次方"></a>2、次方</h2><ul>
+<li><code>Pow(x, y float64) float64</code>：返回x的y次幂。</li>
+<li><code>Sqrt(x float64) float64</code>：返回x的平方根。</li>
+<li><code>Exp(x float64) float64</code>：返回自然指数e的x次幂。</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">demo2</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="comment">// 次方</span></span><br><span class="line">	x := <span class="number">2.</span></span><br><span class="line">	y := <span class="number">4.</span></span><br><span class="line">	<span class="comment">// Pow(x,y) 返回x的y方</span></span><br><span class="line">	fmt.Println(math.Pow(x, y)) <span class="comment">// 16</span></span><br><span class="line">	<span class="comment">// Sqrt(x) 返回x的平方根（开方），等价于math.Pow(x, 0.5)</span></span><br><span class="line">	fmt.Println(math.Sqrt(x), math.Pow(x, <span class="number">0.5</span>))</span><br><span class="line">	<span class="comment">// Exp(x) 返回e的x次幂，等价于math.Pow(math.E, x)与math.SqrtE</span></span><br><span class="line">	fmt.Println(math.Exp(x), math.Pow(math.E, x))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="3、对数"><a href="#3、对数" class="headerlink" title="3、对数"></a>3、对数</h2><ul>
+<li><code>Log(x float64) float64</code>：返回x的自然对数。</li>
+<li><code>math.Ln2</code>：2的自然对数。</li>
+<li><code>math.Log2E</code>：以2为底的自然对数e的倒数。</li>
+<li><code>math.Log10E</code>：以10为底的自然对数e的倒数。</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">demo3</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="comment">// 对数</span></span><br><span class="line">	<span class="comment">// 以自然数为底的对数</span></span><br><span class="line">	fmt.Println(math.Log(math.E)) <span class="comment">// 1</span></span><br><span class="line">	<span class="comment">// 以10为底的对数</span></span><br><span class="line">	fmt.Println(math.Log(<span class="number">100</span>) / math.Log(<span class="number">10</span>)) <span class="comment">// 2</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="4、三角函数"><a href="#4、三角函数" class="headerlink" title="4、三角函数"></a>4、三角函数</h2><ul>
+<li><code>math.Pi</code>：圆周率π。</li>
+<li><code>Sin(x float64) float64</code>：返回x的正弦值（x以弧度为单位）。</li>
+<li><code>Cos(x float64) float64</code>：返回x的余弦值（x以弧度为单位）。</li>
+<li><code>Tan(x float64) float64</code>：返回x的正切值（x以弧度为单位）。</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">demo4</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="comment">// 三角函数</span></span><br><span class="line">	fmt.Println(math.Pi)</span><br><span class="line">	fmt.Println(math.Cos(math.Pi / <span class="number">2</span>))</span><br><span class="line">	fmt.Println(math.Sin(math.Pi / <span class="number">2</span>))</span><br><span class="line">	fmt.Println(math.Tan(math.Pi / <span class="number">2</span>))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="5、大小比较"><a href="#5、大小比较" class="headerlink" title="5、大小比较"></a>5、大小比较</h2><ul>
+<li><code>Max(x, y float64) float64</code></li>
+<li><code>Min(x, y float64) float64</code></li>
+</ul>
+]]></content>
+      <categories>
+        <category>Golang</category>
         <category>go标准库</category>
       </categories>
   </entry>

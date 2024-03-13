@@ -150,13 +150,13 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">34</span>
+          <span class="site-state-item-count">35</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
           <a href="/categories/">
-        <span class="site-state-item-count">15</span>
+        <span class="site-state-item-count">16</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
   </nav>
@@ -178,6 +178,129 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://drinkwateronly.github.io/2024/03/0c11414048d7/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Wallnut">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Wallnut">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Wallnut">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2024/03/0c11414048d7/" class="post-title-link" itemprop="url">7-go标准库math包</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2024-03-13 12:00:00 / 修改时间：12:07:13" itemprop="dateCreated datePublished" datetime="2024-03-13T12:00:00+08:00">2024-03-13</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Golang/" itemprop="url" rel="index"><span itemprop="name">Golang</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Golang/go%E6%A0%87%E5%87%86%E5%BA%93/" itemprop="url" rel="index"><span itemprop="name">go标准库</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="Go标准库math包"><a href="#Go标准库math包" class="headerlink" title="Go标准库math包"></a>Go标准库math包</h1><p><font size=5><strong>注意：参与math包运算的输入与结果全为float64！</strong></font></p>
+<h2 id="1、绝对值与取整"><a href="#1、绝对值与取整" class="headerlink" title="1、绝对值与取整"></a>1、绝对值与取整</h2><ul>
+<li><code>Abs(x float64) float64</code>：返回x的绝对值</li>
+<li><code>Ceil(x float64) float64</code>：返回不小于x的最小整数值。</li>
+<li><code>Floor(x float64) float64</code>：返回不大于x的最大整数值。</li>
+<li><code>Round(x float64) float64</code>：返回四舍五入到最接近的整数值。</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/image/image-20240313120211549.png" alt="image-20240313120211549"></p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://frameimage.org/">Ceil And Floor In Python W3schools | Viewfloor.co (frameimage.org)</a></p>
+</blockquote>
+<p>对于负值而言，五入是向下入，相当于floor，即入了后数值更小；正数则是向上入，相当于ceil，即入了后数值更大。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">demo1</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="comment">// 绝对值与取整</span></span><br><span class="line">	x := <span class="number">-1234.567</span></span><br><span class="line">	<span class="comment">// 返回x绝对值</span></span><br><span class="line">	fmt.Println(math.Abs(x)) <span class="comment">// 1234.567</span></span><br><span class="line">	<span class="comment">// 返回不小于x的最小正整数</span></span><br><span class="line">	fmt.Println(math.Ceil(x)) <span class="comment">// -1234</span></span><br><span class="line">	<span class="comment">// 返回不大于x的最大正整数</span></span><br><span class="line">	fmt.Println(math.Floor(x)) <span class="comment">// -1235</span></span><br><span class="line">	<span class="comment">// 返回四舍五入最接近的整数</span></span><br><span class="line">	fmt.Println(math.Round(x)) <span class="comment">// -1235</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="2、次方"><a href="#2、次方" class="headerlink" title="2、次方"></a>2、次方</h2><ul>
+<li><code>Pow(x, y float64) float64</code>：返回x的y次幂。</li>
+<li><code>Sqrt(x float64) float64</code>：返回x的平方根。</li>
+<li><code>Exp(x float64) float64</code>：返回自然指数e的x次幂。</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">demo2</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="comment">// 次方</span></span><br><span class="line">	x := <span class="number">2.</span></span><br><span class="line">	y := <span class="number">4.</span></span><br><span class="line">	<span class="comment">// Pow(x,y) 返回x的y方</span></span><br><span class="line">	fmt.Println(math.Pow(x, y)) <span class="comment">// 16</span></span><br><span class="line">	<span class="comment">// Sqrt(x) 返回x的平方根（开方），等价于math.Pow(x, 0.5)</span></span><br><span class="line">	fmt.Println(math.Sqrt(x), math.Pow(x, <span class="number">0.5</span>))</span><br><span class="line">	<span class="comment">// Exp(x) 返回e的x次幂，等价于math.Pow(math.E, x)与math.SqrtE</span></span><br><span class="line">	fmt.Println(math.Exp(x), math.Pow(math.E, x))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="3、对数"><a href="#3、对数" class="headerlink" title="3、对数"></a>3、对数</h2><ul>
+<li><code>Log(x float64) float64</code>：返回x的自然对数。</li>
+<li><code>math.Ln2</code>：2的自然对数。</li>
+<li><code>math.Log2E</code>：以2为底的自然对数e的倒数。</li>
+<li><code>math.Log10E</code>：以10为底的自然对数e的倒数。</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">demo3</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="comment">// 对数</span></span><br><span class="line">	<span class="comment">// 以自然数为底的对数</span></span><br><span class="line">	fmt.Println(math.Log(math.E)) <span class="comment">// 1</span></span><br><span class="line">	<span class="comment">// 以10为底的对数</span></span><br><span class="line">	fmt.Println(math.Log(<span class="number">100</span>) / math.Log(<span class="number">10</span>)) <span class="comment">// 2</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="4、三角函数"><a href="#4、三角函数" class="headerlink" title="4、三角函数"></a>4、三角函数</h2><ul>
+<li><code>math.Pi</code>：圆周率π。</li>
+<li><code>Sin(x float64) float64</code>：返回x的正弦值（x以弧度为单位）。</li>
+<li><code>Cos(x float64) float64</code>：返回x的余弦值（x以弧度为单位）。</li>
+<li><code>Tan(x float64) float64</code>：返回x的正切值（x以弧度为单位）。</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">demo4</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="comment">// 三角函数</span></span><br><span class="line">	fmt.Println(math.Pi)</span><br><span class="line">	fmt.Println(math.Cos(math.Pi / <span class="number">2</span>))</span><br><span class="line">	fmt.Println(math.Sin(math.Pi / <span class="number">2</span>))</span><br><span class="line">	fmt.Println(math.Tan(math.Pi / <span class="number">2</span>))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="5、大小比较"><a href="#5、大小比较" class="headerlink" title="5、大小比较"></a>5、大小比较</h2><ul>
+<li><code>Max(x, y float64) float64</code></li>
+<li><code>Min(x, y float64) float64</code></li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -223,7 +346,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2024-03-13 10:57:04" itemprop="dateModified" datetime="2024-03-13T10:57:04+08:00">2024-03-13</time>
+      <time title="修改时间：2024-03-13 12:08:34" itemprop="dateModified" datetime="2024-03-13T12:08:34+08:00">2024-03-13</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -231,11 +354,11 @@
       </span>
       <span class="post-meta-item-text">分类于</span>
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/go/" itemprop="url" rel="index"><span itemprop="name">go</span></a>
+          <a href="/categories/Golang/" itemprop="url" rel="index"><span itemprop="name">Golang</span></a>
         </span>
           ，
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/go/go%E6%A0%87%E5%87%86%E5%BA%93/" itemprop="url" rel="index"><span itemprop="name">go标准库</span></a>
+          <a href="/categories/Golang/go%E6%A0%87%E5%87%86%E5%BA%93/" itemprop="url" rel="index"><span itemprop="name">go标准库</span></a>
         </span>
     </span>
 
@@ -495,9 +618,15 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">发表于</span>
-      
 
-      <time title="创建时间：2024-01-28 21:15:00 / 修改时间：21:17:06" itemprop="dateCreated datePublished" datetime="2024-01-28T21:15:00+08:00">2024-01-28</time>
+      <time title="创建时间：2024-01-28 21:15:00" itemprop="dateCreated datePublished" datetime="2024-01-28T21:15:00+08:00">2024-01-28</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2024-03-13 12:07:21" itemprop="dateModified" datetime="2024-03-13T12:07:21+08:00">2024-03-13</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -505,11 +634,11 @@
       </span>
       <span class="post-meta-item-text">分类于</span>
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/go/" itemprop="url" rel="index"><span itemprop="name">go</span></a>
+          <a href="/categories/Golang/" itemprop="url" rel="index"><span itemprop="name">Golang</span></a>
         </span>
           ，
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/go/go%E6%A0%87%E5%87%86%E5%BA%93/" itemprop="url" rel="index"><span itemprop="name">go标准库</span></a>
+          <a href="/categories/Golang/go%E6%A0%87%E5%87%86%E5%BA%93/" itemprop="url" rel="index"><span itemprop="name">go标准库</span></a>
         </span>
     </span>
 
@@ -782,7 +911,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2024-01-28 21:16:59" itemprop="dateModified" datetime="2024-01-28T21:16:59+08:00">2024-01-28</time>
+      <time title="修改时间：2024-03-13 12:07:25" itemprop="dateModified" datetime="2024-03-13T12:07:25+08:00">2024-03-13</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -790,11 +919,11 @@
       </span>
       <span class="post-meta-item-text">分类于</span>
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/go/" itemprop="url" rel="index"><span itemprop="name">go</span></a>
+          <a href="/categories/Golang/" itemprop="url" rel="index"><span itemprop="name">Golang</span></a>
         </span>
           ，
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/go/go%E6%A0%87%E5%87%86%E5%BA%93/" itemprop="url" rel="index"><span itemprop="name">go标准库</span></a>
+          <a href="/categories/Golang/go%E6%A0%87%E5%87%86%E5%BA%93/" itemprop="url" rel="index"><span itemprop="name">go标准库</span></a>
         </span>
     </span>
 
@@ -984,7 +1113,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2024-01-28 21:16:52" itemprop="dateModified" datetime="2024-01-28T21:16:52+08:00">2024-01-28</time>
+      <time title="修改时间：2024-03-13 12:07:30" itemprop="dateModified" datetime="2024-03-13T12:07:30+08:00">2024-03-13</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -992,11 +1121,11 @@
       </span>
       <span class="post-meta-item-text">分类于</span>
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/go/" itemprop="url" rel="index"><span itemprop="name">go</span></a>
+          <a href="/categories/Golang/" itemprop="url" rel="index"><span itemprop="name">Golang</span></a>
         </span>
           ，
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/go/go%E6%A0%87%E5%87%86%E5%BA%93/" itemprop="url" rel="index"><span itemprop="name">go标准库</span></a>
+          <a href="/categories/Golang/go%E6%A0%87%E5%87%86%E5%BA%93/" itemprop="url" rel="index"><span itemprop="name">go标准库</span></a>
         </span>
     </span>
 
@@ -1041,7 +1170,7 @@
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">demo1</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">type</span> Partner <span class="keyword">struct</span> &#123;</span><br><span class="line">		Name <span class="type">string</span> <span class="string">`json:&quot;firstName&quot;`</span></span><br><span class="line">		Age  <span class="type">uint</span>   <span class="string">`json:&quot;age&quot;`</span></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">type</span> Person <span class="keyword">struct</span> &#123;</span><br><span class="line">		FirstName <span class="type">string</span>  <span class="string">`json:&quot;firstName&quot;`</span>       <span class="comment">// 指定字段名</span></span><br><span class="line">		LastName  <span class="type">string</span>  <span class="string">`json:&quot;-&quot;`</span>               <span class="comment">// 序列化/反序列化时，忽略该字段</span></span><br><span class="line">		Email     <span class="type">string</span>  <span class="string">`json:&quot;email,omitempty&quot;`</span> <span class="comment">// &quot;omitempty&quot; 忽略空值字段，需要和指定字段名搭配使用</span></span><br><span class="line">		Age       <span class="type">uint</span>    <span class="string">`json:&quot;age&quot;`</span>             <span class="comment">// 反序列化时，若为负值，解析失败。</span></span><br><span class="line">		Height    <span class="type">float64</span> <span class="string">`json:&quot;height,string&quot;`</span>   <span class="comment">// 序列化/反序列化时，该数字以字符串形式解析。若不是字符串形式，解析失败。</span></span><br><span class="line">		Sex       <span class="type">bool</span>    <span class="string">`json:&quot;sex&quot;`</span>             <span class="comment">// 反序列化时，只能是true或false</span></span><br><span class="line">		IsNative  <span class="type">bool</span>    <span class="string">`json:&quot;isNative,string&quot;`</span> <span class="comment">// 反序列化时，只能是&quot;true&quot;或&quot;false&quot;</span></span><br><span class="line"></span><br><span class="line">		PartnerA Partner  <span class="string">`json:&quot;partnerA&quot;`</span>           <span class="comment">// 嵌套结构体</span></span><br><span class="line">		PartnerB *Partner <span class="string">`json:&quot;partnerB,omitempty&quot;`</span> <span class="comment">// 只有嵌套结构体是指针时，才能被忽略空值</span></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 序列化</span></span><br><span class="line">	p := Person&#123;</span><br><span class="line">		FirstName: <span class="string">&quot;John&quot;</span>,</span><br><span class="line">		LastName:  <span class="string">&quot;Smith&quot;</span>,</span><br><span class="line">		Email:     <span class="string">&quot;john@example.com&quot;</span>,</span><br><span class="line">		Age:       <span class="number">11</span>,</span><br><span class="line">		Height:    <span class="number">180.01</span>,</span><br><span class="line">		Sex:       <span class="literal">true</span>,</span><br><span class="line">		IsNative:  <span class="literal">false</span>,</span><br><span class="line"></span><br><span class="line">		PartnerA: Partner&#123;</span><br><span class="line">			Name: <span class="string">&quot;&quot;</span>,</span><br><span class="line">			Age:  <span class="number">0</span>,</span><br><span class="line">		&#125;,</span><br><span class="line">		PartnerB: <span class="literal">nil</span>,</span><br><span class="line">	&#125;</span><br><span class="line">	b, err := json.Marshal(p)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Println(<span class="string">&quot;Marshal fail: &quot;</span>, err)</span><br><span class="line">	&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">		fmt.Printf(<span class="string">&quot;Marshal success: %v\n&quot;</span>, <span class="type">string</span>(b))</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 反序列化</span></span><br><span class="line">	s := <span class="string">`&#123;</span></span><br><span class="line"><span class="string">		&quot;firstName&quot;:&quot;John&quot;,</span></span><br><span class="line"><span class="string">		&quot;lastName&quot;:&quot;Smith&quot;,</span></span><br><span class="line"><span class="string">		&quot;email&quot;:&quot;john@example.com&quot;,</span></span><br><span class="line"><span class="string">		&quot;age&quot;:11,</span></span><br><span class="line"><span class="string">		&quot;height&quot;:&quot;180.01&quot;,</span></span><br><span class="line"><span class="string">		&quot;sex&quot;:true,</span></span><br><span class="line"><span class="string">		&quot;isNative&quot;:&quot;false&quot;,</span></span><br><span class="line"><span class="string">		&quot;partnerA&quot;:&#123;</span></span><br><span class="line"><span class="string">			&quot;firstName&quot;:&quot;&quot;,</span></span><br><span class="line"><span class="string">			&quot;age&quot;:0</span></span><br><span class="line"><span class="string">		&#125;</span></span><br><span class="line"><span class="string">	&#125;`</span></span><br><span class="line">	<span class="keyword">var</span> p2 Person</span><br><span class="line">	err = json.Unmarshal([]<span class="type">byte</span>(s), &amp;p2)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Println(<span class="string">&quot;Unmarshal fail: &quot;</span>, err)</span><br><span class="line">	&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">		fmt.Printf(<span class="string">&quot;Unmarshal success: %+v\n&quot;</span>, p2)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <h4 id="输出"><a href="#输出" class="headerlink" title="输出"></a>输出</h4><blockquote>
-<p>Marshal success: {“firstName”:”John”,”email”:”<a href="mailto:&#x6a;&#111;&#104;&#110;&#x40;&#x65;&#x78;&#x61;&#109;&#112;&#108;&#x65;&#x2e;&#99;&#x6f;&#x6d;">&#x6a;&#111;&#104;&#110;&#x40;&#x65;&#x78;&#x61;&#109;&#112;&#108;&#x65;&#x2e;&#99;&#x6f;&#x6d;</a>“,”age”:11,”height”:”180.01”,”sex”:true,”isNative”:”false”,”partnerA”:{“firstName”:””,”age”:0}}<br>Unmarshal success: {FirstName:John LastName: Email:<a href="mailto:&#106;&#111;&#x68;&#110;&#64;&#101;&#120;&#x61;&#109;&#112;&#x6c;&#101;&#46;&#x63;&#111;&#x6d;">&#106;&#111;&#x68;&#110;&#64;&#101;&#120;&#x61;&#109;&#112;&#x6c;&#101;&#46;&#x63;&#111;&#x6d;</a> Age:11 Height:180.01 Sex:true IsNative:false PartnerA:{Name: Age:0} PartnerB:<nil>}</p>
+<p>Marshal success: {“firstName”:”John”,”email”:”<a href="mailto:&#x6a;&#111;&#x68;&#110;&#64;&#x65;&#x78;&#97;&#109;&#112;&#108;&#101;&#x2e;&#x63;&#111;&#109;">&#x6a;&#111;&#x68;&#110;&#64;&#x65;&#x78;&#97;&#109;&#112;&#108;&#101;&#x2e;&#x63;&#111;&#109;</a>“,”age”:11,”height”:”180.01”,”sex”:true,”isNative”:”false”,”partnerA”:{“firstName”:””,”age”:0}}<br>Unmarshal success: {FirstName:John LastName: Email:<a href="mailto:&#x6a;&#x6f;&#x68;&#110;&#x40;&#101;&#120;&#97;&#x6d;&#112;&#108;&#x65;&#x2e;&#99;&#x6f;&#x6d;">&#x6a;&#x6f;&#x68;&#110;&#x40;&#101;&#120;&#97;&#x6d;&#112;&#108;&#x65;&#x2e;&#99;&#x6f;&#x6d;</a> Age:11 Height:180.01 Sex:true IsNative:false PartnerA:{Name: Age:0} PartnerB:<nil>}</p>
 </blockquote>
 <h4 id="关键点"><a href="#关键点" class="headerlink" title="关键点"></a>关键点</h4><ul>
 <li><p><code>-</code>在序列化和反序列化时忽略字段。</p>
@@ -1154,7 +1283,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2024-01-28 21:16:37" itemprop="dateModified" datetime="2024-01-28T21:16:37+08:00">2024-01-28</time>
+      <time title="修改时间：2024-03-13 12:07:35" itemprop="dateModified" datetime="2024-03-13T12:07:35+08:00">2024-03-13</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -1162,11 +1291,11 @@
       </span>
       <span class="post-meta-item-text">分类于</span>
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/go/" itemprop="url" rel="index"><span itemprop="name">go</span></a>
+          <a href="/categories/Golang/" itemprop="url" rel="index"><span itemprop="name">Golang</span></a>
         </span>
           ，
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/go/go%E6%A0%87%E5%87%86%E5%BA%93/" itemprop="url" rel="index"><span itemprop="name">go标准库</span></a>
+          <a href="/categories/Golang/go%E6%A0%87%E5%87%86%E5%BA%93/" itemprop="url" rel="index"><span itemprop="name">go标准库</span></a>
         </span>
     </span>
 
@@ -1327,7 +1456,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2024-01-28 21:16:47" itemprop="dateModified" datetime="2024-01-28T21:16:47+08:00">2024-01-28</time>
+      <time title="修改时间：2024-03-13 12:07:38" itemprop="dateModified" datetime="2024-03-13T12:07:38+08:00">2024-03-13</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -1335,11 +1464,11 @@
       </span>
       <span class="post-meta-item-text">分类于</span>
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/go/" itemprop="url" rel="index"><span itemprop="name">go</span></a>
+          <a href="/categories/Golang/" itemprop="url" rel="index"><span itemprop="name">Golang</span></a>
         </span>
           ，
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/go/go%E6%A0%87%E5%87%86%E5%BA%93/" itemprop="url" rel="index"><span itemprop="name">go标准库</span></a>
+          <a href="/categories/Golang/go%E6%A0%87%E5%87%86%E5%BA%93/" itemprop="url" rel="index"><span itemprop="name">go标准库</span></a>
         </span>
     </span>
 
@@ -2268,146 +2397,6 @@
 <h2 id="Ref"><a href="#Ref" class="headerlink" title="Ref"></a>Ref</h2><p><a target="_blank" rel="noopener" href="https://docs.qq.com/sheet/DS0d2VVVJYmpvZ0pZ?tab=BB08J2">魔改大西瓜可替换的素材 (qq.com)</a></p>
 <p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/H9VR1MWn-9bKSC_1l_MkJw">魔改和上线你的合成大西瓜，最全教程！ (qq.com)</a></p>
 <p><a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1Vy4y1n7KW/?vd_source=9883419bb9939eb61834a63a38921b19">全网最贴心的魔改合成大西瓜教程，从修改到发布！_哔哩哔哩_bilibili</a></p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://drinkwateronly.github.io/2023/11/a6aff7c01e18/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="Wallnut">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Wallnut">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Wallnut">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2023/11/a6aff7c01e18/" class="post-title-link" itemprop="url">VMvare+CentOS7的安装+桥接模式下的静态ip设置</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2023-11-23 20:05:13" itemprop="dateCreated datePublished" datetime="2023-11-23T20:05:13+08:00">2023-11-23</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2023-12-01 12:44:50" itemprop="dateModified" datetime="2023-12-01T12:44:50+08:00">2023-12-01</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Linux/" itemprop="url" rel="index"><span itemprop="name">Linux</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h2 id="VMvare-17下载、安装、配置"><a href="#VMvare-17下载、安装、配置" class="headerlink" title="VMvare 17下载、安装、配置"></a>VMvare 17下载、安装、配置</h2><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_45037155/article/details/123589403">https://blog.csdn.net/qq_45037155/article/details/123589403</a></p>
-<p>如果本机以前安装过，安装前要把原来的vmvare的注册表信息清空。</p>
-<p>官网：<a target="_blank" rel="noopener" href="https://www.vmware.com/cn/products/workstation-pro/workstation-pro-evaluation.html">https://www.vmware.com/cn/products/workstation-pro/workstation-pro-evaluation.html</a></p>
-<p>密钥：MC60H-DWHD5-H80U9-6V85M-8280D</p>
-<p>配置：内存8g，4核CPU</p>
-<h2 id="centos-7下载与设置"><a href="#centos-7下载与设置" class="headerlink" title="centos 7下载与设置"></a>centos 7下载与设置</h2><h3 id="下载地址"><a href="#下载地址" class="headerlink" title="下载地址"></a>下载地址</h3><p><a target="_blank" rel="noopener" href="https://mirrors6.tuna.tsinghua.edu.cn/centos/7.9.2009/isos/x86_64/">https://mirrors6.tuna.tsinghua.edu.cn/centos/7.9.2009/isos/x86_64/</a></p>
-<p>电脑配置够可以不装mini版本，因为缺失了一些基本功能比如ifconfig，再安装浪费时间。</p>
-<h3 id="centOS设置静态ip"><a href="#centOS设置静态ip" class="headerlink" title="centOS设置静态ip"></a>centOS设置静态ip</h3><p>此处不止要设置静态ip，还要将虚拟机的ip归属到主机ip所属的子网，它们之间可以相互ping通。</p>
-<h4 id="获取windows主机子网、网关信息"><a href="#获取windows主机子网、网关信息" class="headerlink" title="获取windows主机子网、网关信息"></a>获取windows主机子网、网关信息</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ipconfig</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/image/image-20231123194830334.png" alt="image-20231123194830334"></p>
-<p>网关、子网掩码显而易见，子网为<code>172.31.226.0</code></p>
-<h4 id="VMware网络模式简单了解"><a href="#VMware网络模式简单了解" class="headerlink" title="VMware网络模式简单了解"></a>VMware网络模式简单了解</h4><ul>
-<li><p>桥接模式（本文选择）<br>桥接模式就是将虚拟机的虚拟网卡利用虚拟网桥与主机的物理网卡进行通信。这时虚拟机与物理主机就相当于在同一个局域网内，它们所使用的IP 地址也是同一个网段，与在办公室里多安装了一台电脑一样，分配给它的IP 与这个局域网内的其它IP 相同会引起冲突，这种方式适用于IP 地址分配较为宽裕的网络环境。</p>
-</li>
-<li><p>主机共享模式<br>虚拟机通过VMnet1 虚拟网卡直接与主机的网卡进行通信，这种方式将虚拟机与外网隔离，只可以通过物理主机来访问虚拟机资源，而虚拟机也不可以访问互联网的资源，这种模式适用于复杂的网络环境进行学习和测试使用</p>
-</li>
-<li><p>NAT模式（原本选择，本文暂未解决NAT模式下的静态ip）<br>在NAT 模式中，主机网卡直接与虚拟机的虚拟NAT 设备相连接，然后虚拟机的NAT 设备与虚拟机的虚拟DHCP 服务器一起连接到虚拟网卡VMnet8 上。这时虚拟机与物理主机就不在同一个局域网内，它主要是通过VMnet8 虚拟网卡与主机进行通信，这种方式适用于IP 地址分配较为紧张的网络环境。</p>
-</li>
-</ul>
-<p>原文链接：<a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_44654974/article/details/127347478">https://blog.csdn.net/qq_44654974/article/details/127347478</a></p>
-<h4 id="vmvare设置"><a href="#vmvare设置" class="headerlink" title="vmvare设置"></a>vmvare设置</h4><p>右键centOS&gt;设置&gt;网络适配器&gt;桥接模式 即可</p>
-<p><em><strong>以下步骤是NAT模式下设置的，虚拟机可以ping通外网，但发现虚拟机并不能被主机ping通</strong></em></p>
-<p><del>编辑&gt;虚拟网络编辑器&gt;VMnet8，设置子网IP+子网掩码</del> </p>
-<p><img src="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/image/image-20231123195029701.png" alt="image-20231123195029701"></p>
-<p><del>然后进入NAT设置，设置网关</del></p>
-<p><img src="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/image/image-20231123195215541.png" alt="image-20231123195215541"></p>
-<h4 id="CentOS设置"><a href="#CentOS设置" class="headerlink" title="CentOS设置"></a>CentOS设置</h4><p>随后进入CentOS，查看网卡名称，确定哪个网卡用于静态ip。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ip a</span><br></pre></td></tr></table></figure>
-
-<p>随后进入CentOS，进入网卡文件配置目录，编辑网卡ens33对应文件</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span>  /etc/sysconfig/network-scripts</span><br><span class="line">vim ifcfg-ens33</span><br></pre></td></tr></table></figure>
-
-<p>根据前几步所涉及的子网、子网掩码、网关信息，新增&#x2F;修改如下配置</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">BOOTRPROTO=&quot;static&quot;  // none/static表示静态网卡，通常是dhcp即动态分配</span><br><span class="line">ONBOOT=&quot;yes</span><br><span class="line"></span><br><span class="line">IPADDR=172.31.226.34  // 一个未被使用的ip地址，属于子网172.31.226.0即可</span><br><span class="line">NETMASK=225.225.225.0  // 子网掩码</span><br><span class="line">172.31.226.33         // 网关</span><br><span class="line">DNS1=114.114.114.114  // 电信DNS服务器，可修改为其他</span><br><span class="line">DNS2=8.8.8.8          // 谷歌DNS服务器，可修改为其他</span><br></pre></td></tr></table></figure>
-
-
-
-<p>重启执行网络</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemctl restart network</span><br></pre></td></tr></table></figure>
-
-<p>使用ping检测网络连接是否正常，并检查ip地址是否是自己配置的那个地址</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ping baidu.com</span><br><span class="line">ifconfig</span><br></pre></td></tr></table></figure>
-
-<p>虚拟机和主机相互ping检查是否正常。</p>
-<h2 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h2><h3 id="ens33网卡不见"><a href="#ens33网卡不见" class="headerlink" title="ens33网卡不见"></a>ens33网卡不见</h3><p>解决方式：重启网络服务即可</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">systemctl stop NetworkManager</span><br><span class="line">systemctl <span class="built_in">disable</span> NetworkManager</span><br><span class="line">systemctl restart network</span><br></pre></td></tr></table></figure>
-
-<h3 id="ens网卡没有ipv4地址"><a href="#ens网卡没有ipv4地址" class="headerlink" title="ens网卡没有ipv4地址"></a>ens网卡没有ipv4地址</h3><p>这时候问题比较奇怪，网卡配置文件已经配置成了静态网卡，但是ifconfig命令中ens33网卡只显示inet6地址，没有找到比较好的解决方案。</p>
-<p><img src="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/image/image-20231201102733496.png" alt="image-20231201102733496"></p>
-<p>临时的解决方案，在重启网络&#x2F;重启机器后，会失效，要重新设置</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ifconfig ens33 172.31.226.34</span><br></pre></td></tr></table></figure>
-
-<p>最后是将<code>/etc/sysconfig/network-scripts/ifcfg-ens33</code>文件重写了才解决。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">TYPE=Ethernet</span><br><span class="line">PROXY_METHOD=none</span><br><span class="line">BROWSER_ONLY=no</span><br><span class="line">BOOTPROTO=static </span><br><span class="line">DEFROUTE=yes</span><br><span class="line">IPV4_FAILURE_FATAL=no</span><br><span class="line">IPV6INIT=yes</span><br><span class="line">IPV6_AUTOCONF=yes</span><br><span class="line">IPV6_DEFROUTE=yes</span><br><span class="line">IPV6_FAILURE_FATAL=no</span><br><span class="line">IPV6_ADDR_GEN_MODE=stable-privacy</span><br><span class="line">NAME=ens33    </span><br><span class="line">UUID=f5e37a10-3da9-47af-8dbb-370b7bf24509</span><br><span class="line">DEVICE=ens33  </span><br><span class="line">ONBOOT=yes  </span><br><span class="line">IPADDR=172.31.226.34    </span><br><span class="line">GATEWAY=172.31.226.33    </span><br><span class="line">NETMASK=255.255.255.0   </span><br><span class="line">DNS1=114.114.114.114  </span><br><span class="line">DNS2=8.8.8.8</span><br></pre></td></tr></table></figure>
-
 
       
     </div>
