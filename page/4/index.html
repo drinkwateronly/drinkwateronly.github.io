@@ -150,13 +150,13 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">35</span>
+          <span class="site-state-item-count">37</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
           <a href="/categories/">
-        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-count">17</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
   </nav>
@@ -178,6 +178,353 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://drinkwateronly.github.io/2023/04/b0de70d75858/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Wallnut">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Wallnut">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Wallnut">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2023/04/b0de70d75858/" class="post-title-link" itemprop="url">ch4-IP地址与域名转换</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2023-04-20 00:00:00" itemprop="dateCreated datePublished" datetime="2023-04-20T00:00:00+08:00">2023-04-20</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-11-17 20:08:22" itemprop="dateModified" datetime="2023-11-17T20:08:22+08:00">2023-11-17</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/C/" itemprop="url" rel="index"><span itemprop="name">C++</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/C/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">网络编程</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="1-DNS"><a href="#1-DNS" class="headerlink" title="1 DNS"></a>1 DNS</h1><p>DNS（Domain Name System），即IP和域名相互转换的系统，核心是DNS服务器。</p>
+<p>ISP服务提供者维护IP地址时可能会变更IP地址，而域名一旦注册通常不会变化，<strong>因此利用域名编写程序就不会依赖某个服务器IP地址</strong>。</p>
+<p>查看本机的DNS服务器地址</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&gt; nslookup</span><br></pre></td></tr></table></figure>
+
+<h1 id="2-通过域名获取IP地址gethostbyname"><a href="#2-通过域名获取IP地址gethostbyname" class="headerlink" title="2 通过域名获取IP地址gethostbyname()"></a>2 通过域名获取IP地址gethostbyname()</h1><h2 id="2-1-使用方法"><a href="#2-1-使用方法" class="headerlink" title="2.1 使用方法"></a>2.1 使用方法</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;netdb.h&gt;</span></span></span><br><span class="line"><span class="keyword">struct</span> hostent *<span class="title function_">gethostbyname</span><span class="params">(<span class="type">const</span> <span class="type">char</span> *hostname)</span></span><br></pre></td></tr></table></figure>
+<p>成功返回hostent结构体地址，失败返回null指针。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">hostent</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    <span class="type">char</span> * h_name; </span><br><span class="line">    <span class="type">char</span> ** h_aliases;</span><br><span class="line">    <span class="type">int</span> h_addrtype;</span><br><span class="line">    <span class="type">int</span> h_length;</span><br><span class="line">    <span class="type">char</span> ** h_addr_list;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<ul>
+<li>h_name：官方域名</li>
+<li>h_aliases：除官方域名外同样能访问的其他域名</li>
+<li>h_addrtype：ip地址族类型</li>
+<li>h_length：ip地址长度（IPv4是4字节，IPv6是16字节</li>
+<li>h_addr_list：<strong>最重要的成员</strong>。用户多的网站会分配多个IP给一个域名，利用多个服务器进行负载均衡，所以存放多个IP地址。</li>
+</ul>
+</blockquote>
+<img src="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/iimage/image-20230415154631974.png" alt="image-20230415154631974" style="zoom:67%;" />
+
+<p>注意，<code>h_addr_list</code>是一个char指针数组（字符串地址构成的数组），但数组元素实际保存的是<code>in_addr</code>结构体变量地址值，结构体如下，s_addr保存一个网络字节序（大端）的IP整型。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">in_addr</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    <span class="type">in_addr_t</span> s_addr; <span class="comment">/*32-bit IPV4 address*/</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p><strong>原因是hostent结构体并非只是为ipv4准备的（sockaddr和sockaddr_in也是有类似的关系，sockaddr并非只为ipv4准备）。</strong></p>
+</li>
+<li><p><strong>看起来声明为void指针数组更合适，而<code>hostent</code>结构体是在void指针标准化前就定义的，当时无法明确指出指针类型时采用char指针。</strong></p>
+</li>
+</ul>
+<h2 id="2-2-例程"><a href="#2-2-例程" class="headerlink" title="2.2 例程"></a>2.2 例程</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;arpa/inet.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;netdb.h&gt;</span></span></span><br><span class="line"><span class="type">void</span> <span class="title function_">error_handling</span><span class="params">(<span class="type">char</span> *message)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">fputs</span>(message,<span class="built_in">stderr</span>);</span><br><span class="line">    fputc(<span class="string">&#x27;\n&#x27;</span>,<span class="built_in">stderr</span>);</span><br><span class="line">    <span class="built_in">exit</span>(<span class="number">1</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> *argv[])</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">hostent</span> *<span class="title">host</span>;</span></span><br><span class="line">    <span class="keyword">if</span>(argc!=<span class="number">2</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;Usage : %s &lt;addr&gt;\n&quot;</span>, argv[<span class="number">0</span>]);</span><br><span class="line">        <span class="built_in">exit</span>(<span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 获取ip地址信息</span></span><br><span class="line">    host = gethostbyname(argv[<span class="number">1</span>]);</span><br><span class="line">    <span class="keyword">if</span>(!host)</span><br><span class="line">        error_handling(<span class="string">&quot;gethostbyname() error&quot;</span>);</span><br><span class="line">    <span class="comment">// 其他附带的信息</span></span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;Official name: %s \n&quot;</span>, host-&gt;h_name);      </span><br><span class="line">    <span class="keyword">for</span>(<span class="type">int</span> i=<span class="number">0</span>; host-&gt;h_aliases[i]; i++)</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;Official name: %s \n&quot;</span>, host-&gt;h_aliases[i]);  </span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;Address type: %s \n&quot;</span>,</span><br><span class="line">                (host-&gt;h_addrtype==AF_INET?<span class="string">&quot;AF_INET&quot;</span>:<span class="string">&quot;AF_INET6&quot;</span>));    </span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;IP length: %d \n&quot;</span>, host-&gt;h_length);    </span><br><span class="line">    <span class="comment">// ip地址信息</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">in_addr</span> *<span class="title">inaddr</span>;</span></span><br><span class="line">    <span class="keyword">for</span>(<span class="type">int</span> i=<span class="number">0</span>; host-&gt;h_addr_list[i]; i++)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">// 强制类型转化</span></span><br><span class="line">        <span class="comment">// h_addr_list是一个char指针数组（字符串地址构成的数组），但数组元素实际保存的是in_addr结构体变量地址值</span></span><br><span class="line">        inaddr = (<span class="keyword">struct</span> in_addr *)host-&gt;h_addr_list[i];</span><br><span class="line">        <span class="comment">// 查看网络字节序ip地址的整数形式</span></span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;in_addr.s_addr: %d \n&quot;</span>,inaddr-&gt;s_addr);</span><br><span class="line">        <span class="comment">// inet_ntoa转化网络字节序为字符串IP地址</span></span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;IP address: %s \n&quot;</span>, inet_ntoa(*inaddr));  </span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="2-3-运行结果"><a href="#2-3-运行结果" class="headerlink" title="2.3 运行结果"></a>2.3 运行结果</h2><p><img src="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/iimage/image-20230415152343436.png" alt="image-20230415152343436"><br>结果中得到了<a href="http://www.baidu.com域名的ip地址信息，一个值得关注的点是，在in_addr结构体中的s_addr整数存放的是网络字节序（大端）的整数形式的IP地址。IP地址大小端存放方式与对应十进制整数的转化方式如下：">www.baidu.com域名的ip地址信息，一个值得关注的点是，在in_addr结构体中的s_addr整数存放的是网络字节序（大端）的整数形式的IP地址。IP地址大小端存放方式与对应十进制整数的转化方式如下：</a></p>
+<h3 id="小端"><a href="#小端" class="headerlink" title="小端"></a>小端</h3><p>小端存放的IP地址转十进制整数的方式为：</p>
+<table>
+<thead>
+<tr>
+<th>十进制</th>
+<th>182</th>
+<th>61</th>
+<th>200</th>
+<th>7</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>二进制</td>
+<td>10110110</td>
+<td>00111101</td>
+<td>11001000</td>
+<td>00000111</td>
+</tr>
+<tr>
+<td>地址顺序</td>
+<td>0</td>
+<td>1</td>
+<td>2</td>
+<td>3</td>
+</tr>
+<tr>
+<td>串联二进制10110110001111011100100000000111 -&gt; 转为十进制3057502215</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
+<h3 id="大端"><a href="#大端" class="headerlink" title="大端"></a>大端</h3><p>in_addr存放IP地址的方式是网络字节序（大端），即高位数据在低地址，地址顺序如上表。而电脑（小端）读取顺序从低地址开始读，先读到的是这个数的最低字节，所以读取到数据为：</p>
+<table>
+<thead>
+<tr>
+<th>7</th>
+<th>200</th>
+<th>61</th>
+<th>182</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>00000111</td>
+<td>11001000</td>
+<td>00111101</td>
+<td>10110110</td>
+</tr>
+</tbody></table>
+<p>串联二进制00000111110010000011110110110110-&gt; 转为十进制130563510，所以in_addr.s_addr的整数形式是130563510。</p>
+<h1 id="3-通过IP获取域名信息gethostbyaddr"><a href="#3-通过IP获取域名信息gethostbyaddr" class="headerlink" title="3 通过IP获取域名信息gethostbyaddr()"></a>3 通过IP获取域名信息gethostbyaddr()</h1><h2 id="3-1-使用方法"><a href="#3-1-使用方法" class="headerlink" title="3.1 使用方法"></a>3.1 使用方法</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;netdb.h&gt;</span></span></span><br><span class="line"><span class="keyword">struct</span> hostent *<span class="title function_">gethostbyaddr</span><span class="params">(<span class="type">const</span> <span class="type">char</span>* addr, <span class="type">socklen_t</span> len, <span class="type">int</span> family)</span>;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>参数<ul>
+<li>addr：IP地址的网络字节序，一般是存放在in_addr结构体，并在传参的时候(char*)对结构体地址强制类型转换。（实际测试时，似乎也不需要强制类型转换）</li>
+<li>len：IP地址字节长度</li>
+<li>family：IP地址协议族（AF_INET或者AF_INET6）</li>
+</ul>
+</li>
+<li>返回值：成功返回hostent结构体地址，失败返回null</li>
+</ul>
+<h2 id="3-2-例程"><a href="#3-2-例程" class="headerlink" title="3.2 例程"></a>3.2 例程</h2><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;arpa/inet.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;netdb.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">error_handling</span><span class="params">(<span class="type">char</span> *message)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">fputs</span>(message,stderr);</span><br><span class="line">    <span class="built_in">fputc</span>(<span class="string">&#x27;\n&#x27;</span>,stderr);</span><br><span class="line">    <span class="built_in">exit</span>(<span class="number">1</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> *argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">struct</span> <span class="title class_">hostent</span> *host;</span><br><span class="line">    <span class="keyword">if</span>(argc!=<span class="number">2</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;Usage : %s &lt;IP&gt;\n&quot;</span>, argv[<span class="number">0</span>]);</span><br><span class="line">        <span class="built_in">exit</span>(<span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// ip转为网络字节序</span></span><br><span class="line">    <span class="keyword">struct</span> <span class="title class_">sockaddr_in</span> sockaddr;</span><br><span class="line">    <span class="comment">/* 方法1</span></span><br><span class="line"><span class="comment">    // ip地址转网络字节序并存放在sockaddr_in的in_addr结构体</span></span><br><span class="line"><span class="comment">    sockaddr.sin_addr.s_addr = inet_addr(argv[1]);</span></span><br><span class="line"><span class="comment">    memset(&amp;sockaddr, 0, sizeof(sockaddr));</span></span><br><span class="line"><span class="comment">    host = gethostbyaddr((char*)&amp;sockaddr.sin_addr, 4, AF_INET);</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line">    <span class="comment">// 方法2</span></span><br><span class="line">    <span class="comment">// ip地址转网络字节序并存放在单独的in_addr结构体</span></span><br><span class="line">    <span class="keyword">struct</span> <span class="title class_">in_addr</span> inaddr1;</span><br><span class="line">    inaddr1.s_addr = <span class="built_in">inet_addr</span>(argv[<span class="number">1</span>]);</span><br><span class="line">    <span class="comment">// 注意(char*)</span></span><br><span class="line">    host = <span class="built_in">gethostbyaddr</span>((<span class="type">char</span>*)&amp;inaddr1, <span class="number">4</span>, AF_INET);</span><br><span class="line">    <span class="keyword">if</span>(!host)</span><br><span class="line">        <span class="built_in">error_handling</span>(<span class="string">&quot;gethostbyname() error&quot;</span>);</span><br><span class="line">    <span class="comment">// 其他附带的信息</span></span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;Official name: %s \n&quot;</span>, host-&gt;h_name);      </span><br><span class="line">    <span class="keyword">for</span>(<span class="type">int</span> i=<span class="number">0</span>; host-&gt;h_aliases[i]; i++)</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;Official name: %s \n&quot;</span>, host-&gt;h_aliases[i]);  </span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;Address type: %s \n&quot;</span>,</span><br><span class="line">                (host-&gt;h_addrtype==AF_INET?<span class="string">&quot;AF_INET&quot;</span>:<span class="string">&quot;AF_INET6&quot;</span>));    </span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;IP length: %d \n&quot;</span>, host-&gt;h_length);    </span><br><span class="line">    <span class="comment">// ip地址信息</span></span><br><span class="line">    <span class="keyword">struct</span> <span class="title class_">in_addr</span> *inaddr;</span><br><span class="line">    <span class="keyword">for</span>(<span class="type">int</span> i=<span class="number">0</span>; host-&gt;h_addr_list[i]; i++)</span><br><span class="line">    &#123;</span><br><span class="line">        inaddr = (<span class="keyword">struct</span> in_addr *)host-&gt;h_addr_list[i];</span><br><span class="line">        <span class="comment">// 查看in_addr.s_addr的网络字节序ip地址，整数存放</span></span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;in_addr.s_addr: %u \n&quot;</span>,inaddr-&gt;s_addr);</span><br><span class="line">        <span class="comment">// inet_ntoa转化网络字节序为字符串IP地址</span></span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;IP address: %s \n&quot;</span>, <span class="built_in">inet_ntoa</span>(*inaddr));  </span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="3-3-结果"><a href="#3-3-结果" class="headerlink" title="3.3 结果"></a>3.3 结果</h2><p> <img src="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/iimage/image-20230415153656086.png" alt="image-20230415153656086"><br>通过2小节的gethostbyname获取了baidu.com的ip地址，但对ip地址获取时出现了获取不了host信息，并不是代码出错，看到网上不少人也出现这样的问题。一个猜测是：</p>
+<blockquote>
+<p>gethostbyname可以通过DNS服务器通过域名获取ip地址等信息。但是gethostbyaddr输入参数时ip地址，这样无需经过dns转换，无法获取域名等信息，但是可以在hosts文件中增加一个映射，它应该会检查hosts文件。所以在host文件添加ip和域名的映射即可。<br><a target="_blank" rel="noopener" href="https://bbs.csdn.net/topics/391815602">https://bbs.csdn.net/topics/391815602</a></p>
+</blockquote>
+<p>而获取电信dns服务器114.114.114.114的host信息是可以的<br><img src="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/iimage/image-20230415153750412.png" alt="image-20230415153750412"></p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://drinkwateronly.github.io/2023/04/6eb876a3f705/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Wallnut">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Wallnut">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Wallnut">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2023/04/6eb876a3f705/" class="post-title-link" itemprop="url">ch5-Socket可选项</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2023-04-20 00:00:00" itemprop="dateCreated datePublished" datetime="2023-04-20T00:00:00+08:00">2023-04-20</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-11-17 20:05:33" itemprop="dateModified" datetime="2023-11-17T20:05:33+08:00">2023-11-17</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/C/" itemprop="url" rel="index"><span itemprop="name">C++</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/C/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">网络编程</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="1-设置和读取套接字可选项"><a href="#1-设置和读取套接字可选项" class="headerlink" title="1 设置和读取套接字可选项"></a>1 设置和读取套接字可选项</h1><p>套接字可以设置出不同的特性，这里给出一部分较为重要的可选项含义与设置方法。</p>
+<h2 id="1-1-使用方法"><a href="#1-1-使用方法" class="headerlink" title="1.1 使用方法"></a>1.1 使用方法</h2><h3 id="1-1-1-getsockopt"><a href="#1-1-1-getsockopt" class="headerlink" title="1.1.1 getsockopt"></a>1.1.1 getsockopt</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/socket.h&gt;</span></span></span><br><span class="line"><span class="type">int</span> <span class="title function_">getsockopt</span><span class="params">(<span class="type">int</span> sock, <span class="type">int</span> level, <span class="type">int</span> optname, <span class="type">void</span> *optval, <span class="type">socklen_t</span> *optlen)</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>功能：读取套接字可选项</li>
+<li>参数<ul>
+<li>sock: 套接字</li>
+<li>level：查看可选项的协议层</li>
+<li>optname：查看可选项的名称</li>
+<li>optval：保存读取结果的缓冲地址</li>
+<li>optlen：缓冲区大小，调用后保存可选信息的字节数</li>
+</ul>
+</li>
+<li>返回值：成功0，失败-1</li>
+</ul>
+<h3 id="1-1-2-setsockopt"><a href="#1-1-2-setsockopt" class="headerlink" title="1.1.2 setsockopt"></a>1.1.2 setsockopt</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/socket.h&gt;</span></span></span><br><span class="line"><span class="type">int</span> <span class="title function_">setsockopt</span><span class="params">(<span class="type">int</span> sock, <span class="type">int</span> level, <span class="type">int</span> optname, <span class="type">const</span> <span class="type">void</span> *optval, <span class="type">socklen_t</span> optlen)</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>功能：设置套接字可选项</li>
+<li>参数<ul>
+<li>sock: 套接字</li>
+<li>level：要更改的可选项的协议层</li>
+<li>optname：要更改的可选项的名称</li>
+<li>optval：保存要更改信息的缓冲区地址</li>
+<li>optlen：缓冲区大小</li>
+</ul>
+</li>
+<li>返回值：成功0，失败-1</li>
+</ul>
+<h2 id="1-2-例程：查看TCP和UDP的套接字类型"><a href="#1-2-例程：查看TCP和UDP的套接字类型" class="headerlink" title="1.2 例程：查看TCP和UDP的套接字类型"></a>1.2 例程：查看TCP和UDP的套接字类型</h2><p>level： <code>SOL_SOCKET</code></p>
+<p>optname： <code>SO_TYPE</code></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;arpa/inet.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/socket.h&gt;</span></span></span><br><span class="line"><span class="type">void</span> <span class="title function_">error_handling</span><span class="params">(<span class="type">char</span> *message)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">fputs</span>(message,<span class="built_in">stderr</span>);</span><br><span class="line">    fputc(<span class="string">&#x27;\n&#x27;</span>,<span class="built_in">stderr</span>);</span><br><span class="line">    <span class="built_in">exit</span>(<span class="number">1</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> *argv[])</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">int</span> tcp_sock, udp_sock;</span><br><span class="line">    <span class="comment">// 存放getsockopt()返回结果</span></span><br><span class="line">    <span class="type">int</span> sock_type;</span><br><span class="line">    <span class="type">socklen_t</span> optlen;</span><br><span class="line">    optlen = <span class="keyword">sizeof</span>(sock_type);</span><br><span class="line">    <span class="type">int</span> state;</span><br><span class="line">    <span class="comment">// 创建套接字</span></span><br><span class="line">    tcp_sock = socket(PF_INET, SOCK_STREAM, <span class="number">0</span>);</span><br><span class="line">    udp_sock = socket(PF_INET, SOCK_DGRAM, <span class="number">0</span>);</span><br><span class="line">    <span class="comment">// 创建时指定的套接字类型</span></span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;SOCK_STREAM: %d \n&quot;</span>, SOCK_STREAM);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;SOCK_DGRAM: %d \n&quot;</span>, SOCK_DGRAM);</span><br><span class="line">    <span class="comment">// 查看tcp的套接字类型</span></span><br><span class="line">    state = getsockopt(tcp_sock, SOL_SOCKET, SO_TYPE, (<span class="type">void</span>*)&amp;sock_type, &amp;optlen);</span><br><span class="line">    <span class="keyword">if</span>(state) <span class="comment">// getsockopt成功0，失败-1</span></span><br><span class="line">        error_handling(<span class="string">&quot;getsockopt() error&quot;</span>);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;socket type one: %d\n&quot;</span>, sock_type);</span><br><span class="line">    <span class="comment">// 查看udp套接字类型</span></span><br><span class="line">    state = getsockopt(udp_sock, SOL_SOCKET, SO_TYPE, (<span class="type">void</span>*)&amp;sock_type, &amp;optlen);</span><br><span class="line">    <span class="keyword">if</span>(state) <span class="comment">// getsockopt成功0，失败-1</span></span><br><span class="line">        error_handling(<span class="string">&quot;getsockopt() error&quot;</span>);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;socket type two: %d\n&quot;</span>, sock_type);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="1-3-例程：设置和读取输入输出缓冲区"><a href="#1-3-例程：设置和读取输入输出缓冲区" class="headerlink" title="1.3 例程：设置和读取输入输出缓冲区"></a>1.3 例程：设置和读取输入输出缓冲区</h2><p>level： <code>SOL_SOCKET</code></p>
+<p>optname：<code>SO_SNDBUF</code> &amp; <code>SO_RCVBUF</code></p>
+<h3 id="1-3-1-代码"><a href="#1-3-1-代码" class="headerlink" title="1.3.1 代码"></a>1.3.1 代码</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;arpa/inet.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/socket.h&gt;</span></span></span><br><span class="line"><span class="type">void</span> <span class="title function_">error_handling</span><span class="params">(<span class="type">char</span> *message)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">fputs</span>(message,<span class="built_in">stderr</span>);</span><br><span class="line">    fputc(<span class="string">&#x27;\n&#x27;</span>,<span class="built_in">stderr</span>);</span><br><span class="line">    <span class="built_in">exit</span>(<span class="number">1</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> *argv[])</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">int</span> snd_buf, recv_buf;</span><br><span class="line">    <span class="type">socklen_t</span> len = <span class="keyword">sizeof</span>(snd_buf);</span><br><span class="line">    <span class="type">int</span> state;</span><br><span class="line">    <span class="comment">// 创建套接字</span></span><br><span class="line">    <span class="type">int</span> tcp_sock, udp_sock;</span><br><span class="line">    tcp_sock = socket(PF_INET, SOCK_STREAM, <span class="number">0</span>);</span><br><span class="line">    udp_sock = socket(PF_INET, SOCK_DGRAM, <span class="number">0</span>);</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 查看tcp套接字的IO缓冲区大小</span></span><br><span class="line">    state = getsockopt(tcp_sock, SOL_SOCKET, SO_SNDBUF, (<span class="type">void</span>*)&amp;snd_buf, &amp;len);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;TCP send/Output buffer size: %d\n&quot;</span>, snd_buf);</span><br><span class="line">    state = getsockopt(tcp_sock, SOL_SOCKET, SO_RCVBUF, (<span class="type">void</span>*)&amp;recv_buf, &amp;len);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;TCP receive/Input buffer size: %d\n&quot;</span>, recv_buf);</span><br><span class="line">    </span><br><span class="line">     <span class="comment">// 查看udp套接字的IO缓冲区大小</span></span><br><span class="line">    state = getsockopt(udp_sock, SOL_SOCKET, SO_SNDBUF, (<span class="type">void</span>*)&amp;snd_buf, &amp;len);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;UDP send/Output buffer size: %d\n&quot;</span>, snd_buf);</span><br><span class="line">    state = getsockopt(udp_sock, SOL_SOCKET, SO_RCVBUF, (<span class="type">void</span>*)&amp;recv_buf, &amp;len);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;UDP receive/Input buffer size: %d\n&quot;</span>, recv_buf);</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 设置tcp套接字的IO缓冲区大小</span></span><br><span class="line">    <span class="type">int</span> set_recv_buf = <span class="number">1024</span>*<span class="number">3</span>, set_snd_buf = <span class="number">1024</span>*<span class="number">4</span>;</span><br><span class="line">    state = setsockopt(tcp_sock, SOL_SOCKET, SO_RCVBUF, (<span class="type">void</span>*)&amp;set_recv_buf, <span class="keyword">sizeof</span>(set_recv_buf));</span><br><span class="line">    state = setsockopt(tcp_sock, SOL_SOCKET, SO_SNDBUF, (<span class="type">void</span>*)&amp;set_snd_buf, <span class="keyword">sizeof</span>(set_snd_buf));</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 查看设置后tcp套接字的IO缓冲区大小</span></span><br><span class="line">    state = getsockopt(tcp_sock, SOL_SOCKET, SO_SNDBUF, (<span class="type">void</span>*)&amp;snd_buf, &amp;len);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;After setsockopt: TCP send/Output buffer size: %d\n&quot;</span>, snd_buf);</span><br><span class="line">    state = getsockopt(tcp_sock, SOL_SOCKET, SO_RCVBUF, (<span class="type">void</span>*)&amp;recv_buf, &amp;len);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;After setsockopt: TCP receive/Input buffer size: %d\n&quot;</span>, recv_buf);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="1-3-2-结果"><a href="#1-3-2-结果" class="headerlink" title="1.3.2 结果"></a>1.3.2 结果</h3><p><img src="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/iimage/image-20230415222338145.png" alt="image-20230415222338145"></p>
+<p>8192和6144并不是我们代码中4*1024和3*1024的大小设置，因为不会完全按照我们的要求设置，防止缓冲区被错误设置。</p>
+<blockquote>
+<p> 任何UDP套接字都有发送缓冲区大小，但<strong>实际上不存在UDP发送缓冲区</strong>，其大小仅仅是可写到套接字的UDP数据报的大小上限。如果一个应用进程写一个大于套接字发送缓冲区大小的数据报，内核将返回该进程一个EMSGSIZE错误。</p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/legend050709/article/details/128437143">(19条消息) udp缓冲区_legend050709ComeON的博客-CSDN博客</a></p>
+</blockquote>
+<h2 id="1-4-地址再分配：SO-REUSEADDR"><a href="#1-4-地址再分配：SO-REUSEADDR" class="headerlink" title="1.4 地址再分配：SO_REUSEADDR"></a>1.4 地址再分配：SO_REUSEADDR</h2><h3 id="1-4-1-time-wait"><a href="#1-4-1-time-wait" class="headerlink" title="1.4.1 time-wait"></a>1.4.1 time-wait</h3><p>先前的只能接入一个用户的回声服务器中，服务器可以有两种中止方式：</p>
+<ul>
+<li>若客户端输入q后，客户端主动发送<strong>FIN</strong>断开服务器，服务器终止。这种情况下，立刻重启服务器，继续绑定上一个端口，服务器能够继续运行。</li>
+<li>按ctrl+z强制关闭也会向服务器传递<strong>FIN</strong>。但如果马上在同一端口运行服务器，会出现bind() error消息。这是因为：实际上，主动断开的套接字会经过time-wait过程，而<strong>time-wait</strong>状态会占用端口号。（但无需考虑客户端的，因为客户端套接字端口号是任意指定）</li>
+</ul>
+<p>为什么要有time-wait状态：</p>
+<p><img src="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/iimage/image-20230415224608984.png" alt="image-20230415224608984"></p>
+<p>因为如果主机A向B传输ACK消息（<strong>上图红框</strong>）后立即消除套接字，但这条消息丢失了，B会认为自己的FIN消息没达到主机A，试图重传，而主机A已经关闭，B永远无法得到A传来的ACK消息。因此基于，先发送FIN的主机，要经过time-wait状态。</p>
+<p>time-wait看似重要，但也会出问题：<br>1、若服务器紧急停止，若需要尽快重启提供服务，需要等待<br>2、Time-wait延长：</p>
+<p><img src="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/iimage/image-20230415224946329.png" alt="image-20230415224946329"></p>
+<p>解决方式就是设置套接字可选项的SO_REUSEADDR为true：</p>
+<h3 id="1-3-1-SO-REUSEADDR-地址再分配"><a href="#1-3-1-SO-REUSEADDR-地址再分配" class="headerlink" title="1.3.1 SO_REUSEADDR 地址再分配"></a>1.3.1 SO_REUSEADDR 地址再分配</h3><p>level： <code>SOL_SOCKET</code></p>
+<p>optname：<code>SO_REUSEADDR </code> </p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">bool</span> option = TRUE;</span><br><span class="line">optlen = <span class="keyword">sizeof</span>(option);</span><br><span class="line">setsockopt(serv_sock, SOL_SOCKET, SO_REUSEADDR, (<span class="type">void</span>*)&amp;option, optlen);</span><br></pre></td></tr></table></figure>
+
+<p>SO_REUSEADDR&#x3D;true时，允许在同一端口上启动同一服务器的多个实例，只要每个实例捆绑一个不同的IP地址即可。也就是说本机服务器如果有多个地址，可以在不同地址上使用相同的端口提供服务。</p>
+<p>下图为21端口的socketA在time-wait时，设置SO_REUSEADDR，然后绑定21端口给socketB的所有情况。0.0.0.0表示本机所有地址</p>
+<p><img src="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/iimage/image-20230415225250543.png" alt="image-20230415225250543"></p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/14388706/how-do-so-reuseaddr-and-so-reuseport-differ/14388707#14388707">linux - How do SO_REUSEADDR and SO_REUSEPORT differ? - Stack Overflow</a></p>
+</blockquote>
+<h2 id="1-5-启用Nagle算法：TCP-NODELAY"><a href="#1-5-启用Nagle算法：TCP-NODELAY" class="headerlink" title="1.5 启用Nagle算法：TCP_NODELAY"></a>1.5 启用Nagle算法：TCP_NODELAY</h2><p>level： <code>IPPROTO_TCP</code></p>
+<p>optname：<code>TCP_NODELAY</code> </p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 设置禁用/启用Nagle算法，因为默认是启用的，所以opt_val = 0表示启用，1表示禁用。</span></span><br><span class="line">state = setsockopt(sock, IPPROTO_TCP, TCP_NODELAY, (<span class="type">void</span> *)&amp;opt_val, <span class="keyword">sizeof</span>(opt_val))</span><br></pre></td></tr></table></figure>
+
+<p>Nagle算法：防止数据包过多导致网络过载，<strong>收到前一个包的ACK，才发送下一个数据。</strong></p>
+<p><img src="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/iimage/image-20230415225429654.png" alt="image-20230415225429654"></p>
+<ul>
+<li>实际上是控制发送方发送使得缓冲区存到一定程度再发生。若发送方产生数据太慢，这种方式可以让发送方的数据进入缓冲区一部分再发送，不至于一字节一字节发送而数据包泛滥（数据包头）。当然这是一种极端情况。</li>
+<li>在发送大文件时，缓冲区也会很快被填满然后发送，不会无端增加数据包数量，不使用Nagle算法会更快。</li>
+<li><strong>TCP套接字默认使用Nagle算法</strong>，未判断数据特性时，不应禁用Nagle算法。</li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 

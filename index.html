@@ -150,13 +150,13 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">35</span>
+          <span class="site-state-item-count">37</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
           <a href="/categories/">
-        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-count">17</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
   </nav>
@@ -178,6 +178,376 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://drinkwateronly.github.io/2024/03/dd13c1a34d70/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Wallnut">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Wallnut">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Wallnut">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2024/03/dd13c1a34d70/" class="post-title-link" itemprop="url">MySQL底层原理：chapter1基础篇</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2024-03-29 00:00:00" itemprop="dateCreated datePublished" datetime="2024-03-29T00:00:00+08:00">2024-03-29</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2024-04-01 14:37:37" itemprop="dateModified" datetime="2024-04-01T14:37:37+08:00">2024-04-01</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/MySQL/" itemprop="url" rel="index"><span itemprop="name">MySQL</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/MySQL/%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">底层原理</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="基础篇"><a href="#基础篇" class="headerlink" title="基础篇"></a>基础篇</h1><p>全文参考：</p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://www.xiaolincoding.com/mysql/">图解MySQL介绍 | 小林coding (xiaolincoding.com)</a></p>
+</blockquote>
+<h2 id="mysql执行流程"><a href="#mysql执行流程" class="headerlink" title="mysql执行流程"></a>mysql执行流程</h2><p><img src="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/image/mysql%E6%9F%A5%E8%AF%A2%E6%B5%81%E7%A8%8B.png" alt="mysql查询流程"></p>
+<p>两层：Server层+存储引擎层</p>
+<ul>
+<li>Server层：建立连接、解析sql语句、执行sql语句</li>
+<li>存储引擎层：数据的存储和提取。不同存储引擎可共享一个Server层。</li>
+</ul>
+<p>两层之间以记录为最小单位传输数据。</p>
+<h3 id="连接器"><a href="#连接器" class="headerlink" title="连接器"></a>连接器</h3><ul>
+<li>流程：TCP三次握手建立连接 -&gt; 用户密码输入 -&gt; 用户权限获取</li>
+<li>查询连接情况：<code>show processlist</code>查看多少个客户端连接了mysql</li>
+<li>最大连接数：<code>show variables like &#39;max_connections&#39; </code></li>
+<li>最长空闲连接时长：<code>show variables like &#39;wait_timeout&#39;</code>定义了最长的空闲连接时长，超出则断开连接。（28880s&#x3D;8h）</li>
+<li>长连接和短链接（和HTTP类似）<ul>
+<li>短连接，每个sql语句执行需要TCP3握，执行完毕TCP4挥。</li>
+<li>长连接，一个TCP连接可以执行多个sql语句。但会导致内存占用增多。<ul>
+<li>解决方式1：服务器定期断开长连接</li>
+<li>解决方式2：客户端主动重置长连接。虽然重置了，但不需要再重连和重新验证权限</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="查询sql缓存（废弃）"><a href="#查询sql缓存（废弃）" class="headerlink" title="查询sql缓存（废弃）"></a>查询sql缓存（废弃）</h3><p>先查缓存，以sql语句为key，结果为value。对于更新频繁的表命中率低，因此8.0版本后移除。</p>
+<p>该缓存与buffer pool不同。</p>
+<h3 id="解析sql"><a href="#解析sql" class="headerlink" title="解析sql"></a>解析sql</h3><p>词法分析 -&gt; 语法分析，构建语法树。此过程不会查看表或字段是否存在。</p>
+<h3 id="执行sql"><a href="#执行sql" class="headerlink" title="执行sql"></a>执行sql</h3><h4 id="预处理"><a href="#预处理" class="headerlink" title="预处理"></a>预处理</h4><ul>
+<li>确定sql语句中的表&#x2F;字段是否存在</li>
+<li>将<code>select *</code>的<code>*</code>扩展为全列</li>
+</ul>
+<h4 id="优化器"><a href="#优化器" class="headerlink" title="优化器"></a>优化器</h4><p>基于查询成本，确认sql的执行计划。例如在多种索引时确定用哪个索引。</p>
+<h4 id="执行器"><a href="#执行器" class="headerlink" title="执行器"></a>执行器</h4><p>执行器开始与存储引擎交互，</p>
+<ul>
+<li>主键索引查询：计划中用到了主键索引，优化器决定访问类型为const。先查B+树，有记录时判断记录是否符合条件，符合发给客户端，否则跳过。</li>
+<li>全表扫描：计划中没有用到索引，优化器决定访问类型为ALL进行查询。循环所有记录，符合条件发给客户端。</li>
+<li>索引下推：能够减少【二级索引】查询时的回表操作。</li>
+</ul>
+<h3 id="索引下推？"><a href="#索引下推？" class="headerlink" title="索引下推？"></a>索引下推？</h3><p>5.6版本推出的机制，减少『二级索引』在查询时的『回表操作』。通常和联合索引有关？</p>
+<p>叫『下推』的原因是，一些应该是Server层处理的事情，可『下推』到存储引擎层处理。</p>
+<p>假设对<code>t_user</code>表建立了联合索引<code>(age, reward)</code>，并查询如下语句。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select * from t_user  where age &gt; 20 and reward = 100000;</span><br></pre></td></tr></table></figure>
+
+<h4 id="假设没有索引下推"><a href="#假设没有索引下推" class="headerlink" title="假设没有索引下推"></a>假设没有索引下推</h4><ul>
+<li>首先，<code>InnoDB</code>根据<code>age</code>索引找到第一条<code>age&gt;20</code>的二级索引记录</li>
+<li>然后，根据二级索引记录的主键值，回表查询该主键对应的记录</li>
+<li>最后，该记录被返回到Server层，进一步判断<code>reward</code>是否等于100000</li>
+</ul>
+<p>如此循环</p>
+<h4 id="假设有索引下推"><a href="#假设有索引下推" class="headerlink" title="假设有索引下推"></a>假设有索引下推</h4><p>因为<code>reward</code>和<code>age</code>是联合索引，在二级索引记录中会同时记录有<code>reward</code>和<code>age</code>的值。因此该查询语句可以在存储引擎中『提前过滤』不满足条件的二级索引记录，减少回表次数。</p>
+<ul>
+<li>首先，<code>InnoDB</code>根据<code>age</code>索引找到第一条<code>age&gt;20</code>的二级索引记录</li>
+<li>然后，先判断<code>reward</code>字段条件是否成立，<ul>
+<li>如果不成立，则跳过该二级索引记录，找下一条</li>
+<li>如果成立，则根据该二级索引记录的主键值，回表查询主键对应记录</li>
+</ul>
+</li>
+<li>最后，该记录被返回到Server层，进一步判断<code>reward</code>是否等于100000</li>
+</ul>
+<h2 id="mysql数据存储方式"><a href="#mysql数据存储方式" class="headerlink" title="mysql数据存储方式"></a>mysql数据存储方式</h2><p>一张数据库表的数据是保存在名为『表名字.ibd』 的『独占表空间文件』里。</p>
+<p>此处主要讲InnoDB的结构，表空间由<strong>『段、区、页、行』</strong>（segment，extent，page，row）组成</p>
+<p><img src="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/image/image-20240401143434916.png" alt="image-20240401143434916"></p>
+<h3 id="各结构概览"><a href="#各结构概览" class="headerlink" title="各结构概览"></a>各结构概览</h3><h4 id="行-row"><a href="#行-row" class="headerlink" title="行 row"></a>行 row</h4><p>记录按行存放，不同的存储引擎有不同结构。</p>
+<p>详见后续行结构细节</p>
+<h4 id="页-page"><a href="#页-page" class="headerlink" title="页 page"></a>页 page</h4><p>问题：每次I&#x2F;O只读取一行，效率很差。</p>
+<p>解决：多条记录存为一页，一次的I&#x2F;O以页为单位。即当读取一条记录时，会以页为单位从磁盘读到内存。</p>
+<p>页是存储引擎管理的最小单位，为16KB，即最多能保证一页16KB的连续空间</p>
+<h4 id="区-extent"><a href="#区-extent" class="headerlink" title="区 extent"></a>区 extent</h4><p>问题：InnoDB 存储引擎用 B+ 树存储数据，每个叶子通过双向链表链接，如果相邻两页距离很远，『对磁盘而言』需要大量的『随机I&#x2F;O』，速度较慢。</p>
+<p>解决：多个相邻的页的物理位置也相邻，构成区，因此可以使用『顺序I&#x2F;O』，范围查询时的性能很高。数据大时，为索引分配空间是按照区，而不是按照页为单位分配。</p>
+<p>区大小1MB &#x3D; 64 × 页大小16KB</p>
+<h4 id="段-segment"><a href="#段-segment" class="headerlink" title="段 segment"></a>段 segment</h4><p>段由多个区组成，表空间则由多个段构成。段分为</p>
+<ul>
+<li>索引段：存放B+树非叶子节点的区</li>
+<li>数据段：存放B+树叶子节点的区</li>
+<li>回滚段：存放了回滚数据的区</li>
+</ul>
+<h3 id="行格式细节"><a href="#行格式细节" class="headerlink" title="行格式细节"></a>行格式细节</h3><p>行格式即存储记录的结构，InnoDB提供了4种格式：</p>
+<ul>
+<li>Redundant格式用于5.0之前，基本不使用。</li>
+<li>Compact格式，紧凑行格式，5.0后。</li>
+<li>Dynamic和Compressed，也是紧凑行格式，类似Compact。</li>
+</ul>
+<p>本节以Compact介绍，可通过Compact拓展到其他紧凑行格式。</p>
+<p>具体而言，除了真实数据本身，Compact每一行记录的额外信息有：变长字段长度列表，NULL值列表、记录头信息、真实数据部分的隐藏字段。</p>
+<h4 id="变长字段长度列表"><a href="#变长字段长度列表" class="headerlink" title="变长字段长度列表"></a>变长字段长度列表</h4><p>变长字段有：<code>varchar</code>，<code>TEXT</code>，<code>BLOB</code>等。</p>
+<p>『变长字段长度列表』根据建表时『变长字段的逆序』存放『变长字段』的数据真正占用的字节数。</p>
+<p>注意，『变长字段长度列表』中各元素的长度必须以字节为单位，由于mysql对记录大小的限制，因此每个元素最大为2字节。当表里没有变长字段时，该列表可以不存在。</p>
+<h4 id="NULL值列表"><a href="#NULL值列表" class="headerlink" title="NULL值列表"></a>NULL值列表</h4><p>某些列可能有NULL值，将NULL值存为真实数据浪费空间。</p>
+<p>『NULL值列表』根据建表时『允许NULL字段的逆序』存放表示字段是否为NULL的二进制位：0时为NULL；1时相反。</p>
+<p>注意，NULL值列表长度必须以字节为单位，位数不足时『高位补0』。类似的，如果所有字段NOT NULL，则该列表可以不存在。</p>
+<h4 id="记录头信息"><a href="#记录头信息" class="headerlink" title="记录头信息"></a>记录头信息</h4><p>内容较多，比较重要的是</p>
+<ul>
+<li><code>delete_mask</code>：软删除的数据标记为1</li>
+<li><code>next_record</code>：下一条记录的位置，实际上指的是下一条记录的『记录头信息』和『真实数据』之间的位置。因此往右可以读到记录头信息，往左可以读到真实数据。</li>
+<li><code>record_type</code>：0表示普通记录，1表示B+树非叶子节点记录，2表示最小记录，3表示最大记录。</li>
+</ul>
+<h4 id="隐藏字段"><a href="#隐藏字段" class="headerlink" title="隐藏字段"></a>隐藏字段</h4><p>除了建表时定义的字段，还有一些隐藏字段。这些字段属于数据部分。</p>
+<ul>
+<li><code>row_id</code>：建表时没有指定主键，且表里没有UNIQUE约束的列时（即表内没有字段可以作为主键），会被作为隐藏主键使用，因此是非必需的。占用6字节。</li>
+<li><code>trx_id</code>：指定该记录由哪个事务生成。必需，占用6字节。</li>
+<li><code>roll_pointer</code>：指定上一个版本的指针。必需，占用7字节。</li>
+</ul>
+<h4 id="例子"><a href="#例子" class="headerlink" title="例子"></a>例子</h4><p>该例子主要展示InnoDB的COMPATCT行格式中的『变长字段长度列表』，『NULL值列表』如何记录信息。</p>
+<p>例如：假设下表的字符集为ascii，其中<code>name</code>和<code>phone</code>为变长字段。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">CREATE TABLE `t_user` (</span><br><span class="line">  `id` int(11) NOT NULL,</span><br><span class="line">  `name` VARCHAR(20) DEFAULT NULL,  # --变长--</span><br><span class="line">  `phone` VARCHAR(20) DEFAULT NULL, # --变长--</span><br><span class="line">  `age` int(11) DEFAULT NULL,</span><br><span class="line">  PRIMARY KEY (`id`) USING BTREE</span><br><span class="line">) ENGINE = InnoDB DEFAULT CHARACTER SET = ascii ROW_FORMAT = COMPACT;</span><br></pre></td></tr></table></figure>
+
+<p>并有如下记录</p>
+<table>
+<thead>
+<tr>
+<th>id主键</th>
+<th>name</th>
+<th>phone</th>
+<th>age</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>a</td>
+<td>123</td>
+<td>18</td>
+</tr>
+<tr>
+<td>2</td>
+<td>bb</td>
+<td>1234</td>
+<td>NULL</td>
+</tr>
+<tr>
+<td>3</td>
+<td>ccc</td>
+<td>NULL</td>
+<td>NULL</td>
+</tr>
+</tbody></table>
+<p>对于第一条记录</p>
+<ul>
+<li><code>name=&#39;a&#39;</code>占用字节数为<code>0x01</code>，<code>phone=&#39;123&#39;</code>占用字节数为<code>0x03</code>。因此『变长字段长度列表』内容是<code>[0x03 0x01]</code></li>
+<li>所有字段非空，因此『NULL值列表』为<code>0000 0000</code>，即<code>0x00</code></li>
+</ul>
+<p>对于第二条记录</p>
+<ul>
+<li><code>name=&#39;bb&#39;</code>占用字节数为0x02，<code>phone=&#39;1234&#39;</code>占用字节数为0x04。因此变长字段长度列表内容是<code>[0x04 0x02]</code></li>
+<li>第三个字段为空，因此『NULL值列表』为<code>[0 0 0 0 0 1 0 0]</code>，即<code>0x04</code></li>
+</ul>
+<p>对于第三条记录</p>
+<ul>
+<li><code>name=&#39;ccc&#39;</code>占用字节数为0x03，<code>phone=&#39;NULL&#39;</code>不记录其占用字节数。因此变长字段长度列表内容是<code>[0x03]</code></li>
+<li>第二、三个字段为空，因此『NULL值列表』为<code>[0 0 0 0 0 1 1 0]</code>，即<code>0x05</code></li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/image/image-20240401143355298.png" alt="image-20240401143355298"></p>
+<h3 id="为什么变长字段长度列表和NULL值列表以字段逆序存放"><a href="#为什么变长字段长度列表和NULL值列表以字段逆序存放" class="headerlink" title="为什么变长字段长度列表和NULL值列表以字段逆序存放"></a>为什么变长字段长度列表和NULL值列表以字段逆序存放</h3><ul>
+<li><p>主要是因为「记录头信息」中指向下一个记录的指针，指向的是下一条记录的「记录头信息」和「真实数据」之间的位置，这样的好处是向左读就是记录头信息，向右读就是真实数据，比较方便。</p>
+</li>
+<li><p>【因为<strong>使得位置靠前的记录的真实数据和数据对应的字段长度信息可以同时在一个 CPU Cache Line 中，这样就可以提高 CPU Cache 的命中率</strong>。】？？？？</p>
+</li>
+</ul>
+<h3 id="varchar-n-的n最大取值"><a href="#varchar-n-的n最大取值" class="headerlink" title="varchar(n)的n最大取值"></a>varchar(n)的n最大取值</h3><p>mysql规定，除了<code>TEXT</code>和<code>BLOBs</code>大对象类型，其他所有列（不包括『隐藏列』和『记录头信息』，包括『变长字段长度列表』和『NULL值列表』）占用的字节长度不超过65535字节。</p>
+<p>即满足式子：</p>
+<blockquote>
+<p>所有用户定义的字段长度（除了<code>TEXT</code>和<code>BLOBs</code>字段） + 变长字段长度列表所占字节数 + NULL值列表所占字节数 &lt;&#x3D; 65535</p>
+</blockquote>
+<p>例如下表，只创建一个varchar字段，那么n最大可取多大？</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">CREATE TABLE test ( </span><br><span class="line">`name` VARCHAR(n)  NULL</span><br><span class="line">) ENGINE = InnoDB DEFAULT CHARACTER SET = ascii ROW_FORMAT = COMPACT;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>『变长字段长度列表』所占字节数：2字节。因为varchar字段的长度应该是接近65535字节，因此需要2字节记录varchar字段长度。</li>
+<li>『NULL值列表』所占字节数：1字节。因为可以只用1bit表示是否为null，且该列表要以字节为单位。</li>
+</ul>
+<p>因此，根据上式 <code>n + 2 + 1 &lt;= 65535</code>，即n最大取65532。</p>
+<h3 id="行溢出处理方式"><a href="#行溢出处理方式" class="headerlink" title="行溢出处理方式"></a>行溢出处理方式</h3><p>一页大小为<code>16KB=16384</code>字节，小于<code>65535</code>字节，因此一些记录会发生『行溢出』。</p>
+<ul>
+<li>Compact：在记录真实数据的地方保存『该列的部分数据』，并将剩余数据放到『溢出页』，在部分数据后用20字节指针，指向该『溢出页』。</li>
+<li>Compressed和Dynamic：不存部分数据，直接将数据放到『溢出页』，只存20字节的指针。</li>
+</ul>
+<p>一些暂未解决的问题：</p>
+<ul>
+<li>在Compact中，如果有两列共同导致行溢出，那么这两列分别保存多少部分数据？</li>
+<li>溢出页如何存放？是否溢出页会构成一个区？</li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://drinkwateronly.github.io/2024/03/49fd9137ba4a/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Wallnut">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Wallnut">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Wallnut">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2024/03/49fd9137ba4a/" class="post-title-link" itemprop="url">Docker可视化工具Portainer安装</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2024-03-21 19:05:21" itemprop="dateCreated datePublished" datetime="2024-03-21T19:05:21+08:00">2024-03-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2024-03-26 20:13:14" itemprop="dateModified" datetime="2024-03-26T20:13:14+08:00">2024-03-26</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%90%8E%E7%AB%AF/" itemprop="url" rel="index"><span itemprop="name">后端</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%90%8E%E7%AB%AF/Docker/" itemprop="url" rel="index"><span itemprop="name">Docker</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h2 id="Docker可视化Portainer安装"><a href="#Docker可视化Portainer安装" class="headerlink" title="Docker可视化Portainer安装"></a>Docker可视化Portainer安装</h2><p>注意linux和windows安装的命令不同，安装错则连接不上docker</p>
+<p>拉镜像</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker pull portainer/portainer</span><br></pre></td></tr></table></figure>
+
+<p>运行</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">docker run -p 9000:9000 -p 8000:8000 --name portainer \</span><br><span class="line">--restart=always \</span><br><span class="line">-v /var/run/docker.sock:/var/run/docker.sock \</span><br><span class="line">-v /mydata/portainer/data:/data \</span><br><span class="line">-d portainer/portainer</span><br></pre></td></tr></table></figure>
+
+<p>访问</p>
+<p>localhose:9000</p>
+<h2 id="Ref"><a href="#Ref" class="headerlink" title="Ref"></a>Ref</h2><blockquote>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/ljq_up/article/details/135674495">https://blog.csdn.net/ljq_up/article/details/135674495</a></p>
+</blockquote>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1959,444 +2329,6 @@
 
 
 
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://drinkwateronly.github.io/2023/11/2978ee3a4e31/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="Wallnut">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Wallnut">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Wallnut">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2023/11/2978ee3a4e31/" class="post-title-link" itemprop="url">Docker基础教程</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2023-11-27 10:42:07" itemprop="dateCreated datePublished" datetime="2023-11-27T10:42:07+08:00">2023-11-27</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2024-01-03 12:01:32" itemprop="dateModified" datetime="2024-01-03T12:01:32+08:00">2024-01-03</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E5%90%8E%E7%AB%AF/" itemprop="url" rel="index"><span itemprop="name">后端</span></a>
-        </span>
-          ，
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E5%90%8E%E7%AB%AF/Docker/" itemprop="url" rel="index"><span itemprop="name">Docker</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h2 id="Ref"><a href="#Ref" class="headerlink" title="Ref"></a>Ref</h2><p><a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1HP4118797/?spm_id_from=333.337.search-card.all.click&vd_source=9883419bb9939eb61834a63a38921b19">https://www.bilibili.com/video/BV1HP4118797/?spm_id_from=333.337.search-card.all.click&amp;vd_source=9883419bb9939eb61834a63a38921b19</a></p>
-<h1 id="Docker基础教程"><a href="#Docker基础教程" class="headerlink" title="Docker基础教程"></a>Docker基础教程</h1><h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>使用Docker安装应用时会从镜像仓库自动下载镜像image，镜像包含应用本身，还包含应用运行所需的环境、配置、系统函数库。镜像仓库由docker官方管理。</p>
-<p>也就是镜像可以忽略操作系统的差异直接部署。</p>
-<p>Docker运行image会创建一个隔离环境，即容器container。多个容器是互不干扰的。</p>
-<p><img src="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/image/image-20231123103249728.png" alt="image-20231123103249728"></p>
-<h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><p>linux版本centOS 7，对应官方文档</p>
-<blockquote>
-<p><a target="_blank" rel="noopener" href="https://docs.docker.com/engine/install/centos/">https://docs.docker.com/engine/install/centos/</a></p>
-</blockquote>
-<p>安装教程</p>
-<blockquote>
-<p><a target="_blank" rel="noopener" href="https://b11et3un53m.feishu.cn/wiki/Rfocw7ctXij2RBkShcucLZbrn2d">https://b11et3un53m.feishu.cn/wiki/Rfocw7ctXij2RBkShcucLZbrn2d</a></p>
-</blockquote>
-<p>1、安装yum（centOS已有），并配置仓库</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo yum install -y yum-utils</span><br><span class="line">sudo yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo</span><br></pre></td></tr></table></figure>
-
-<p>2、安装docker</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo yum install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin</span><br></pre></td></tr></table></figure>
-
-<p>3、启动和关闭</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">docker ps <span class="comment"># 不报错则安装成功</span></span><br><span class="line"></span><br><span class="line">systemctl start docker</span><br><span class="line">systemctl stop docker</span><br><span class="line">systemctl restart docker</span><br><span class="line"></span><br><span class="line">systemctl <span class="built_in">enable</span> docker <span class="comment"># 设置开启自启</span></span><br></pre></td></tr></table></figure>
-
-<p>4、配置镜像加速</p>
-<p>配置阿里云镜像加速</p>
-<p><a target="_blank" rel="noopener" href="https://cr.console.aliyun.com/cn-hangzhou/instances/mirrors">https://cr.console.aliyun.com/cn-hangzhou/instances/mirrors</a></p>
-<p>添加其他镜像加速</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vi /etc/docker/daemon.json</span><br></pre></td></tr></table></figure>
-
-<p>添加如下其中一项内容即可（实测，只能添加其中一个），如果某个速度慢，可以切换</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="string">&quot;registry-mirrors&quot;</span>: [<span class="string">&quot;https://_______.mirror.aliyuncs.com&quot;</span>]  <span class="comment"># 空白处从阿里云获取</span></span><br><span class="line">&#125;</span><br><span class="line">&#123;</span><br><span class="line">  <span class="string">&quot;registry-mirrors&quot;</span>: [<span class="string">&quot;https://hub-mirror.c.163.com&quot;</span>]</span><br><span class="line">&#125;</span><br><span class="line">&#123;</span><br><span class="line">  <span class="string">&quot;registry-mirrors&quot;</span>: [<span class="string">&quot;https://mirror.baidubce.com&quot;</span>]</span><br><span class="line">&#125;</span><br><span class="line">&#123;</span><br><span class="line">  <span class="string">&quot;registry-mirrors&quot;</span>: [<span class="string">&quot;https://docker.mirrors.ustc.edu.cn&quot;</span>]</span><br><span class="line">&#125;</span><br><span class="line">&#123;</span><br><span class="line">  <span class="string">&quot;registry-mirrors&quot;</span>: [<span class="string">&quot;https://registry.docker-cn.com&quot;</span>]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>或者用如下命令快速完成配置</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">sudo <span class="built_in">mkdir</span> -p /etc/docker</span><br><span class="line">sudo <span class="built_in">tee</span> /etc/docker/daemon.json &lt;&lt;-<span class="string">&#x27;EOF&#x27;</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="string">&quot;registry-mirrors&quot;</span>: [<span class="string">&quot;https://_______.mirror.aliyuncs.com&quot;</span>]  <span class="comment"># 空白处从阿里云获取</span></span><br><span class="line">&#125;</span><br><span class="line">&#123;</span><br><span class="line">  <span class="string">&quot;registry-mirrors&quot;</span>: [<span class="string">&quot;https://hub-mirror.c.163.com&quot;</span>]</span><br><span class="line">&#125;</span><br><span class="line">&#123;</span><br><span class="line">  <span class="string">&quot;registry-mirrors&quot;</span>: [<span class="string">&quot;https://mirror.baidubce.com&quot;</span>]</span><br><span class="line">&#125;</span><br><span class="line">&#123;</span><br><span class="line">  <span class="string">&quot;registry-mirrors&quot;</span>: [<span class="string">&quot;https://docker.mirrors.ustc.edu.cn&quot;</span>]</span><br><span class="line">&#125;</span><br><span class="line">&#123;</span><br><span class="line">  <span class="string">&quot;registry-mirrors&quot;</span>: [<span class="string">&quot;https://registry.docker-cn.com&quot;</span>]</span><br><span class="line">&#125;</span><br><span class="line">EOF</span><br><span class="line">sudo systemctl daemon-reload</span><br><span class="line">sudo systemctl restart docker</span><br></pre></td></tr></table></figure>
-
-
-
-<h2 id="demo-部署mysql"><a href="#demo-部署mysql" class="headerlink" title="demo: 部署mysql"></a>demo: 部署mysql</h2><h3 id="下载并安装image"><a href="#下载并安装image" class="headerlink" title="下载并安装image"></a>下载并安装image</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">docker run -d \ <span class="comment"># 创建并运行 -d使得容器在后台运行</span></span><br><span class="line">--name mysql \  <span class="comment"># 容器名称</span></span><br><span class="line">-p 3306:3306 \  <span class="comment"># 端口映射</span></span><br><span class="line">-e TZ=Asia/Shanghai \  <span class="comment"># 环境变量 -e KEY=VALUE，不同镜像不同，需要查看镜像的文档说明</span></span><br><span class="line">-e MYSQL_ROOT_PASSWORD=123 \ </span><br><span class="line">mysql \  <span class="comment"># 镜像的名字 [仓库]:[版本号]，无版本号就是最新版本</span></span><br></pre></td></tr></table></figure>
-
-<p>端口映射：</p>
-<ul>
-<li>端口映射：容器由于是独立的，拥有自己的文件系统、内存空间、网络空间，也有自己的IP，但是是对外隔离的，所以当主机ping容器的ip时，是无法访问的，因此可以端口映射，将虚拟机的3306端口映射到容器的3306端口。</li>
-<li>mysql的端口永远是3306，但宿主机进行端口映射的端口可以不是3306，比如<code>-p 3310:3306</code>。</li>
-</ul>
-<h3 id="navicat连接数据库："><a href="#navicat连接数据库：" class="headerlink" title="navicat连接数据库："></a>navicat连接数据库：</h3><p>1、由于使用虚拟机，此处要使用SSH连接虚拟机，注意，此处的虚拟机和主机采用桥接模式，同属一个内网中。</p>
-<p><img src="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/image/image-20231123214213515.png" alt="image-20231123214213515"></p>
-<p>2、进行数据库的连接</p>
-<p><img src="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/image/image-20231123214624203.png" alt="image-20231123214624203"></p>
-<blockquote>
-<p>memo：数据库账号是root（默认），密码123456，CentOS账号wallnut，密码生日。</p>
-</blockquote>
-<p>3、连接成功</p>
-<p><img src="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/image/image-20231123214946891.png" alt="image-20231123214946891"></p>
-<h2 id="镜像、容器常见命令"><a href="#镜像、容器常见命令" class="headerlink" title="镜像、容器常见命令"></a>镜像、容器常见命令</h2><p><img src="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/image/image-20231123104353877.png" alt="image-20231123104353877"></p>
-<p>（注：DockerFile用于定制镜像，左下是将镜像存储并加载）</p>
-<p>区分镜像和容器，可以类比为程序和进程。</p>
-<h3 id="查看已有镜像"><a href="#查看已有镜像" class="headerlink" title="查看已有镜像"></a>查看已有镜像</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost network-scripts]<span class="comment"># docker images</span></span><br><span class="line">REPOSITORY   TAG       IMAGE ID       CREATED         SIZE</span><br><span class="line">nginx        latest    a6bd71f48f68   2 days ago      187MB</span><br><span class="line">mysql        5.7       bdba757bc933   4 weeks ago     501MB</span><br><span class="line">mysql        latest    3218b38490ce   23 months ago   516MB</span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="从远端仓库拉取镜像-pull"><a href="#从远端仓库拉取镜像-pull" class="headerlink" title="从远端仓库拉取镜像 pull"></a>从远端仓库拉取镜像 pull</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">docker pull nginx</span><br><span class="line">docker images</span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="保存镜像到本地-save"><a href="#保存镜像到本地-save" class="headerlink" title="保存镜像到本地 save"></a>保存镜像到本地 save</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker save -o nginx.tar nginx:latest <span class="comment"># 注意要把版本号TAG也放上，因为可能有不同的版本号但相同的Repository</span></span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="删除本地镜像-rmi"><a href="#删除本地镜像-rmi" class="headerlink" title="删除本地镜像 rmi"></a>删除本地镜像 rmi</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker rmi nginx:latest <span class="comment"># 注意要把版本号TAG也放上，因为可能有不同的版本号但相同的Repository</span></span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="加载本地镜像-load"><a href="#加载本地镜像-load" class="headerlink" title="加载本地镜像 load"></a>加载本地镜像 load</h3><figure class="highlight docker"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">docker load -i nginx.tar</span><br><span class="line"><span class="number">92770</span>f546e06: Loading layer [==================================================&gt;]  <span class="number">77.87</span>MB/<span class="number">77.87</span>MB</span><br><span class="line"><span class="number">8</span>ae474e0cc8f: Loading layer [==================================================&gt;]  <span class="number">113.1</span>MB/<span class="number">113.1</span>MB</span><br><span class="line">f5525891d9e9: Loading layer [==================================================&gt;]  <span class="number">3.584</span>kB/<span class="number">3.584</span>kB</span><br><span class="line"><span class="number">66283570</span>f41b: Loading layer [==================================================&gt;]  <span class="number">4.608</span>kB/<span class="number">4.608</span>kB</span><br><span class="line">c2d3ab485d1b: Loading layer [==================================================&gt;]   <span class="number">2.56</span>kB/<span class="number">2.56</span>kB</span><br><span class="line">cddc309885a2: Loading layer [==================================================&gt;]   <span class="number">5.12</span>kB/<span class="number">5.12</span>kB</span><br><span class="line"><span class="number">0</span>d0e9c83b6f7: Loading layer [==================================================&gt;]  <span class="number">7.168</span>kB/<span class="number">7.168</span>kB</span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="运行本地镜像-run"><a href="#运行本地镜像-run" class="headerlink" title="运行本地镜像 run"></a>运行本地镜像 run</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">docker run -d --name nginx -p 80:80 nginx</span><br><span class="line">0cb11aaca245abc658a96c7ad05f731678f3570419d856773013e83e7f4225ad</span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="查看已有容器-ps"><a href="#查看已有容器-ps" class="headerlink" title="查看已有容器 ps"></a>查看已有容器 ps</h3><p>可用参数<code>format</code>指定输出格式，参数<code>-a</code>使用时，显示所有容器；否则仅显示正在运行的容器</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">docker ps -a</span><br><span class="line">docker ps</span><br><span class="line">docker ps --format <span class="string">&quot;table &#123;&#123;.ID&#125;&#125;\t&#123;&#123;.Image&#125;&#125;\t&#123;&#123;.Ports&#125;&#125;\t&#123;&#123;.Status&#125;&#125;\t&#123;&#123;.Names&#125;&#125;&quot;</span></span><br><span class="line">CONTAINER ID   IMAGE       PORTS                                                  STATUS        NAMES</span><br><span class="line">0cb11aaca245   nginx       0.0.0.0:80-&gt;80/tcp, :::80-&gt;80/tcp                      Up 2 hours    nginx</span><br><span class="line">563cc50d335e   mysql:5.7   0.0.0.0:3306-&gt;3306/tcp, :::3306-&gt;3306/tcp, 33060/tcp   Up 17 hours   mysql</span><br></pre></td></tr></table></figure>
-
-<h4 id="命令别名"><a href="#命令别名" class="headerlink" title="命令别名"></a>命令别名</h4><p>由于format指定输出格式的指令非常长，如果经常使用，可以设置一个命令别名</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">vi ~/.bashrc</span><br><span class="line"><span class="comment"># 添加：</span></span><br><span class="line"><span class="comment"># alias dpsf=&#x27;docker ps --format &quot;table &#123;&#123;.ID&#125;&#125;\t&#123;&#123;.Image&#125;&#125;\t&#123;&#123;.Ports&#125;&#125;\t&#123;&#123;.Status&#125;&#125;\t&#123;&#123;.Names&#125;&#125;&quot;&#x27;</span></span><br><span class="line"><span class="built_in">source</span> ~/.bashrc</span><br><span class="line">dpsf</span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="关闭容器-stop"><a href="#关闭容器-stop" class="headerlink" title="关闭容器 stop"></a>关闭容器 stop</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker stop nginx</span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="运行容器-start"><a href="#运行容器-start" class="headerlink" title="运行容器 start"></a>运行容器 start</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker start nginx</span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="日志-logs"><a href="#日志-logs" class="headerlink" title="日志 logs"></a>日志 logs</h3><p>参数<code>-f</code>使用时，持续跟踪日志，否则只打印历史日志</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker logs -f nginx </span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="进入容器执行-exec"><a href="#进入容器执行-exec" class="headerlink" title="进入容器执行 exec"></a>进入容器执行 exec</h3><p> <code>-it</code>:可交互终端 </p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost network-scripts] docker <span class="built_in">exec</span> -it nginx bash</span><br><span class="line">root@0cb11aaca245:/ <span class="built_in">ls</span></span><br><span class="line">bin   dev		   docker-entrypoint.sh  home  lib32  libx32  mnt  proc  run   srv  tmp  var</span><br><span class="line">boot  docker-entrypoint.d  etc			 lib   lib64  media   opt  root  sbin  sys  usr</span><br></pre></td></tr></table></figure>
-
-<p>退出容器执行</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">exit</span></span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="删除容器-rm"><a href="#删除容器-rm" class="headerlink" title="删除容器 rm"></a>删除容器 rm</h3><p>被删除的容器要先停止运行stop，除非使用<code>-f</code>强制删除。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker <span class="built_in">rm</span> nginx</span><br></pre></td></tr></table></figure>
-
-
-
-<h2 id="部署nginx遇到的问题"><a href="#部署nginx遇到的问题" class="headerlink" title="部署nginx遇到的问题"></a>部署nginx遇到的问题</h2><p>虚拟机可以通过curl访问已部署的nginx容器，但宿主机既不能通过curl访问，也不能通过浏览器访问该ip。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl 172.31.226.34</span><br></pre></td></tr></table></figure>
-
-<p>原因：虚拟机防火墙未关闭</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">systemctl status firewalld <span class="comment"># 如果是active 就是未关闭</span></span><br><span class="line">systemctl stop firewalld.service <span class="comment"># 关闭即可解决</span></span><br><span class="line">systemctl restart docker <span class="comment"># 重启docker</span></span><br></pre></td></tr></table></figure>
-
-
-
-<h2 id="数据卷挂载"><a href="#数据卷挂载" class="headerlink" title="数据卷挂载"></a>数据卷挂载</h2><p>为什么需要数据卷：若想修改容器内的文件，使用exec命令进入容器的bash后，发现无法使用vi修改其中的文件，原因是容器只提供了最小化的系统环境，而vi不是必要的。</p>
-<p>数据卷volume：虚拟目录，容器内目录和宿主机目录之间映射的桥梁。</p>
-<p>即便容器删了，数据仍会保存在虚拟机中。</p>
-<p><img src="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/image/image-20231124153318786.png" alt="image-20231124153318786"></p>
-<p>挂载数据卷要在容器运行时进行挂载，正在运行的容器不能再挂载数据卷。容器运行时，若不指定挂载名，会自动创建数据卷。</p>
-<h3 id="数据卷命令"><a href="#数据卷命令" class="headerlink" title="数据卷命令"></a>数据卷命令</h3><p><img src="C:/Users/wallnut/AppData/Roaming/Typora/typora-user-images/image-20231124154230723.png" alt="image-20231124154230723"></p>
-<h3 id="demo：利用nginx部署静态资源"><a href="#demo：利用nginx部署静态资源" class="headerlink" title="demo：利用nginx部署静态资源"></a>demo：利用nginx部署静态资源</h3><ul>
-<li>创建nginx容器，并修改html目录下的index.html文件</li>
-<li>将静态资源部署到html目录。</li>
-</ul>
-<h4 id="1、运行容器时挂载数据卷"><a href="#1、运行容器时挂载数据卷" class="headerlink" title="1、运行容器时挂载数据卷"></a>1、运行容器时挂载数据卷</h4><p>参数<code>-v 数据卷名：容器内目录</code>：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -d --name nginx -p 80:80 -v html:/usr/share/nginx/html nginx</span><br></pre></td></tr></table></figure>
-
-<h4 id="2、查看挂载的数据卷"><a href="#2、查看挂载的数据卷" class="headerlink" title="2、查看挂载的数据卷"></a>2、查看挂载的数据卷</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">docker volume <span class="built_in">ls</span></span><br><span class="line">DRIVER    VOLUME NAME</span><br><span class="line"><span class="built_in">local</span>     d156f43095144e073085f20b9d0d2ca802e81358b99fe6273e3420ec6338ccdf</span><br><span class="line"><span class="built_in">local</span>     db24dc659d6f0dfd0aa3d931561e585b2cf393c636dda5b3967720131175e285</span><br><span class="line"><span class="built_in">local</span>     e90f11091bc53a779f4a6f5b6ec12d0ef0e2aa2fb40ffe6c6181e09ffc17ad2d</span><br><span class="line"><span class="built_in">local</span>     ffc104a40519463581ffa58433e95225ed93894cfdb44d3d1400b2a3e66ffabb</span><br><span class="line"><span class="built_in">local</span>     html</span><br></pre></td></tr></table></figure>
-
-<h4 id="3、查看html数据卷详细信息"><a href="#3、查看html数据卷详细信息" class="headerlink" title="3、查看html数据卷详细信息"></a>3、查看html数据卷详细信息</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">docker volume inspect html</span><br><span class="line">[</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="string">&quot;CreatedAt&quot;</span>: <span class="string">&quot;2023-11-23T23:46:58-08:00&quot;</span>,</span><br><span class="line">        <span class="string">&quot;Driver&quot;</span>: <span class="string">&quot;local&quot;</span>,</span><br><span class="line">        <span class="string">&quot;Labels&quot;</span>: null,</span><br><span class="line">        <span class="string">&quot;Mountpoint&quot;</span>: <span class="string">&quot;/var/lib/docker/volumes/html/_data&quot;</span>,  <span class="comment"># 虚拟机目录</span></span><br><span class="line">        <span class="string">&quot;Name&quot;</span>: <span class="string">&quot;html&quot;</span>,</span><br><span class="line">        <span class="string">&quot;Options&quot;</span>: null,</span><br><span class="line">        <span class="string">&quot;Scope&quot;</span>: <span class="string">&quot;local&quot;</span></span><br><span class="line">    &#125;</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
-
-<p>至此，虚拟机目录<code>&quot;/var/lib/docker/volumes/html/_data&quot;</code>和html数据卷映射，html数据卷又和容器目录<code>/usr/share/nginx/html</code>映射</p>
-<h4 id="4、修改html文件或添加静态资源"><a href="#4、修改html文件或添加静态资源" class="headerlink" title="4、修改html文件或添加静态资源"></a>4、修改html文件或添加静态资源</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vi /var/lib/docker/volumes/html/_data/index.html</span><br></pre></td></tr></table></figure>
-
-
-
-<h2 id="目录挂载"><a href="#目录挂载" class="headerlink" title="目录挂载"></a>目录挂载</h2><p>用于数据的迁移，例如原本的mysql进行版本升级，所以需要新版本mysql的容器，并把原始数据迁移到新的mysql。</p>
-<h3 id="demo："><a href="#demo：" class="headerlink" title="demo："></a>demo：</h3><p>当前mysql的挂载信息，名字很长一串，这是在run是默认时，随机生成的数据卷，称为匿名卷。可以看到虚拟机目录<code>/var/lib/docker/volumes/d156f43095144e073085f20b9d0d2ca802e81358b99fe6273e3420ec6338ccdf/_data/mysql</code>存放了mysql的数据</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">docker inspect mysql</span><br><span class="line"><span class="string">&quot;Mounts&quot;</span>: [</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="string">&quot;Type&quot;</span>: <span class="string">&quot;volume&quot;</span>,</span><br><span class="line">                <span class="string">&quot;Name&quot;</span>: <span class="string">&quot;d156f43095144e073085f20b9d0d2ca802e81358b99fe6273e3420ec6338ccdf&quot;</span>,</span><br><span class="line">                <span class="string">&quot;Source&quot;</span>: <span class="string">&quot;/var/lib/docker/volumes/d156f43095144e073085f20b9d0d2ca802e81358b99fe6273e3420ec6338ccdf/_data&quot;</span>,</span><br><span class="line">                <span class="string">&quot;Destination&quot;</span>: <span class="string">&quot;/var/lib/mysql&quot;</span>,</span><br><span class="line"> ...</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost wallnut]<span class="comment"># cd /var/lib/docker/volumes/d156f43095144e073085f20b9d0d2ca802e81358b99fe6273e3420ec6338ccdf/_data</span></span><br><span class="line">[root@localhost _data]<span class="comment"># ls</span></span><br><span class="line">auto.cnf         client-key.pem  ib_logfile1         private_key.pem  sys</span><br><span class="line">ca-key.pem       ib_buffer_pool  mysql               public_key.pem</span><br><span class="line">ca.pem           ibdata1         mysql.sock          server-cert.pem</span><br><span class="line">client-cert.pem  ib_logfile0     performance_schema  server-key.pem</span><br></pre></td></tr></table></figure>
-
-<p><del>使用navicat为该数据库创建一个数据库pvz和一个wallnut表，用于后续数据迁移的验证。</del></p>
-<p>目录挂载和数据卷挂载使用docker run命令时挂载，参数<code>-v 本地目录:容器内目录</code>。注意，本地目录要以<code>/</code>或<code>./</code>开头，即要以绝对路径和相对路径开头，否则会被识别为数据卷。</p>
-<p>此外还需要挂载配置文件、初始化脚本，感觉较难用上此处不做深入（视频P8）。</p>
-<p><img src="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/image/image-20231124203920577.png" alt="image-20231124203920577"></p>
-<h2 id="自定义镜像"><a href="#自定义镜像" class="headerlink" title="自定义镜像"></a>自定义镜像</h2><p>镜像包含了应用程序、程序运行的系统函数库、运行配置等文件的文件包。构建自定义镜像就是把上述文件打包的过程。</p>
-<p><img src="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/iimage/image-20231126100645222.png" alt="image-20231126100645222"></p>
-<h3 id="镜像结构"><a href="#镜像结构" class="headerlink" title="镜像结构"></a>镜像结构</h3><p><img src="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/iimage/image-20231126101316105.png" alt="image-20231126101316105"></p>
-<p>分层，好处是可以共享某些基础层，不必重复构建。例如在安装了mysql镜像后，安装redis镜像，可见层<code>1f7ce2fa46ab</code>已存在。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost wallnut]<span class="comment"># docker pull redis</span></span><br><span class="line">Using default tag: latest</span><br><span class="line">latest: Pulling from library/redis</span><br><span class="line">1f7ce2fa46ab: Already exists  <span class="comment">#当前层已存在</span></span><br><span class="line">3c6368585bf1: Pull complete </span><br><span class="line">3911d271d7d8: Pull complete </span><br><span class="line">ac88aa9d4021: Pull complete </span><br><span class="line">127cd75a68a2: Pull complete </span><br><span class="line">4f4fb700ef54: Pull complete </span><br><span class="line">f3993c1104fc: Pull complete </span><br><span class="line">Digest: sha256:2976bc0437deff693af2dcf081a1d1758de8b413e6de861151a5a136c25eb9e4</span><br><span class="line">Status: Downloaded newer image <span class="keyword">for</span> redis:latest</span><br><span class="line">docker.io/library/redis:latest</span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="Dockerfile"><a href="#Dockerfile" class="headerlink" title="Dockerfile"></a>Dockerfile</h3><p>自定义镜像时不需要自己找，而是使用Dockerfile中的指令说明要什么操作来构建镜像。</p>
-<h4 id="常见指令"><a href="#常见指令" class="headerlink" title="常见指令"></a>常见指令</h4><p><img src="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/iimage/image-20231126101454693.png" alt="image-20231126101454693"></p>
-<h4 id="demo：-1"><a href="#demo：-1" class="headerlink" title="demo："></a>demo：</h4><p><img src="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/iimage/image-20231126101938554.png" alt="image-20231126101938554"></p>
-<h3 id="构建镜像"><a href="#构建镜像" class="headerlink" title="构建镜像"></a>构建镜像</h3><p>有了dockerfile后，使用命令构建镜像</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">docker build -t myImage:1.0 . </span><br><span class="line"><span class="comment">#docker built -t repository:tag dockerfile路径（最好是相对路径）</span></span><br></pre></td></tr></table></figure>
-
-<h4 id="demo"><a href="#demo" class="headerlink" title="demo"></a>demo</h4><p>1、加载本地镜像</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost demo]<span class="comment"># ls</span></span><br><span class="line">demo  jdk.tar  mysql.tar  nginx.tar</span><br><span class="line">[root@localhost demo]<span class="comment"># docker load -i jdk.tar</span></span><br><span class="line">2c7e7ab2260a: Loading layer  119.3MB/119.3MB</span><br><span class="line">9ad2165feb02: Loading layer  17.18MB/17.18MB</span><br><span class="line">92903c3857f8: Loading layer  17.87MB/17.87MB</span><br><span class="line">1736ab871b32: Loading layer  12.18MB/12.18MB</span><br><span class="line">6f8e4cb95a88: Loading layer  3.584kB/3.584kB</span><br><span class="line">41080a0c646f: Loading layer  141.8MB/141.8MB</span><br><span class="line">Loaded image: openjdk:11.0-jre-buster</span><br></pre></td></tr></table></figure>
-
-<p>2、进入demo目录</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost demo]<span class="comment"># cd demo</span></span><br><span class="line">[root@localhost demo]<span class="comment"># docker build -t docker-demo .</span></span><br><span class="line">[+] Building 0.4s (8/8) FINISHED                                                            docker:default</span><br><span class="line"> =&gt; [internal] load .dockerignore                                                                     0.0s</span><br><span class="line"> =&gt; =&gt; transferring context: 2B                                                                       0.0s</span><br><span class="line"> =&gt; [internal] load build definition from Dockerfile                                                  0.0s</span><br><span class="line"> =&gt; =&gt; transferring dockerfile: 358B                                                                  0.0s</span><br><span class="line"> =&gt; [internal] load metadata <span class="keyword">for</span> docker.io/library/openjdk:11.0-jre-buster                            0.0s</span><br><span class="line"> =&gt; [1/3] FROM docker.io/library/openjdk:11.0-jre-buster                                              0.0s</span><br><span class="line"> =&gt; [internal] load build context                                                                     0.1s</span><br><span class="line"> =&gt; =&gt; transferring context: 17.70MB                                                                  0.1s</span><br><span class="line"> =&gt; [2/3] RUN <span class="built_in">ln</span> -snf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime &amp;&amp; <span class="built_in">echo</span> Asia/Shanghai &gt; /etc/  0.2s</span><br><span class="line"> =&gt; [3/3] COPY docker-demo.jar /app.jar                                                               0.1s</span><br><span class="line"> =&gt; exporting to image                                                                                0.1s</span><br><span class="line"> =&gt; =&gt; exporting layers                                                                               0.1s</span><br><span class="line"> =&gt; =&gt; writing image sha256:ca7a0e87318bc12fbc68314cdfb4ba2b97eaea92ee4c12d88716b46c1cde27bb          0.0s</span><br><span class="line"> =&gt; =&gt; naming to docker.io/library/docker-demo                                                        0.0s</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/iimage/image-20231126103909950.png" alt="image-20231126103909950"></p>
-<p>3、运行镜像</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -d --name docker_demo -p 8080:8080 docker-demo <span class="comment"># 8080是代码中指定的端口号，此处无需关心</span></span><br></pre></td></tr></table></figure>
-
-<p>4、访问<code>172.31.226.34:8080</code></p>
-<p><img src="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/iimage/image-20231126104206361.png" alt="image-20231126104206361"></p>
-<h2 id="容器互联"><a href="#容器互联" class="headerlink" title="容器互联"></a>容器互联</h2><p><code>docker inspect 容器名</code>中的networks字段即可看到该容器的ip地址。默认情况下，所有容器以bridge方式连接到docker的一个虚拟网桥</p>
-<p><img src="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/image/image-20231127172334735.png" alt="image-20231127172334735"></p>
-<p>虽然这些容器同属一个网桥，可以相互通信，但这些ip是由docker按顺序分配的，一旦docker重启，容器启动顺序改变，这些容器的ip地址可能不同，容器之间相互通信的地址要重新设置。</p>
-<h3 id="自定义网络"><a href="#自定义网络" class="headerlink" title="自定义网络"></a>自定义网络</h3><p>加入自定义网络的容器可以通过<strong>容器名</strong>互相访问</p>
-<h4 id="常用指令"><a href="#常用指令" class="headerlink" title="常用指令"></a>常用指令</h4><p><img src="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/image/image-20231127181037711.png" alt="image-20231127181037711"></p>
-<h4 id="demo：-2"><a href="#demo：-2" class="headerlink" title="demo："></a>demo：</h4><ul>
-<li>第一步：创建网络mynetwork，并使自定义镜像时创建的docker_demo容器加入网络。</li>
-</ul>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost mysql]<span class="comment"># docker network ls</span></span><br><span class="line">NETWORK ID     NAME      DRIVER    SCOPE</span><br><span class="line">0c5ff379beb7   bridge    bridge    <span class="built_in">local</span></span><br><span class="line">68f4a61a71b2   host      host      <span class="built_in">local</span></span><br><span class="line">b27cc43b8cba   none      null      <span class="built_in">local</span></span><br><span class="line">[root@localhost mysql]<span class="comment"># docker network create mynetwork</span></span><br><span class="line">04da59f0180192d722d3846b4eaa6d7df3d4ae35df510412cf1bef9196036630</span><br><span class="line">[root@localhost mysql]<span class="comment"># docker network ls</span></span><br><span class="line">NETWORK ID     NAME        DRIVER    SCOPE</span><br><span class="line">0c5ff379beb7   bridge      bridge    <span class="built_in">local</span></span><br><span class="line">68f4a61a71b2   host        host      <span class="built_in">local</span></span><br><span class="line">04da59f01801   mynetwork   bridge    <span class="built_in">local</span></span><br><span class="line">b27cc43b8cba   none        null      <span class="built_in">local</span></span><br><span class="line">[root@localhost mysql]<span class="comment"># docker network connect mynetwork docker_demo</span></span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>第二步，将nginx在运行时加入网络mynetwork</li>
-</ul>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -d --name 镜像名 -p 8080:8080 --network 容器名</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost mysql]<span class="comment"># docker rm -f nginx</span></span><br><span class="line">nginx</span><br><span class="line">[root@localhost mysql]<span class="comment"># docker run -d --name nginx -p 80:80 --network mynetwork nginx</span></span><br><span class="line">ee0f915f6e398eaba6cc95665f23d2380492e22b02a709ad2adbf9a2a7754665</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>第三步，进入docker_demo容器执行bash，并通过容器名ping nginx</li>
-</ul>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost mysql]<span class="comment"># docker exec -it docker_demo bash</span></span><br><span class="line">root@f0e9ba9a7278:/<span class="comment"># ping nginx</span></span><br><span class="line">PING nginx (172.18.0.3) 56(84) bytes of data.</span><br><span class="line">64 bytes from nginx.mynetwork (172.18.0.3): icmp_seq=1 ttl=64 time=0.191 ms</span><br><span class="line">64 bytes from nginx.mynetwork (172.18.0.3): icmp_seq=2 ttl=64 time=0.142 ms</span><br></pre></td></tr></table></figure>
-
-
-
-<h2 id="项目部署"><a href="#项目部署" class="headerlink" title="项目部署"></a>项目部署</h2><p>由于不是java选手，无法将java项目打包，此处暂时没做。</p>
-<h2 id="DockerCompose"><a href="#DockerCompose" class="headerlink" title="DockerCompose"></a>DockerCompose</h2><p>通过一个单独的docker-compuse.yml模板文件定义一组相关联的应用容器，帮助我们实现多个相关联docker容器的快速部署。</p>
-<p><img src="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/image/image-20231127190855534.png" alt="image-20231127190855534"></p>
-<p>语法和docker run 命令几乎类似。</p>
-<p><img src="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/image/image-20231127191013928.png" alt="image-20231127191013928"></p>
-<h3 id="docker语法详解"><a href="#docker语法详解" class="headerlink" title="docker语法详解"></a>docker语法详解</h3><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">version:</span> <span class="string">&quot;3.8&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="attr">services:</span>  <span class="comment"># 容器</span></span><br><span class="line">  <span class="attr">mysql:</span>   <span class="comment"># mysql 容器</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">mysql</span>  <span class="comment"># 来自mysql镜像</span></span><br><span class="line">    <span class="attr">container_name:</span> <span class="string">mysql</span> </span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;3306:3306&quot;</span></span><br><span class="line">    <span class="attr">environment:</span></span><br><span class="line">      <span class="attr">TZ:</span> <span class="string">Asia/Shanghai</span></span><br><span class="line">      <span class="attr">MYSQL_ROOT_PASSWORD:</span> <span class="number">123</span></span><br><span class="line">    <span class="attr">volumes:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;./mysql/conf:/etc/mysql/conf.d&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;./mysql/data:/var/lib/mysql&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;./mysql/init:/docker-entrypoint-initdb.d&quot;</span></span><br><span class="line">    <span class="attr">networks:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">hm-net</span></span><br><span class="line">  <span class="attr">hmall:</span></span><br><span class="line">    <span class="attr">build:</span> </span><br><span class="line">      <span class="attr">context:</span> <span class="string">.</span></span><br><span class="line">      <span class="attr">dockerfile:</span> <span class="string">Dockerfile</span></span><br><span class="line">    <span class="attr">container_name:</span> <span class="string">hmall</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;8080:8080&quot;</span></span><br><span class="line">    <span class="attr">networks:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">hm-net</span></span><br><span class="line">    <span class="attr">depends_on:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">mysql</span></span><br><span class="line">  <span class="attr">nginx:</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">nginx</span></span><br><span class="line">    <span class="attr">container_name:</span> <span class="string">nginx</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;18080:18080&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;18081:18081&quot;</span></span><br><span class="line">    <span class="attr">volumes:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;./nginx/nginx.conf:/etc/nginx/nginx.conf&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;./nginx/html:/usr/share/nginx/html&quot;</span></span><br><span class="line">    <span class="attr">depends_on:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">hmall</span></span><br><span class="line">    <span class="attr">networks:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">hm-net</span></span><br><span class="line"><span class="attr">networks:</span>  <span class="comment"># 网络</span></span><br><span class="line">  <span class="attr">hm-net:</span></span><br><span class="line">    <span class="attr">name:</span> <span class="string">hmall</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="命令"><a href="#命令" class="headerlink" title="命令"></a>命令</h3><p><img src="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/image/image-20231127191800774.png" alt="image-20231127191800774"></p>
-<h2 id="出现的问题"><a href="#出现的问题" class="headerlink" title="出现的问题"></a>出现的问题</h2><h3 id="1"><a href="#1" class="headerlink" title="1"></a>1</h3><blockquote>
-<p>[root@localhost &#x2F;]# docker images<br>Cannot connect to the Docker daemon at unix:&#x2F;&#x2F;&#x2F;var&#x2F;run&#x2F;docker.sock. Is the docker daemon running?</p>
-</blockquote>
-<p>解决方法：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo systemctl daemon-reload</span><br><span class="line">sudo systemctl restart docker</span><br></pre></td></tr></table></figure>
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://drinkwateronly.github.io/2023/11/b8c525c7aadb/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="Wallnut">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Wallnut">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Wallnut">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2023/11/b8c525c7aadb/" class="post-title-link" itemprop="url">合成大西瓜基础版本魔改+4everland部署</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-      
-
-      <time title="创建时间：2023-11-25 14:47:14 / 修改时间：14:49:50" itemprop="dateCreated datePublished" datetime="2023-11-25T14:47:14+08:00">2023-11-25</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E6%8A%98%E8%85%BE/" itemprop="url" rel="index"><span itemprop="name">折腾</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="合成大西瓜基础版本魔改-4everland部署"><a href="#合成大西瓜基础版本魔改-4everland部署" class="headerlink" title="合成大西瓜基础版本魔改+4everland部署"></a>合成大西瓜基础版本魔改+4everland部署</h1><p>仓库：<a target="_blank" rel="noopener" href="https://github.com/drinkwateronly/watermelon">https://github.com/drinkwateronly/watermelon</a></p>
-<p>使用本仓库的代码魔改合成大西瓜的要求</p>
-<ul>
-<li>会运行python代码</li>
-<li>会上传代码到github仓库。</li>
-</ul>
-<h2 id="文件概览"><a href="#文件概览" class="headerlink" title="文件概览"></a>文件概览</h2><p>下载本仓库文件后，文件如下：</p>
-<p><img src="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/iimage/image-20231125134155347.png" alt="image-20231125134155347"></p>
-<h2 id="魔改"><a href="#魔改" class="headerlink" title="魔改"></a>魔改</h2><p><code>src/extraSetting.js</code>中按需修改，要强调的是可以修改网页标题。</p>
-<h2 id="图片处理"><a href="#图片处理" class="headerlink" title="图片处理"></a>图片处理</h2><p>两种处理方式，本文提供python脚本自动处理。手动处理较为繁琐，请查询网络教程，或使用他人提供的在线大西瓜图片处理工具。</p>
-<h3 id="自动处理"><a href="#自动处理" class="headerlink" title="自动处理"></a>自动处理</h3><p>原本水果图片文件在<code>res/raw-assets</code>的位置、图片文件名等信息已按水果尺寸从小到大记录到<code>image_process/info.xlsx</code>中，具体如下。例如樱桃图片文件为<code>res/raw-assets/0c/0cbb3dbb-2a85-42a5-be21-9839611e5af7.png</code>。</p>
-<p><img src="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/iimage/image-20231125104727166.png" alt="image-20231125104727166"></p>
-<p>定制水果图片为想要的图片，则需要将要定制的11张图片（对应11种水果）放到<code>image_process/original</code>，并按水果尺寸从小到大的顺序命名为<code>1.jpg</code>, <code>2.jpg</code>…, <code>11.jpg</code>。</p>
-<p><strong>注意，这些定制图片的尺寸最好是近似正方形，以免在后续图片处理中的缩放操作导致图片被拉伸，效果变差。</strong></p>
-<p>随后运行<code>image_process/demo.py</code>即可自动将这些图片修改到原本水果图片的位置。其中该python脚本将图片先缩放到对应的正方形尺寸，并裁剪成圆形。</p>
-<h3 id="手动"><a href="#手动" class="headerlink" title="手动"></a>手动</h3><p>略</p>
-<h2 id="本地预览"><a href="#本地预览" class="headerlink" title="本地预览"></a>本地预览</h2><ul>
-<li><p>下载并安装Node</p>
-<p><a target="_blank" rel="noopener" href="http://nodejs.cn/download/">http://nodejs.cn/download/</a></p>
-</li>
-<li><p>进入命令行，检查npm是否安装成功</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm -v</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>命令行安装serve工具</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm i -g serve</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>从合成大西瓜文件夹进入命令行，启动serve</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">serve</span><br></pre></td></tr></table></figure></li>
-</ul>
-<p>成功后浏览器输访问<code>localhost:5000</code>即可</p>
-<h2 id="部署"><a href="#部署" class="headerlink" title="部署"></a>部署</h2><p>预览没问题后，可以开始部署上线。</p>
-<ul>
-<li><p><strong>首先代码要上传到github仓库</strong>。</p>
-</li>
-<li><p>随后使用<a target="_blank" rel="noopener" href="https://dashboard.4everland.org/?invite=49TRKU2D">4everland</a>进行静态网页托管，并使用github注册即可。</p>
-</li>
-<li><p>注册成功后，点击<code>new project</code>，创建一个新项目</p>
-<p><img src="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/iimage/image-20231125111433974.png" alt="image-20231125111433974"></p>
-</li>
-<li><p>然后在step 1，import保存了合成大西瓜代码的github的仓库</p>
-<p><img src="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/iimage/image-20231125112002423.png" alt="image-20231125112002423"></p>
-</li>
-<li><p>step2，可选仓库的branch，意味着可以定制不同的合成大西瓜，上传到同一个仓库的不同branch管理。此处使用默认的branch，直接deploy即可。</p>
-<img src="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/iimage/image-20231125112423795.png" alt="image-20231125112423795" style="zoom:67%;" />
-</li>
-<li><p>step3，耐心等待部署。完成后点击visit访问，并记录下url。首次加载该游戏可能比较慢。</p>
-</li>
-</ul>
-<p><img src="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/iimage/image-20231125112509144.png" alt="image-20231125112509144"></p>
-<ul>
-<li><p>拓展：</p>
-<p><a target="_blank" rel="noopener" href="https://dashboard.4everland.org/?invite=49TRKU2D">4everland</a>注册就送了1G的静态网页托管空间，一个合成大西瓜也就十几m，所以合理地管理好仓库的branch，可以上线很多个合成大西瓜游戏。</p>
-</li>
-</ul>
-<h2 id="Ref"><a href="#Ref" class="headerlink" title="Ref"></a>Ref</h2><p><a target="_blank" rel="noopener" href="https://docs.qq.com/sheet/DS0d2VVVJYmpvZ0pZ?tab=BB08J2">魔改大西瓜可替换的素材 (qq.com)</a></p>
-<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/H9VR1MWn-9bKSC_1l_MkJw">魔改和上线你的合成大西瓜，最全教程！ (qq.com)</a></p>
-<p><a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1Vy4y1n7KW/?vd_source=9883419bb9939eb61834a63a38921b19">全网最贴心的魔改合成大西瓜教程，从修改到发布！_哔哩哔哩_bilibili</a></p>
 
       
     </div>

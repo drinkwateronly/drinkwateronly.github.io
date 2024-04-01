@@ -150,13 +150,13 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">35</span>
+          <span class="site-state-item-count">37</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
           <a href="/categories/">
-        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-count">17</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
   </nav>
@@ -178,6 +178,444 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://drinkwateronly.github.io/2023/11/2978ee3a4e31/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Wallnut">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Wallnut">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Wallnut">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2023/11/2978ee3a4e31/" class="post-title-link" itemprop="url">Docker基础教程</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2023-11-27 10:42:07" itemprop="dateCreated datePublished" datetime="2023-11-27T10:42:07+08:00">2023-11-27</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2024-03-21 19:24:21" itemprop="dateModified" datetime="2024-03-21T19:24:21+08:00">2024-03-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%90%8E%E7%AB%AF/" itemprop="url" rel="index"><span itemprop="name">后端</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%90%8E%E7%AB%AF/Docker/" itemprop="url" rel="index"><span itemprop="name">Docker</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h2 id="Ref"><a href="#Ref" class="headerlink" title="Ref"></a>Ref</h2><p><a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1HP4118797/?spm_id_from=333.337.search-card.all.click&vd_source=9883419bb9939eb61834a63a38921b19">https://www.bilibili.com/video/BV1HP4118797/?spm_id_from=333.337.search-card.all.click&amp;vd_source=9883419bb9939eb61834a63a38921b19</a></p>
+<h1 id="Docker基础教程"><a href="#Docker基础教程" class="headerlink" title="Docker基础教程"></a>Docker基础教程</h1><h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>使用Docker安装应用时会从镜像仓库自动下载镜像image，镜像包含应用本身，还包含应用运行所需的环境、配置、系统函数库。镜像仓库由docker官方管理。</p>
+<p>也就是镜像可以忽略操作系统的差异直接部署。</p>
+<p>Docker运行image会创建一个隔离环境，即容器container。多个容器是互不干扰的。</p>
+<p><img src="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/image/image-20231123103249728.png" alt="image-20231123103249728"></p>
+<h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><p>linux版本centOS 7，对应官方文档</p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://docs.docker.com/engine/install/centos/">https://docs.docker.com/engine/install/centos/</a></p>
+</blockquote>
+<p>安装教程</p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://b11et3un53m.feishu.cn/wiki/Rfocw7ctXij2RBkShcucLZbrn2d">https://b11et3un53m.feishu.cn/wiki/Rfocw7ctXij2RBkShcucLZbrn2d</a></p>
+</blockquote>
+<p>1、安装yum（centOS已有），并配置仓库</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo yum install -y yum-utils</span><br><span class="line">sudo yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo</span><br></pre></td></tr></table></figure>
+
+<p>2、安装docker</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo yum install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin</span><br></pre></td></tr></table></figure>
+
+<p>3、启动和关闭</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">docker ps <span class="comment"># 不报错则安装成功</span></span><br><span class="line"></span><br><span class="line">systemctl start docker</span><br><span class="line">systemctl stop docker</span><br><span class="line">systemctl restart docker</span><br><span class="line"></span><br><span class="line">systemctl <span class="built_in">enable</span> docker <span class="comment"># 设置开启自启</span></span><br></pre></td></tr></table></figure>
+
+<p>4、配置镜像加速</p>
+<p>配置阿里云镜像加速</p>
+<p><a target="_blank" rel="noopener" href="https://cr.console.aliyun.com/cn-hangzhou/instances/mirrors">https://cr.console.aliyun.com/cn-hangzhou/instances/mirrors</a></p>
+<p>添加其他镜像加速</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vi /etc/docker/daemon.json</span><br></pre></td></tr></table></figure>
+
+<p>添加如下其中一项内容即可（实测，只能添加其中一个），如果某个速度慢，可以切换</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="string">&quot;registry-mirrors&quot;</span>: [<span class="string">&quot;https://_______.mirror.aliyuncs.com&quot;</span>]  <span class="comment"># 空白处从阿里云获取</span></span><br><span class="line">&#125;</span><br><span class="line">&#123;</span><br><span class="line">  <span class="string">&quot;registry-mirrors&quot;</span>: [<span class="string">&quot;https://hub-mirror.c.163.com&quot;</span>]</span><br><span class="line">&#125;</span><br><span class="line">&#123;</span><br><span class="line">  <span class="string">&quot;registry-mirrors&quot;</span>: [<span class="string">&quot;https://mirror.baidubce.com&quot;</span>]</span><br><span class="line">&#125;</span><br><span class="line">&#123;</span><br><span class="line">  <span class="string">&quot;registry-mirrors&quot;</span>: [<span class="string">&quot;https://docker.mirrors.ustc.edu.cn&quot;</span>]</span><br><span class="line">&#125;</span><br><span class="line">&#123;</span><br><span class="line">  <span class="string">&quot;registry-mirrors&quot;</span>: [<span class="string">&quot;https://registry.docker-cn.com&quot;</span>]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>或者用如下命令快速完成配置</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">sudo <span class="built_in">mkdir</span> -p /etc/docker</span><br><span class="line">sudo <span class="built_in">tee</span> /etc/docker/daemon.json &lt;&lt;-<span class="string">&#x27;EOF&#x27;</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="string">&quot;registry-mirrors&quot;</span>: [<span class="string">&quot;https://_______.mirror.aliyuncs.com&quot;</span>]  <span class="comment"># 空白处从阿里云获取</span></span><br><span class="line">&#125;</span><br><span class="line">&#123;</span><br><span class="line">  <span class="string">&quot;registry-mirrors&quot;</span>: [<span class="string">&quot;https://hub-mirror.c.163.com&quot;</span>]</span><br><span class="line">&#125;</span><br><span class="line">&#123;</span><br><span class="line">  <span class="string">&quot;registry-mirrors&quot;</span>: [<span class="string">&quot;https://mirror.baidubce.com&quot;</span>]</span><br><span class="line">&#125;</span><br><span class="line">&#123;</span><br><span class="line">  <span class="string">&quot;registry-mirrors&quot;</span>: [<span class="string">&quot;https://docker.mirrors.ustc.edu.cn&quot;</span>]</span><br><span class="line">&#125;</span><br><span class="line">&#123;</span><br><span class="line">  <span class="string">&quot;registry-mirrors&quot;</span>: [<span class="string">&quot;https://registry.docker-cn.com&quot;</span>]</span><br><span class="line">&#125;</span><br><span class="line">EOF</span><br><span class="line">sudo systemctl daemon-reload</span><br><span class="line">sudo systemctl restart docker</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="demo-部署mysql"><a href="#demo-部署mysql" class="headerlink" title="demo: 部署mysql"></a>demo: 部署mysql</h2><h3 id="下载并安装image"><a href="#下载并安装image" class="headerlink" title="下载并安装image"></a>下载并安装image</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">docker run -d \ <span class="comment"># 创建并运行 -d使得容器在后台运行</span></span><br><span class="line">--name mysql \  <span class="comment"># 容器名称</span></span><br><span class="line">-p 3306:3306 \  <span class="comment"># 端口映射</span></span><br><span class="line">-e TZ=Asia/Shanghai \  <span class="comment"># 环境变量 -e KEY=VALUE，不同镜像不同，需要查看镜像的文档说明</span></span><br><span class="line">-e MYSQL_ROOT_PASSWORD=123 \ </span><br><span class="line">mysql \  <span class="comment"># 镜像的名字 [仓库]:[版本号]，无版本号就是最新版本</span></span><br></pre></td></tr></table></figure>
+
+<p>端口映射：</p>
+<ul>
+<li>端口映射：容器由于是独立的，拥有自己的文件系统、内存空间、网络空间，也有自己的IP，但是是对外隔离的，所以当主机ping容器的ip时，是无法访问的，因此可以端口映射，将虚拟机的3306端口映射到容器的3306端口。</li>
+<li>mysql的端口永远是3306，但宿主机进行端口映射的端口可以不是3306，比如<code>-p 3310:3306</code>。</li>
+</ul>
+<h3 id="navicat连接数据库："><a href="#navicat连接数据库：" class="headerlink" title="navicat连接数据库："></a>navicat连接数据库：</h3><p>1、由于使用虚拟机，此处要使用SSH连接虚拟机，注意，此处的虚拟机和主机采用桥接模式，同属一个内网中。</p>
+<p><img src="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/image/image-20231123214213515.png" alt="image-20231123214213515"></p>
+<p>2、进行数据库的连接</p>
+<p><img src="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/image/image-20231123214624203.png" alt="image-20231123214624203"></p>
+<blockquote>
+<p>memo：数据库账号是root（默认），密码123456，CentOS账号wallnut，密码生日。</p>
+</blockquote>
+<p>3、连接成功</p>
+<p><img src="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/image/image-20231123214946891.png" alt="image-20231123214946891"></p>
+<h2 id="镜像、容器常见命令"><a href="#镜像、容器常见命令" class="headerlink" title="镜像、容器常见命令"></a>镜像、容器常见命令</h2><p><img src="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/image/image-20231123104353877.png" alt="image-20231123104353877"></p>
+<p>（注：DockerFile用于定制镜像，左下是将镜像存储并加载）</p>
+<p>区分镜像和容器，可以类比为程序和进程。</p>
+<h3 id="查看已有镜像"><a href="#查看已有镜像" class="headerlink" title="查看已有镜像"></a>查看已有镜像</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost network-scripts]<span class="comment"># docker images</span></span><br><span class="line">REPOSITORY   TAG       IMAGE ID       CREATED         SIZE</span><br><span class="line">nginx        latest    a6bd71f48f68   2 days ago      187MB</span><br><span class="line">mysql        5.7       bdba757bc933   4 weeks ago     501MB</span><br><span class="line">mysql        latest    3218b38490ce   23 months ago   516MB</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="从远端仓库拉取镜像-pull"><a href="#从远端仓库拉取镜像-pull" class="headerlink" title="从远端仓库拉取镜像 pull"></a>从远端仓库拉取镜像 pull</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">docker pull nginx</span><br><span class="line">docker images</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="保存镜像到本地-save"><a href="#保存镜像到本地-save" class="headerlink" title="保存镜像到本地 save"></a>保存镜像到本地 save</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker save -o nginx.tar nginx:latest <span class="comment"># 注意要把版本号TAG也放上，因为可能有不同的版本号但相同的Repository</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="删除本地镜像-rmi"><a href="#删除本地镜像-rmi" class="headerlink" title="删除本地镜像 rmi"></a>删除本地镜像 rmi</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker rmi nginx:latest <span class="comment"># 注意要把版本号TAG也放上，因为可能有不同的版本号但相同的Repository</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="加载本地镜像-load"><a href="#加载本地镜像-load" class="headerlink" title="加载本地镜像 load"></a>加载本地镜像 load</h3><figure class="highlight docker"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">docker load -i nginx.tar</span><br><span class="line"><span class="number">92770</span>f546e06: Loading layer [==================================================&gt;]  <span class="number">77.87</span>MB/<span class="number">77.87</span>MB</span><br><span class="line"><span class="number">8</span>ae474e0cc8f: Loading layer [==================================================&gt;]  <span class="number">113.1</span>MB/<span class="number">113.1</span>MB</span><br><span class="line">f5525891d9e9: Loading layer [==================================================&gt;]  <span class="number">3.584</span>kB/<span class="number">3.584</span>kB</span><br><span class="line"><span class="number">66283570</span>f41b: Loading layer [==================================================&gt;]  <span class="number">4.608</span>kB/<span class="number">4.608</span>kB</span><br><span class="line">c2d3ab485d1b: Loading layer [==================================================&gt;]   <span class="number">2.56</span>kB/<span class="number">2.56</span>kB</span><br><span class="line">cddc309885a2: Loading layer [==================================================&gt;]   <span class="number">5.12</span>kB/<span class="number">5.12</span>kB</span><br><span class="line"><span class="number">0</span>d0e9c83b6f7: Loading layer [==================================================&gt;]  <span class="number">7.168</span>kB/<span class="number">7.168</span>kB</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="运行本地镜像-run"><a href="#运行本地镜像-run" class="headerlink" title="运行本地镜像 run"></a>运行本地镜像 run</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">docker run -d --name nginx -p 80:80 nginx</span><br><span class="line">0cb11aaca245abc658a96c7ad05f731678f3570419d856773013e83e7f4225ad</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="查看已有容器-ps"><a href="#查看已有容器-ps" class="headerlink" title="查看已有容器 ps"></a>查看已有容器 ps</h3><p>可用参数<code>format</code>指定输出格式，参数<code>-a</code>使用时，显示所有容器；否则仅显示正在运行的容器</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">docker ps -a</span><br><span class="line">docker ps</span><br><span class="line">docker ps --format <span class="string">&quot;table &#123;&#123;.ID&#125;&#125;\t&#123;&#123;.Image&#125;&#125;\t&#123;&#123;.Ports&#125;&#125;\t&#123;&#123;.Status&#125;&#125;\t&#123;&#123;.Names&#125;&#125;&quot;</span></span><br><span class="line">CONTAINER ID   IMAGE       PORTS                                                  STATUS        NAMES</span><br><span class="line">0cb11aaca245   nginx       0.0.0.0:80-&gt;80/tcp, :::80-&gt;80/tcp                      Up 2 hours    nginx</span><br><span class="line">563cc50d335e   mysql:5.7   0.0.0.0:3306-&gt;3306/tcp, :::3306-&gt;3306/tcp, 33060/tcp   Up 17 hours   mysql</span><br></pre></td></tr></table></figure>
+
+<h4 id="命令别名"><a href="#命令别名" class="headerlink" title="命令别名"></a>命令别名</h4><p>由于format指定输出格式的指令非常长，如果经常使用，可以设置一个命令别名</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">vi ~/.bashrc</span><br><span class="line"><span class="comment"># 添加：</span></span><br><span class="line"><span class="comment"># alias dpsf=&#x27;docker ps --format &quot;table &#123;&#123;.ID&#125;&#125;\t&#123;&#123;.Image&#125;&#125;\t&#123;&#123;.Ports&#125;&#125;\t&#123;&#123;.Status&#125;&#125;\t&#123;&#123;.Names&#125;&#125;&quot;&#x27;</span></span><br><span class="line"><span class="built_in">source</span> ~/.bashrc</span><br><span class="line">dpsf</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="关闭容器-stop"><a href="#关闭容器-stop" class="headerlink" title="关闭容器 stop"></a>关闭容器 stop</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker stop nginx</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="运行容器-start"><a href="#运行容器-start" class="headerlink" title="运行容器 start"></a>运行容器 start</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker start nginx</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="日志-logs"><a href="#日志-logs" class="headerlink" title="日志 logs"></a>日志 logs</h3><p>参数<code>-f</code>使用时，持续跟踪日志，否则只打印历史日志</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker logs -f nginx </span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="进入容器执行-exec"><a href="#进入容器执行-exec" class="headerlink" title="进入容器执行 exec"></a>进入容器执行 exec</h3><p> <code>-it</code>:可交互终端 </p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost network-scripts] docker <span class="built_in">exec</span> -it nginx bash</span><br><span class="line">root@0cb11aaca245:/ <span class="built_in">ls</span></span><br><span class="line">bin   dev		   docker-entrypoint.sh  home  lib32  libx32  mnt  proc  run   srv  tmp  var</span><br><span class="line">boot  docker-entrypoint.d  etc			 lib   lib64  media   opt  root  sbin  sys  usr</span><br></pre></td></tr></table></figure>
+
+<p>退出容器执行</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">exit</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="删除容器-rm"><a href="#删除容器-rm" class="headerlink" title="删除容器 rm"></a>删除容器 rm</h3><p>被删除的容器要先停止运行stop，除非使用<code>-f</code>强制删除。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker <span class="built_in">rm</span> nginx</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="部署nginx遇到的问题"><a href="#部署nginx遇到的问题" class="headerlink" title="部署nginx遇到的问题"></a>部署nginx遇到的问题</h2><p>虚拟机可以通过curl访问已部署的nginx容器，但宿主机既不能通过curl访问，也不能通过浏览器访问该ip。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl 172.31.226.34</span><br></pre></td></tr></table></figure>
+
+<p>原因：虚拟机防火墙未关闭</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">systemctl status firewalld <span class="comment"># 如果是active 就是未关闭</span></span><br><span class="line">systemctl stop firewalld.service <span class="comment"># 关闭即可解决</span></span><br><span class="line">systemctl restart docker <span class="comment"># 重启docker</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="数据卷挂载"><a href="#数据卷挂载" class="headerlink" title="数据卷挂载"></a>数据卷挂载</h2><p>为什么需要数据卷：若想修改容器内的文件，使用exec命令进入容器的bash后，发现无法使用vi修改其中的文件，原因是容器只提供了最小化的系统环境，而vi不是必要的。</p>
+<p>数据卷volume：虚拟目录，容器内目录和宿主机目录之间映射的桥梁。</p>
+<p>即便容器删了，数据仍会保存在虚拟机中。</p>
+<p><img src="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/image/image-20231124153318786.png" alt="image-20231124153318786"></p>
+<p>挂载数据卷要在容器运行时进行挂载，正在运行的容器不能再挂载数据卷。容器运行时，若不指定挂载名，会自动创建数据卷。</p>
+<h3 id="数据卷命令"><a href="#数据卷命令" class="headerlink" title="数据卷命令"></a>数据卷命令</h3><p><img src="C:/Users/wallnut/AppData/Roaming/Typora/typora-user-images/image-20231124154230723.png" alt="image-20231124154230723"></p>
+<h3 id="demo：利用nginx部署静态资源"><a href="#demo：利用nginx部署静态资源" class="headerlink" title="demo：利用nginx部署静态资源"></a>demo：利用nginx部署静态资源</h3><ul>
+<li>创建nginx容器，并修改html目录下的index.html文件</li>
+<li>将静态资源部署到html目录。</li>
+</ul>
+<h4 id="运行容器时挂载数据卷"><a href="#运行容器时挂载数据卷" class="headerlink" title="运行容器时挂载数据卷"></a>运行容器时挂载数据卷</h4><p>参数<code>-v 数据卷名：容器内目录</code>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -d --name nginx -p 80:80 -v html:/usr/share/nginx/html nginx</span><br></pre></td></tr></table></figure>
+
+<h4 id="查看挂载的数据卷"><a href="#查看挂载的数据卷" class="headerlink" title="查看挂载的数据卷"></a>查看挂载的数据卷</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">docker volume <span class="built_in">ls</span></span><br><span class="line">DRIVER    VOLUME NAME</span><br><span class="line"><span class="built_in">local</span>     d156f43095144e073085f20b9d0d2ca802e81358b99fe6273e3420ec6338ccdf</span><br><span class="line"><span class="built_in">local</span>     db24dc659d6f0dfd0aa3d931561e585b2cf393c636dda5b3967720131175e285</span><br><span class="line"><span class="built_in">local</span>     e90f11091bc53a779f4a6f5b6ec12d0ef0e2aa2fb40ffe6c6181e09ffc17ad2d</span><br><span class="line"><span class="built_in">local</span>     ffc104a40519463581ffa58433e95225ed93894cfdb44d3d1400b2a3e66ffabb</span><br><span class="line"><span class="built_in">local</span>     html</span><br></pre></td></tr></table></figure>
+
+<h4 id="查看html数据卷详细信息"><a href="#查看html数据卷详细信息" class="headerlink" title="查看html数据卷详细信息"></a>查看html数据卷详细信息</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">docker volume inspect html</span><br><span class="line">[</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="string">&quot;CreatedAt&quot;</span>: <span class="string">&quot;2023-11-23T23:46:58-08:00&quot;</span>,</span><br><span class="line">        <span class="string">&quot;Driver&quot;</span>: <span class="string">&quot;local&quot;</span>,</span><br><span class="line">        <span class="string">&quot;Labels&quot;</span>: null,</span><br><span class="line">        <span class="string">&quot;Mountpoint&quot;</span>: <span class="string">&quot;/var/lib/docker/volumes/html/_data&quot;</span>,  <span class="comment"># 虚拟机目录</span></span><br><span class="line">        <span class="string">&quot;Name&quot;</span>: <span class="string">&quot;html&quot;</span>,</span><br><span class="line">        <span class="string">&quot;Options&quot;</span>: null,</span><br><span class="line">        <span class="string">&quot;Scope&quot;</span>: <span class="string">&quot;local&quot;</span></span><br><span class="line">    &#125;</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
+
+<p>至此，虚拟机目录<code>&quot;/var/lib/docker/volumes/html/_data&quot;</code>和html数据卷映射，html数据卷又和容器目录<code>/usr/share/nginx/html</code>映射</p>
+<h4 id="修改html文件或添加静态资源"><a href="#修改html文件或添加静态资源" class="headerlink" title="修改html文件或添加静态资源"></a>修改html文件或添加静态资源</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vi /var/lib/docker/volumes/html/_data/index.html</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="目录挂载"><a href="#目录挂载" class="headerlink" title="目录挂载"></a>目录挂载</h2><p>用于数据的迁移，例如原本的mysql进行版本升级，所以需要新版本mysql的容器，并把原始数据迁移到新的mysql。</p>
+<h3 id="demo："><a href="#demo：" class="headerlink" title="demo："></a>demo：</h3><p>当前mysql的挂载信息，名字很长一串，这是在run是默认时，随机生成的数据卷，称为匿名卷。可以看到虚拟机目录<code>/var/lib/docker/volumes/d156f43095144e073085f20b9d0d2ca802e81358b99fe6273e3420ec6338ccdf/_data/mysql</code>存放了mysql的数据</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">docker inspect mysql</span><br><span class="line"><span class="string">&quot;Mounts&quot;</span>: [</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="string">&quot;Type&quot;</span>: <span class="string">&quot;volume&quot;</span>,</span><br><span class="line">                <span class="string">&quot;Name&quot;</span>: <span class="string">&quot;d156f43095144e073085f20b9d0d2ca802e81358b99fe6273e3420ec6338ccdf&quot;</span>,</span><br><span class="line">                <span class="string">&quot;Source&quot;</span>: <span class="string">&quot;/var/lib/docker/volumes/d156f43095144e073085f20b9d0d2ca802e81358b99fe6273e3420ec6338ccdf/_data&quot;</span>,</span><br><span class="line">                <span class="string">&quot;Destination&quot;</span>: <span class="string">&quot;/var/lib/mysql&quot;</span>,</span><br><span class="line"> ...</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost wallnut]<span class="comment"># cd /var/lib/docker/volumes/d156f43095144e073085f20b9d0d2ca802e81358b99fe6273e3420ec6338ccdf/_data</span></span><br><span class="line">[root@localhost _data]<span class="comment"># ls</span></span><br><span class="line">auto.cnf         client-key.pem  ib_logfile1         private_key.pem  sys</span><br><span class="line">ca-key.pem       ib_buffer_pool  mysql               public_key.pem</span><br><span class="line">ca.pem           ibdata1         mysql.sock          server-cert.pem</span><br><span class="line">client-cert.pem  ib_logfile0     performance_schema  server-key.pem</span><br></pre></td></tr></table></figure>
+
+<p><del>使用navicat为该数据库创建一个数据库pvz和一个wallnut表，用于后续数据迁移的验证。</del></p>
+<p>目录挂载和数据卷挂载使用docker run命令时挂载，参数<code>-v 本地目录:容器内目录</code>。注意，本地目录要以<code>/</code>或<code>./</code>开头，即要以绝对路径和相对路径开头，否则会被识别为数据卷。</p>
+<p>此外还需要挂载配置文件、初始化脚本，感觉较难用上此处不做深入（视频P8）。</p>
+<p><img src="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/image/image-20231124203920577.png" alt="image-20231124203920577"></p>
+<h2 id="自定义镜像"><a href="#自定义镜像" class="headerlink" title="自定义镜像"></a>自定义镜像</h2><p>镜像包含了应用程序、程序运行的系统函数库、运行配置等文件的文件包。构建自定义镜像就是把上述文件打包的过程。</p>
+<p><img src="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/iimage/image-20231126100645222.png" alt="image-20231126100645222"></p>
+<h3 id="镜像结构"><a href="#镜像结构" class="headerlink" title="镜像结构"></a>镜像结构</h3><p><img src="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/iimage/image-20231126101316105.png" alt="image-20231126101316105"></p>
+<p>分层，好处是可以共享某些基础层，不必重复构建。例如在安装了mysql镜像后，安装redis镜像，可见层<code>1f7ce2fa46ab</code>已存在。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost wallnut]<span class="comment"># docker pull redis</span></span><br><span class="line">Using default tag: latest</span><br><span class="line">latest: Pulling from library/redis</span><br><span class="line">1f7ce2fa46ab: Already exists  <span class="comment">#当前层已存在</span></span><br><span class="line">3c6368585bf1: Pull complete </span><br><span class="line">3911d271d7d8: Pull complete </span><br><span class="line">ac88aa9d4021: Pull complete </span><br><span class="line">127cd75a68a2: Pull complete </span><br><span class="line">4f4fb700ef54: Pull complete </span><br><span class="line">f3993c1104fc: Pull complete </span><br><span class="line">Digest: sha256:2976bc0437deff693af2dcf081a1d1758de8b413e6de861151a5a136c25eb9e4</span><br><span class="line">Status: Downloaded newer image <span class="keyword">for</span> redis:latest</span><br><span class="line">docker.io/library/redis:latest</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="Dockerfile"><a href="#Dockerfile" class="headerlink" title="Dockerfile"></a>Dockerfile</h3><p>自定义镜像时不需要自己找，而是使用Dockerfile中的指令说明要什么操作来构建镜像。</p>
+<h4 id="常见指令"><a href="#常见指令" class="headerlink" title="常见指令"></a>常见指令</h4><p><img src="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/iimage/image-20231126101454693.png" alt="image-20231126101454693"></p>
+<h4 id="demo：-1"><a href="#demo：-1" class="headerlink" title="demo："></a>demo：</h4><p><img src="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/iimage/image-20231126101938554.png" alt="image-20231126101938554"></p>
+<h3 id="构建镜像"><a href="#构建镜像" class="headerlink" title="构建镜像"></a>构建镜像</h3><p>有了dockerfile后，使用命令构建镜像</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">docker build -t myImage:1.0 . </span><br><span class="line"><span class="comment">#docker built -t repository:tag dockerfile路径（最好是相对路径）</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="demo"><a href="#demo" class="headerlink" title="demo"></a>demo</h4><p>1、加载本地镜像</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost demo]<span class="comment"># ls</span></span><br><span class="line">demo  jdk.tar  mysql.tar  nginx.tar</span><br><span class="line">[root@localhost demo]<span class="comment"># docker load -i jdk.tar</span></span><br><span class="line">2c7e7ab2260a: Loading layer  119.3MB/119.3MB</span><br><span class="line">9ad2165feb02: Loading layer  17.18MB/17.18MB</span><br><span class="line">92903c3857f8: Loading layer  17.87MB/17.87MB</span><br><span class="line">1736ab871b32: Loading layer  12.18MB/12.18MB</span><br><span class="line">6f8e4cb95a88: Loading layer  3.584kB/3.584kB</span><br><span class="line">41080a0c646f: Loading layer  141.8MB/141.8MB</span><br><span class="line">Loaded image: openjdk:11.0-jre-buster</span><br></pre></td></tr></table></figure>
+
+<p>2、进入demo目录</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost demo]<span class="comment"># cd demo</span></span><br><span class="line">[root@localhost demo]<span class="comment"># docker build -t docker-demo .</span></span><br><span class="line">[+] Building 0.4s (8/8) FINISHED                                                            docker:default</span><br><span class="line"> =&gt; [internal] load .dockerignore                                                                     0.0s</span><br><span class="line"> =&gt; =&gt; transferring context: 2B                                                                       0.0s</span><br><span class="line"> =&gt; [internal] load build definition from Dockerfile                                                  0.0s</span><br><span class="line"> =&gt; =&gt; transferring dockerfile: 358B                                                                  0.0s</span><br><span class="line"> =&gt; [internal] load metadata <span class="keyword">for</span> docker.io/library/openjdk:11.0-jre-buster                            0.0s</span><br><span class="line"> =&gt; [1/3] FROM docker.io/library/openjdk:11.0-jre-buster                                              0.0s</span><br><span class="line"> =&gt; [internal] load build context                                                                     0.1s</span><br><span class="line"> =&gt; =&gt; transferring context: 17.70MB                                                                  0.1s</span><br><span class="line"> =&gt; [2/3] RUN <span class="built_in">ln</span> -snf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime &amp;&amp; <span class="built_in">echo</span> Asia/Shanghai &gt; /etc/  0.2s</span><br><span class="line"> =&gt; [3/3] COPY docker-demo.jar /app.jar                                                               0.1s</span><br><span class="line"> =&gt; exporting to image                                                                                0.1s</span><br><span class="line"> =&gt; =&gt; exporting layers                                                                               0.1s</span><br><span class="line"> =&gt; =&gt; writing image sha256:ca7a0e87318bc12fbc68314cdfb4ba2b97eaea92ee4c12d88716b46c1cde27bb          0.0s</span><br><span class="line"> =&gt; =&gt; naming to docker.io/library/docker-demo                                                        0.0s</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/iimage/image-20231126103909950.png" alt="image-20231126103909950"></p>
+<p>3、运行镜像</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -d --name docker_demo -p 8080:8080 docker-demo <span class="comment"># 8080是代码中指定的端口号，此处无需关心</span></span><br></pre></td></tr></table></figure>
+
+<p>4、访问<code>172.31.226.34:8080</code></p>
+<p><img src="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/iimage/image-20231126104206361.png" alt="image-20231126104206361"></p>
+<h2 id="容器互联"><a href="#容器互联" class="headerlink" title="容器互联"></a>容器互联</h2><p><code>docker inspect 容器名</code>中的networks字段即可看到该容器的ip地址。默认情况下，所有容器以bridge方式连接到docker的一个虚拟网桥</p>
+<p><img src="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/image/image-20231127172334735.png" alt="image-20231127172334735"></p>
+<p>虽然这些容器同属一个网桥，可以相互通信，但这些ip是由docker按顺序分配的，一旦docker重启，容器启动顺序改变，这些容器的ip地址可能不同，容器之间相互通信的地址要重新设置。</p>
+<h3 id="自定义网络"><a href="#自定义网络" class="headerlink" title="自定义网络"></a>自定义网络</h3><p>加入自定义网络的容器可以通过<strong>容器名</strong>互相访问</p>
+<h4 id="常用指令"><a href="#常用指令" class="headerlink" title="常用指令"></a>常用指令</h4><p><img src="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/image/image-20231127181037711.png" alt="image-20231127181037711"></p>
+<h4 id="demo：-2"><a href="#demo：-2" class="headerlink" title="demo："></a>demo：</h4><ul>
+<li>第一步：创建网络mynetwork，并使自定义镜像时创建的docker_demo容器加入网络。</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost mysql]<span class="comment"># docker network ls</span></span><br><span class="line">NETWORK ID     NAME      DRIVER    SCOPE</span><br><span class="line">0c5ff379beb7   bridge    bridge    <span class="built_in">local</span></span><br><span class="line">68f4a61a71b2   host      host      <span class="built_in">local</span></span><br><span class="line">b27cc43b8cba   none      null      <span class="built_in">local</span></span><br><span class="line">[root@localhost mysql]<span class="comment"># docker network create mynetwork</span></span><br><span class="line">04da59f0180192d722d3846b4eaa6d7df3d4ae35df510412cf1bef9196036630</span><br><span class="line">[root@localhost mysql]<span class="comment"># docker network ls</span></span><br><span class="line">NETWORK ID     NAME        DRIVER    SCOPE</span><br><span class="line">0c5ff379beb7   bridge      bridge    <span class="built_in">local</span></span><br><span class="line">68f4a61a71b2   host        host      <span class="built_in">local</span></span><br><span class="line">04da59f01801   mynetwork   bridge    <span class="built_in">local</span></span><br><span class="line">b27cc43b8cba   none        null      <span class="built_in">local</span></span><br><span class="line">[root@localhost mysql]<span class="comment"># docker network connect mynetwork docker_demo</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>第二步，将nginx在运行时加入网络mynetwork</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -d --name 镜像名 -p 8080:8080 --network 容器名</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost mysql]<span class="comment"># docker rm -f nginx</span></span><br><span class="line">nginx</span><br><span class="line">[root@localhost mysql]<span class="comment"># docker run -d --name nginx -p 80:80 --network mynetwork nginx</span></span><br><span class="line">ee0f915f6e398eaba6cc95665f23d2380492e22b02a709ad2adbf9a2a7754665</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>第三步，进入docker_demo容器执行bash，并通过容器名ping nginx</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost mysql]<span class="comment"># docker exec -it docker_demo bash</span></span><br><span class="line">root@f0e9ba9a7278:/<span class="comment"># ping nginx</span></span><br><span class="line">PING nginx (172.18.0.3) 56(84) bytes of data.</span><br><span class="line">64 bytes from nginx.mynetwork (172.18.0.3): icmp_seq=1 ttl=64 time=0.191 ms</span><br><span class="line">64 bytes from nginx.mynetwork (172.18.0.3): icmp_seq=2 ttl=64 time=0.142 ms</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="项目部署"><a href="#项目部署" class="headerlink" title="项目部署"></a>项目部署</h2><p>由于不是java选手，无法将java项目打包，此处暂时没做。</p>
+<h2 id="DockerCompose"><a href="#DockerCompose" class="headerlink" title="DockerCompose"></a>DockerCompose</h2><p>通过一个单独的docker-compuse.yml模板文件定义一组相关联的应用容器，帮助我们实现多个相关联docker容器的快速部署。</p>
+<p><img src="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/image/image-20231127190855534.png" alt="image-20231127190855534"></p>
+<p>语法和docker run 命令几乎类似。</p>
+<p><img src="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/image/image-20231127191013928.png" alt="image-20231127191013928"></p>
+<h3 id="docker语法详解"><a href="#docker语法详解" class="headerlink" title="docker语法详解"></a>docker语法详解</h3><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">version:</span> <span class="string">&quot;3.8&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="attr">services:</span>  <span class="comment"># 容器</span></span><br><span class="line">  <span class="attr">mysql:</span>   <span class="comment"># mysql 容器</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">mysql</span>  <span class="comment"># 来自mysql镜像</span></span><br><span class="line">    <span class="attr">container_name:</span> <span class="string">mysql</span> </span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;3306:3306&quot;</span></span><br><span class="line">    <span class="attr">environment:</span></span><br><span class="line">      <span class="attr">TZ:</span> <span class="string">Asia/Shanghai</span></span><br><span class="line">      <span class="attr">MYSQL_ROOT_PASSWORD:</span> <span class="number">123</span></span><br><span class="line">    <span class="attr">volumes:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;./mysql/conf:/etc/mysql/conf.d&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;./mysql/data:/var/lib/mysql&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;./mysql/init:/docker-entrypoint-initdb.d&quot;</span></span><br><span class="line">    <span class="attr">networks:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">hm-net</span></span><br><span class="line">  <span class="attr">hmall:</span></span><br><span class="line">    <span class="attr">build:</span> </span><br><span class="line">      <span class="attr">context:</span> <span class="string">.</span></span><br><span class="line">      <span class="attr">dockerfile:</span> <span class="string">Dockerfile</span></span><br><span class="line">    <span class="attr">container_name:</span> <span class="string">hmall</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;8080:8080&quot;</span></span><br><span class="line">    <span class="attr">networks:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">hm-net</span></span><br><span class="line">    <span class="attr">depends_on:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">mysql</span></span><br><span class="line">  <span class="attr">nginx:</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">nginx</span></span><br><span class="line">    <span class="attr">container_name:</span> <span class="string">nginx</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;18080:18080&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;18081:18081&quot;</span></span><br><span class="line">    <span class="attr">volumes:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;./nginx/nginx.conf:/etc/nginx/nginx.conf&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;./nginx/html:/usr/share/nginx/html&quot;</span></span><br><span class="line">    <span class="attr">depends_on:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">hmall</span></span><br><span class="line">    <span class="attr">networks:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">hm-net</span></span><br><span class="line"><span class="attr">networks:</span>  <span class="comment"># 网络</span></span><br><span class="line">  <span class="attr">hm-net:</span></span><br><span class="line">    <span class="attr">name:</span> <span class="string">hmall</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="命令"><a href="#命令" class="headerlink" title="命令"></a>命令</h3><p><img src="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/image/image-20231127191800774.png" alt="image-20231127191800774"></p>
+<h2 id="出现的问题"><a href="#出现的问题" class="headerlink" title="出现的问题"></a>出现的问题</h2><h3 id="1"><a href="#1" class="headerlink" title="1"></a>1</h3><blockquote>
+<p>[root@localhost &#x2F;]# docker images<br>Cannot connect to the Docker daemon at unix:&#x2F;&#x2F;&#x2F;var&#x2F;run&#x2F;docker.sock. Is the docker daemon running?</p>
+</blockquote>
+<p>解决方法：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo systemctl restart docker</span><br></pre></td></tr></table></figure>
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://drinkwateronly.github.io/2023/11/b8c525c7aadb/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Wallnut">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Wallnut">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Wallnut">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2023/11/b8c525c7aadb/" class="post-title-link" itemprop="url">合成大西瓜基础版本魔改+4everland部署</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2023-11-25 14:47:14 / 修改时间：14:49:50" itemprop="dateCreated datePublished" datetime="2023-11-25T14:47:14+08:00">2023-11-25</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%8A%98%E8%85%BE/" itemprop="url" rel="index"><span itemprop="name">折腾</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="合成大西瓜基础版本魔改-4everland部署"><a href="#合成大西瓜基础版本魔改-4everland部署" class="headerlink" title="合成大西瓜基础版本魔改+4everland部署"></a>合成大西瓜基础版本魔改+4everland部署</h1><p>仓库：<a target="_blank" rel="noopener" href="https://github.com/drinkwateronly/watermelon">https://github.com/drinkwateronly/watermelon</a></p>
+<p>使用本仓库的代码魔改合成大西瓜的要求</p>
+<ul>
+<li>会运行python代码</li>
+<li>会上传代码到github仓库。</li>
+</ul>
+<h2 id="文件概览"><a href="#文件概览" class="headerlink" title="文件概览"></a>文件概览</h2><p>下载本仓库文件后，文件如下：</p>
+<p><img src="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/iimage/image-20231125134155347.png" alt="image-20231125134155347"></p>
+<h2 id="魔改"><a href="#魔改" class="headerlink" title="魔改"></a>魔改</h2><p><code>src/extraSetting.js</code>中按需修改，要强调的是可以修改网页标题。</p>
+<h2 id="图片处理"><a href="#图片处理" class="headerlink" title="图片处理"></a>图片处理</h2><p>两种处理方式，本文提供python脚本自动处理。手动处理较为繁琐，请查询网络教程，或使用他人提供的在线大西瓜图片处理工具。</p>
+<h3 id="自动处理"><a href="#自动处理" class="headerlink" title="自动处理"></a>自动处理</h3><p>原本水果图片文件在<code>res/raw-assets</code>的位置、图片文件名等信息已按水果尺寸从小到大记录到<code>image_process/info.xlsx</code>中，具体如下。例如樱桃图片文件为<code>res/raw-assets/0c/0cbb3dbb-2a85-42a5-be21-9839611e5af7.png</code>。</p>
+<p><img src="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/iimage/image-20231125104727166.png" alt="image-20231125104727166"></p>
+<p>定制水果图片为想要的图片，则需要将要定制的11张图片（对应11种水果）放到<code>image_process/original</code>，并按水果尺寸从小到大的顺序命名为<code>1.jpg</code>, <code>2.jpg</code>…, <code>11.jpg</code>。</p>
+<p><strong>注意，这些定制图片的尺寸最好是近似正方形，以免在后续图片处理中的缩放操作导致图片被拉伸，效果变差。</strong></p>
+<p>随后运行<code>image_process/demo.py</code>即可自动将这些图片修改到原本水果图片的位置。其中该python脚本将图片先缩放到对应的正方形尺寸，并裁剪成圆形。</p>
+<h3 id="手动"><a href="#手动" class="headerlink" title="手动"></a>手动</h3><p>略</p>
+<h2 id="本地预览"><a href="#本地预览" class="headerlink" title="本地预览"></a>本地预览</h2><ul>
+<li><p>下载并安装Node</p>
+<p><a target="_blank" rel="noopener" href="http://nodejs.cn/download/">http://nodejs.cn/download/</a></p>
+</li>
+<li><p>进入命令行，检查npm是否安装成功</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm -v</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>命令行安装serve工具</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm i -g serve</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>从合成大西瓜文件夹进入命令行，启动serve</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">serve</span><br></pre></td></tr></table></figure></li>
+</ul>
+<p>成功后浏览器输访问<code>localhost:5000</code>即可</p>
+<h2 id="部署"><a href="#部署" class="headerlink" title="部署"></a>部署</h2><p>预览没问题后，可以开始部署上线。</p>
+<ul>
+<li><p><strong>首先代码要上传到github仓库</strong>。</p>
+</li>
+<li><p>随后使用<a target="_blank" rel="noopener" href="https://dashboard.4everland.org/?invite=49TRKU2D">4everland</a>进行静态网页托管，并使用github注册即可。</p>
+</li>
+<li><p>注册成功后，点击<code>new project</code>，创建一个新项目</p>
+<p><img src="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/iimage/image-20231125111433974.png" alt="image-20231125111433974"></p>
+</li>
+<li><p>然后在step 1，import保存了合成大西瓜代码的github的仓库</p>
+<p><img src="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/iimage/image-20231125112002423.png" alt="image-20231125112002423"></p>
+</li>
+<li><p>step2，可选仓库的branch，意味着可以定制不同的合成大西瓜，上传到同一个仓库的不同branch管理。此处使用默认的branch，直接deploy即可。</p>
+<img src="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/iimage/image-20231125112423795.png" alt="image-20231125112423795" style="zoom:67%;" />
+</li>
+<li><p>step3，耐心等待部署。完成后点击visit访问，并记录下url。首次加载该游戏可能比较慢。</p>
+</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/iimage/image-20231125112509144.png" alt="image-20231125112509144"></p>
+<ul>
+<li><p>拓展：</p>
+<p><a target="_blank" rel="noopener" href="https://dashboard.4everland.org/?invite=49TRKU2D">4everland</a>注册就送了1G的静态网页托管空间，一个合成大西瓜也就十几m，所以合理地管理好仓库的branch，可以上线很多个合成大西瓜游戏。</p>
+</li>
+</ul>
+<h2 id="Ref"><a href="#Ref" class="headerlink" title="Ref"></a>Ref</h2><p><a target="_blank" rel="noopener" href="https://docs.qq.com/sheet/DS0d2VVVJYmpvZ0pZ?tab=BB08J2">魔改大西瓜可替换的素材 (qq.com)</a></p>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/H9VR1MWn-9bKSC_1l_MkJw">魔改和上线你的合成大西瓜，最全教程！ (qq.com)</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1Vy4y1n7KW/?vd_source=9883419bb9939eb61834a63a38921b19">全网最贴心的魔改合成大西瓜教程，从修改到发布！_哔哩哔哩_bilibili</a></p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1876,357 +2314,6 @@ Savepoints: NO
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> key, value := <span class="keyword">range</span> map1 &#123;</span><br><span class="line">    <span class="keyword">switch</span> data := value.(<span class="keyword">type</span>) &#123;</span><br><span class="line">    <span class="keyword">case</span> <span class="type">string</span>:</span><br><span class="line">        fmt.Println(<span class="string">&quot;string&quot;</span>, key, data)</span><br><span class="line">    <span class="keyword">case</span> <span class="type">bool</span>:</span><br><span class="line">        fmt.Println(<span class="string">&quot;bool&quot;</span>, key, data)</span><br><span class="line">    <span class="keyword">case</span> <span class="type">int</span>:</span><br><span class="line">        fmt.Println(<span class="string">&quot;int&quot;</span>, key, data)</span><br><span class="line">    <span class="keyword">case</span> []<span class="type">string</span>:</span><br><span class="line">        fmt.Println(<span class="string">&quot;[]string&quot;</span>, key, data)</span><br><span class="line">    <span class="keyword">case</span> []<span class="keyword">interface</span>&#123;&#125;:</span><br><span class="line">        fmt.Println(<span class="string">&quot;[]interface&quot;</span>, key, data)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <h4 id="使用struct存放（推荐）"><a href="#使用struct存放（推荐）" class="headerlink" title="使用struct存放（推荐）"></a>使用struct存放（推荐）</h4><p>其实就说struct内部已经定义好了类型，所以无需类型判断</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> person1 Person <span class="comment">// 用到了11.3.1的Person结构体</span></span><br><span class="line">err2 := json.Unmarshal([]<span class="type">byte</span>(jsonStr), &amp;person1)</span><br><span class="line"><span class="keyword">if</span> err2 != <span class="literal">nil</span> &#123;</span><br><span class="line">	fmt.Println(err)</span><br><span class="line">&#125;</span><br><span class="line">fmt.Printf(<span class="string">&quot;person = %+v&quot;</span>, person1) </span><br><span class="line">   <span class="comment">//person = &#123;Name: Age:10 Sex:false Birthday:1900-1-1 Company: Language:[go json]&#125; </span></span><br></pre></td></tr></table></figure>
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://drinkwateronly.github.io/2023/11/a90c7818ac95/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="Wallnut">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Wallnut">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Wallnut">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2023/11/a90c7818ac95/" class="post-title-link" itemprop="url">ch14-反射</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-      
-
-      <time title="创建时间：2023-11-17 00:00:00 / 修改时间：19:48:49" itemprop="dateCreated datePublished" datetime="2023-11-17T00:00:00+08:00">2023-11-17</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Golang/" itemprop="url" rel="index"><span itemprop="name">Golang</span></a>
-        </span>
-          ，
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Golang/Go%E5%9F%BA%E7%A1%80/" itemprop="url" rel="index"><span itemprop="name">Go基础</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="第14章-反射"><a href="#第14章-反射" class="headerlink" title="第14章 反射"></a>第14章 反射</h1><p><a target="_blank" rel="noopener" href="http://www.zzvips.com/article/200181.html">一文搞懂Go反射的使用方法和应用场景_Golang_脚本之家 (zzvips.com)</a><br><a target="_blank" rel="noopener" href="https://golangbot.com/reflection/">Reflection in Golang | golangbot.com</a></p>
-<h2 id="14-1-反射的定义"><a href="#14-1-反射的定义" class="headerlink" title="14.1 反射的定义"></a>14.1 反射的定义</h2><p>go语言提供一种机制——反射：<strong>运行时</strong>更新变量和检查它们的值，调用它们的方法或支持的内在操作，但<strong>编译时</strong>并不知道这些变量的具体类型。</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">funcName</span><span class="params">(x <span class="keyword">interface</span>&#123;&#125;)</span></span>&#123;</span><br><span class="line">    <span class="comment">// 不知道其他人调用该函数时，会传入什么类型</span></span><br><span class="line">    <span class="comment">// 1、类型断言可以获取x的类型，但需要猜，有很多种情况</span></span><br><span class="line">    <span class="comment">// 2、利用反射reflect</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="14-2-reflect包基本用法"><a href="#14-2-reflect包基本用法" class="headerlink" title="14.2 reflect包基本用法"></a>14.2 reflect包基本用法</h2><h3 id="14-2-1-reflect-TypeOf"><a href="#14-2-1-reflect-TypeOf" class="headerlink" title="14.2.1 reflect.TypeOf()"></a>14.2.1 <code>reflect.TypeOf()</code></h3><p><code>reflect.TypeOf()</code>获取反射类型对象<code>reflect.Type</code>，如<code>reflect.String</code>等</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> typeOfa reflect.Type = reflect.TypeOf(a)</span><br><span class="line"><span class="comment">// reflect.Type的3种方法</span></span><br><span class="line">typeOfa.Name() <span class="comment">// 获得类型名称，经过type关键字后新建立的类型名</span></span><br><span class="line">typeOfa.Kind() <span class="comment">// 获得种类，实际的类型</span></span><br><span class="line">typeOfa.Elem() <span class="comment">// 若是指针就获得指向的类型</span></span><br></pre></td></tr></table></figure>
-
-<p>反射的种类reflect.Kind的定义如下，如reflect.Int：</p>
-<p><img src="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/iimage/image-20230520202931430.png" alt="image-20230520202931430"></p>
-<p>其中Map、Slice、Chan属于引用类型，使用起来类似于指针，但是在种类常量定义中仍然属于 独立的种类，不属于Ptr。type A struct{}定义的结构体属于Struct种类，*A属于Ptr。</p>
-<h5 id="例程"><a href="#例程" class="headerlink" title="例程"></a>例程</h5><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Number <span class="type">int</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> Person <span class="keyword">struct</span> &#123;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">checkType</span><span class="params">(t reflect.Type)</span></span> &#123;</span><br><span class="line">	fmt.Printf(<span class="string">&quot;变量的类型名称=&gt;%v, 类型种类=&gt; %v\n&quot;</span>, t.Name(), t.Kind())</span><br><span class="line">	<span class="keyword">if</span> t.Kind() == reflect.Ptr &#123; <span class="comment">// 指针，</span></span><br><span class="line">		fmt.Printf(<span class="string">&quot;指向的变量：%v&quot;</span>, t.Elem())</span><br><span class="line">		t = t.Elem() <span class="comment">// 如果是指针，t赋值为t的指向</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> num Number = <span class="number">10</span></span><br><span class="line">	typeOfNum := reflect.TypeOf(num)</span><br><span class="line">	fmt.Println(<span class="string">&quot;typeOfNum:&quot;</span>)</span><br><span class="line">	checkType(typeOfNum)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">var</span> person Person</span><br><span class="line">	typeOfperson := reflect.TypeOf(person)</span><br><span class="line">	fmt.Println(<span class="string">&quot;typeOfperson:&quot;</span>)</span><br><span class="line">	checkType(typeOfperson)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">var</span> personPtr = &amp;person  </span><br><span class="line">	typeOfptr := reflect.TypeOf(&amp;personPtr)</span><br><span class="line">	fmt.Println(<span class="string">&quot;typeOfptr:&quot;</span>)</span><br><span class="line">	checkType(typeOfptr)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<blockquote>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">typeOfNum:</span><br><span class="line">变量的类型名称=&gt;Number, 类型种类=&gt; int   </span><br><span class="line">typeOfperson:                            </span><br><span class="line">变量的类型名称=&gt;Person, 类型种类=&gt; struct</span><br><span class="line">typeOfptr:                               </span><br><span class="line">变量的类型名称=&gt;, 类型种类=&gt; ptr       </span><br><span class="line">指向的变量：*main.Person   </span><br></pre></td></tr></table></figure>
-</blockquote>
-<h3 id="14-2-2-reflect-ValueOf"><a href="#14-2-2-reflect-ValueOf" class="headerlink" title="14.2.2 reflect.ValueOf()"></a>14.2.2 <code>reflect.ValueOf()</code></h3><p><code>reflect.ValueOf()</code>获取类型为<code>reflect.Value</code>的反射值对象</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> valueOfa reflect.Value = reflect.ValueOf(a)</span><br><span class="line">valueOfa.Type() <span class="comment">// 类型种类</span></span><br><span class="line">valueOfa.Elem() <span class="comment">// 若是指针就是指向的类型</span></span><br><span class="line"></span><br><span class="line">valueOfa.Int() <span class="comment">// 获取变量值，如果a不是int，会panic</span></span><br><span class="line"><span class="comment">// 基本类型都有，如valueOfa.String()、valueOfa.Bool()</span></span><br></pre></td></tr></table></figure>
-
-<h5 id="例程-1"><a href="#例程-1" class="headerlink" title="例程"></a>例程</h5><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">checkValue</span><span class="params">(v reflect.Value)</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> v.Kind() == reflect.Ptr &#123; </span><br><span class="line">		v = v.Elem() <span class="comment">// 如果是指针，v转移到指针指向的值</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> v.Kind() == reflect.Int &#123;  <span class="comment">// 如果v的实际类型是int</span></span><br><span class="line">    	<span class="comment">// 方式1，调用reflect.Value的Int()，再强制类型转换</span></span><br><span class="line">		<span class="keyword">var</span> v1 <span class="type">int</span> = <span class="type">int</span>(v.Int()) <span class="comment">// 若v本身不是int，不做判断直接.Int()会panic</span></span><br><span class="line">        <span class="comment">// 方式2，调用reflect.Value的Interface()，再从interface转成int</span></span><br><span class="line">		<span class="keyword">var</span> v2 <span class="type">int</span> = v.Interface().(<span class="type">int</span>)</span><br><span class="line">		fmt.Println(v1, v2)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> num <span class="type">int</span> = <span class="number">10</span></span><br><span class="line">	ValueOfNum := reflect.ValueOf(num)</span><br><span class="line">	fmt.Println(<span class="string">&quot;ValueOfNum&quot;</span>)</span><br><span class="line">	checkValue(ValueOfNum)</span><br><span class="line"></span><br><span class="line">	ValueOfPtr := reflect.ValueOf(&amp;num)</span><br><span class="line">	fmt.Println(<span class="string">&quot;ValueOfPtr&quot;</span>)</span><br><span class="line">	checkValue(ValueOfPtr)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="14-2-3-使用反射调用函数"><a href="#14-2-3-使用反射调用函数" class="headerlink" title="14.2.3  使用反射调用函数"></a>14.2.3  使用反射调用函数</h3><p>这块比较复杂，最好是结合例程进行理解：</p>
-<ol>
-<li>函数也是变量，所以也可以获取其<code>reflect.Value</code>对象。</li>
-<li>函数的<code>reflect.Value</code>对象有个Call方法，调用Call方法能够调用函数本身。</li>
-<li>Call方法的参数：reflect.Value对象的切片，每个元素按序是 函数本身所需要的参数 的reflect.Value对象</li>
-<li>Call方法的返回值：reflect.Value对象的切片，每个元素按序是 函数本身返回值 的reflect.Value对象</li>
-</ol>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(v Value)</span></span> Call(in []Value) []Value  <span class="comment">// func (v Value)的方法Call()，输入为切片，输出为切片</span></span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>如果v的Kind不是Func会panic。参数没对应上也会panic。</li>
-</ul>
-<h5 id="例程-2"><a href="#例程-2" class="headerlink" title="例程"></a>例程</h5><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Equal</span><span class="params">(a, b <span class="type">int</span>)</span></span> <span class="type">bool</span> &#123;</span><br><span class="line">	<span class="keyword">if</span> a == b &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">true</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="literal">false</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="comment">// 获取函数Equal的reflect.Value对象</span></span><br><span class="line">	valueOfFunc := reflect.ValueOf(Equal)</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 获取reflect.Value对象的切片，作为valueOfFunc调用时的参数</span></span><br><span class="line">	args := []reflect.Value&#123;reflect.ValueOf(<span class="number">1</span>), reflect.ValueOf(<span class="number">2</span>)&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// Call方法调用，即调用函数本身</span></span><br><span class="line">	result := valueOfFunc.Call(args)</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 返回值也是reflect.Value对象切片，获取返回值reflect.Value的变量值</span></span><br><span class="line">	fmt.Println(<span class="string">&quot;result&quot;</span>, result[<span class="number">0</span>].Bool())</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-
-
-<h2 id="14-3-对结构体的反射操作"><a href="#14-3-对结构体的反射操作" class="headerlink" title="14.3 对结构体的反射操作"></a>14.3 对结构体的反射操作</h2><h3 id="14-3-1-获取结构体成员类型"><a href="#14-3-1-获取结构体成员类型" class="headerlink" title="14.3.1 获取结构体成员类型"></a>14.3.1 获取结构体成员类型</h3><p>通过<code>reflect.Type()</code>获得的<code>reflect.Type</code>对象，可以调用如下方法</p>
-<ul>
-<li><p><code>NumField()</code>：获取结构体成员的数量</p>
-</li>
-<li><p><code>Field(index int)</code>：根据索引返回结构体字段详情信息，即<code>StructField</code>对象定义如下</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> StructField <span class="keyword">struct</span> &#123;</span><br><span class="line">    Name <span class="type">string</span>    <span class="comment">// 字段名</span></span><br><span class="line">    PkgPath <span class="type">string</span> <span class="comment">// 字段路径</span></span><br><span class="line">    Type Type      <span class="comment">// 字段反射类型对象</span></span><br><span class="line">    Tag StructTag  <span class="comment">// 字段结构体标签</span></span><br><span class="line">    Offset <span class="type">uintptr</span> <span class="comment">// 字段在结构体中的偏移</span></span><br><span class="line">    Index []<span class="type">int</span> 	<span class="comment">// 字段的索引值</span></span><br><span class="line">    Anonymous <span class="type">bool</span> <span class="comment">// 是否为匿名字段</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-</li>
-<li><p><code>FieldByName(name string)</code>：通过字段名（结构体成员名）获取字段信息，即<code>StructField</code>对象</p>
-</li>
-<li><p><code>FieldByIndex(index []int)</code>：It is equivalent to calling <code>Field()</code> successively for each index i.</p>
-</li>
-</ul>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Person <span class="keyword">struct</span> &#123;</span><br><span class="line">	Name   <span class="type">string</span></span><br><span class="line">	Age    <span class="type">int</span> <span class="string">`json:&quot;age&quot;`</span></span><br><span class="line">	<span class="type">string</span>     <span class="comment">// 匿名字段 Anonymous Field</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">printStructFiled</span><span class="params">(field reflect.StructField)</span></span> &#123;</span><br><span class="line">	fmt.Println(<span class="string">&quot;字段名&quot;</span>, field.Name)</span><br><span class="line">	fmt.Println(<span class="string">&quot;字段路径&quot;</span>, field.PkgPath)</span><br><span class="line">	fmt.Println(<span class="string">&quot;字段反射类型对象&quot;</span>, field.Type)</span><br><span class="line">	fmt.Println(<span class="string">&quot;字段结构体标签&quot;</span>, field.Tag)</span><br><span class="line">	fmt.Println(<span class="string">&quot;字段在结构体中的偏移&quot;</span>, field.Offset)</span><br><span class="line">	fmt.Println(<span class="string">&quot;字段的索引值&quot;</span>, field.Index)</span><br><span class="line">	fmt.Println(<span class="string">&quot;是否为匿名字段&quot;</span>, field.Anonymous)</span><br><span class="line">	fmt.Println()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	person := Person&#123;<span class="string">&quot;walle&quot;</span>, <span class="number">100</span>, <span class="string">&quot;test&quot;</span>&#125;</span><br><span class="line">	typeOfPerson := reflect.TypeOf(person)</span><br><span class="line">	<span class="comment">// 根据NumField()循环所有成员，获取字段信息</span></span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; typeOfPerson.NumField(); i++ &#123;</span><br><span class="line">		field := typeOfPerson.Field(i)</span><br><span class="line">		printStructFiled(field)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">// FieldByName()根据字段名获取字段信息</span></span><br><span class="line">	<span class="keyword">if</span> field, ok := typeOfPerson.FieldByName(<span class="string">&quot;Age&quot;</span>); ok &#123;</span><br><span class="line">		fmt.Println(<span class="string">&quot;通过字段名获取字段信息&quot;</span>)</span><br><span class="line">		printStructFiled(field)</span><br><span class="line">		<span class="comment">//fmt.Println(field.Int())</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">// 根据索引获取字段信息</span></span><br><span class="line">	field := typeOfPerson.FieldByIndex([]<span class="type">int</span>&#123;<span class="number">1</span>&#125;)</span><br><span class="line">    <span class="comment">// field := typeOfPerson.Field(1) // 等价写法</span></span><br><span class="line">	fmt.Println(<span class="string">&quot;通过索引获取字段信息&quot;</span>)</span><br><span class="line">	printStructFiled(field)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<blockquote>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">字段名 Name</span><br><span class="line">字段路径                 </span><br><span class="line">字段反射类型对象 string  </span><br><span class="line">字段结构体标签           </span><br><span class="line">字段在结构体中的偏移 0   </span><br><span class="line">字段的索引值 [0]         </span><br><span class="line">是否为匿名字段 false     </span><br><span class="line">                         </span><br><span class="line">字段名 Age               </span><br><span class="line">字段路径                 </span><br><span class="line">字段反射类型对象 int     </span><br><span class="line">字段结构体标签 json:&quot;age&quot;</span><br><span class="line">字段在结构体中的偏移 16  </span><br><span class="line">字段的索引值 [1]         </span><br><span class="line">是否为匿名字段 false     </span><br><span class="line">                         </span><br><span class="line">字段名 string            </span><br><span class="line">字段路径 main            </span><br><span class="line">字段反射类型对象 string  </span><br><span class="line">字段结构体标签           </span><br><span class="line">字段在结构体中的偏移 24  </span><br><span class="line">字段的索引值 [2]         </span><br><span class="line">是否为匿名字段 true      </span><br><span class="line">                         </span><br><span class="line">通过字段名获取字段信息   </span><br><span class="line">字段名 Age</span><br><span class="line">...和Age一样</span><br><span class="line"></span><br><span class="line">通过索引获取字段信息</span><br><span class="line">字段名 Age</span><br><span class="line">...和Age一样</span><br></pre></td></tr></table></figure>
-</blockquote>
-<h3 id="14-3-2-获取结构体成员字段的值"><a href="#14-3-2-获取结构体成员字段的值" class="headerlink" title="14.3.2 获取结构体成员字段的值"></a>14.3.2 获取结构体成员字段的值</h3><p>通过<code>reflect.Value()</code>获得的<code>reflect.Value</code>对象，可以调用如下方法（和<code>reflect.Type</code>的方法一样，但返回值不同）</p>
-<ul>
-<li><code>NumField()</code>：获取结构体成员的数量</li>
-<li><code>Field(index int)</code>：根据索引返回字段<code>reflect.Value</code>对象</li>
-<li><code>FieldByName(name string)</code>：通过字段名（结构体成员名）获取字段<code>reflect.Value</code>对象</li>
-<li><code>FieldByIndex(index []int)</code>：It is equivalent to calling <code>Field()</code> successively for each index i.</li>
-</ul>
-<h3 id="14-3-3-反射执行结构体方法"><a href="#14-3-3-反射执行结构体方法" class="headerlink" title="14.3.3 反射执行结构体方法"></a>14.3.3 反射执行结构体方法</h3><p>流程与14.2.3反射调用函数流程一致，但需要通过<code>reflect.Value</code>的<code>MethodByName</code>获取方法作为方法变量（类似于函数变量）。</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">valueOfPerson := reflect.ValueOf(person) <span class="comment">// 获取reflect.Value</span></span><br><span class="line">f := valueOfPerson.MethodByName(<span class="string">&quot;GetName&quot;</span>) <span class="comment">// 获取方法变量</span></span><br><span class="line">f.Call([]reflect.Value&#123;&#125;)  <span class="comment">// call调用该方法</span></span><br></pre></td></tr></table></figure>
-
-
-
-<h2 id="14-4-反射三定律"><a href="#14-4-反射三定律" class="headerlink" title="14.4 反射三定律"></a>14.4 反射三定律</h2><h3 id="14-4-1-接口到反射类型的转换"><a href="#14-4-1-接口到反射类型的转换" class="headerlink" title="14.4.1 接口到反射类型的转换"></a>14.4.1 接口到反射类型的转换</h3><p>反射可以将接口类型转化为反射类型（reflect.Type和reflect.Value）</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">TypeOf</span><span class="params">(i <span class="keyword">interface</span>&#123;&#125;)</span></span> Type</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">ValueOf</span><span class="params">(i <span class="keyword">interface</span>&#123;&#125;)</span></span> Value</span><br></pre></td></tr></table></figure>
-
-<h3 id="14-4-2-反射到接口类型的转换"><a href="#14-4-2-反射到接口类型的转换" class="headerlink" title="14.4.2 反射到接口类型的转换"></a>14.4.2 反射到接口类型的转换</h3><p>反射可以将反射类型变量（reflect.Value）转化为接口类型，reflect.Value对象用了Interface()方法</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> a <span class="type">int</span> = <span class="number">5</span></span><br><span class="line">valueOfA := reflect.ValueOf(a)</span><br><span class="line">fmt.Println(valueOfA.Interface()) <span class="comment">// 5</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="14-4-3修改反射类型对象"><a href="#14-4-3修改反射类型对象" class="headerlink" title="14.4.3修改反射类型对象"></a>14.4.3修改反射类型对象</h3><p>想要使用反射修改变量值，其值是可写canSet的：1、变量可被寻址canAddr，2、变量可导出<br>（对结构体而言，字段不能是匿名，且字段名首字母大写）</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Person <span class="keyword">struct</span> &#123;</span><br><span class="line">	Name <span class="type">string</span></span><br><span class="line">	age  <span class="type">int</span> <span class="string">`json:&quot;Age&quot;`</span> <span class="comment">// 字段名首字母非大写</span></span><br><span class="line">	<span class="type">string</span> <span class="comment">// 匿名字段</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	person := Person&#123;<span class="string">&quot;w&quot;</span>, <span class="number">123</span>, <span class="string">&quot;test&quot;</span>&#125;</span><br><span class="line">	valueOfPerson := reflect.ValueOf(&amp;person) <span class="comment">// 指针</span></span><br><span class="line">	typeOfPerson := reflect.TypeOf(&amp;person)   <span class="comment">// 指针</span></span><br><span class="line"></span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; valueOfPerson.Elem().NumField(); i++ &#123;</span><br><span class="line">		fieldValue := valueOfPerson.Elem().Field(i)</span><br><span class="line">		fieldType := typeOfPerson.Elem().Field(i)</span><br><span class="line">		fmt.Printf(<span class="string">&quot;类型名：%v，Value.CanAddr()=&gt;%v，fieldValue.CanSet=&gt;%v\n&quot;</span>, fieldType.Name, fieldValue.CanAddr(), fieldValue.CanSet())</span><br><span class="line">	&#125;</span><br><span class="line">	fmt.Println(<span class="string">&quot;修改前&quot;</span>, person)</span><br><span class="line">	valueOfPerson.Elem().Field(<span class="number">0</span>).SetString(<span class="string">&quot;test2&quot;</span>)</span><br><span class="line">	fmt.Println(<span class="string">&quot;修改后&quot;</span>, person)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>由于是指针，所以都可以寻址。而age字段和匿名字段不可导出，其值不能被修改。</p>
-<blockquote>
-<p>类型名：Name，Value.CanAddr()&#x3D;&gt;true，fieldValue.CanSet&#x3D;&gt;true<br>类型名：age，Value.CanAddr()&#x3D;&gt;true，fieldValue.CanSet&#x3D;&gt;false<br>类型名：string，Value.CanAddr()&#x3D;&gt;true，fieldValue.CanSet&#x3D;&gt;false<br>修改前 {w 123 test}<br>修改后 {test2 123 test}</p>
-</blockquote>
-<h2 id="14-5-反射的性能"><a href="#14-5-反射的性能" class="headerlink" title="14.5 反射的性能"></a>14.5 反射的性能</h2><p>反射的性能极差</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://drinkwateronly.github.io/2023/11/f9dcb18c0cb7/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="Wallnut">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Wallnut">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Wallnut">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2023/11/f9dcb18c0cb7/" class="post-title-link" itemprop="url">ch12-接口类型</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-      
-
-      <time title="创建时间：2023-11-17 00:00:00 / 修改时间：19:48:38" itemprop="dateCreated datePublished" datetime="2023-11-17T00:00:00+08:00">2023-11-17</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Golang/" itemprop="url" rel="index"><span itemprop="name">Golang</span></a>
-        </span>
-          ，
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Golang/Go%E5%9F%BA%E7%A1%80/" itemprop="url" rel="index"><span itemprop="name">Go基础</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="第12章-接口与类型"><a href="#第12章-接口与类型" class="headerlink" title="第12章 接口与类型"></a>第12章 接口与类型</h1><p>接口是为了抽象，方便代码解耦。</p>
-<p>我对接口就是定义某些数据类型能够实现的方法集合，只要实现了这些方法集合的数据类型，就属于某个接口。</p>
-<p>比较常用的是对struct去实现，因为struct内部能同时维护多个不同类型的数据，相当于是C++类的成员变量。当实现接口时，接口里的方法相当于是C++类里的方法，方法是可以对struct里的数据进行操作的。</p>
-<p>虽然不同的struct可能实现方法的方式不同，但都属于一个接口。一个显而易见的好处就是，在函数传参的时候，参数定义为该interface类型，只要是实现了这个接口的实例，就能被当作参数传入，这样不用针对不同的数据类型定义参数不同但内部实现完全相同的函数。</p>
-<blockquote>
-<ul>
-<li>鸭子类型：动态类型的一种风格，一个对象的有效语义不是继承自特定的类 或 实现特定的接口来决定，而是由当前的<strong>方法和属性</strong>的集合所决定。</li>
-<li>鸭子测试：当一只鸟走起来像鸭子，游泳起来像鸭子，叫起来也像鸭子，那这只鸟就可以被称为鸭子。</li>
-</ul>
-</blockquote>
-<p>一个类型可以实现多个接口；多个类型可以实现同一个接口；任何一个接口必然实现了空接口。</p>
-<h2 id="12-1-接口的定义"><a href="#12-1-接口的定义" class="headerlink" title="12.1 接口的定义"></a>12.1 接口的定义</h2><p>接口是一个自定义<strong>类型</strong>，所以也需要type关键字，</p>
-<ul>
-<li><p>不会暴露内部属性结构，只会展示出方法，因此不能将接口实例化。</p>
-</li>
-<li><p>单个函数的接口名以”er”为后缀，接口的实现去掉“er”</p>
-</li>
-</ul>
-<h2 id="12-2-接口的创建和实现"><a href="#12-2-接口的创建和实现" class="headerlink" title="12.2 接口的创建和实现"></a>12.2 接口的创建和实现</h2><h3 id="12-2-1-接口创建"><a href="#12-2-1-接口创建" class="headerlink" title="12.2.1 接口创建"></a>12.2.1 接口创建</h3><p>接口创建时内部只需要声明存在什么方法，而不需要实现。这是由用户定义的类型去实现的，实现了这些方法的具体类型就叫这个接口类型的实例。</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> InterfaceName <span class="keyword">interface</span>&#123;</span><br><span class="line">    Method()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="12-2-2-demo"><a href="#12-2-2-demo" class="headerlink" title="12.2.2 demo"></a>12.2.2 demo</h3><p>创建一个数据库操作接口：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> IDatabaser <span class="keyword">interface</span>&#123;</span><br><span class="line">    Connect() <span class="type">error</span></span><br><span class="line">    Disconncet() <span class="type">error</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>以下是两个类型实现了数据库操作接口IDatabaser的方法，所以是IDatabaser接口的实例。</p>
-<p><img src="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/iimage/image-20230510111558257.png" alt="image-20230510111558257"></p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Mysql <span class="keyword">struct</span> &#123; </span><br><span class="line">    DBName    <span class="type">string</span></span><br><span class="line">    isConnect <span class="type">bool</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(mysql *Mysql)</span></span> Connect() <span class="type">error</span> &#123;  <span class="comment">// 指针类型，可以修改Mysql内部元素</span></span><br><span class="line">	fmt.Println(<span class="string">&quot;Mysql Connect DB =&gt;&quot;</span> + mysql.DBName)</span><br><span class="line">	mysql.isConnect = <span class="literal">true</span></span><br><span class="line">	fmt.Println(<span class="string">&quot;Mysql connect Success!&quot;</span>)</span><br><span class="line">	<span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(mysql *Mysql)</span></span> Disconnect() <span class="type">error</span> &#123;</span><br><span class="line">	fmt.Println(<span class="string">&quot;Mysql Disconnect Success!&quot;</span>)</span><br><span class="line">	<span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Redis <span class="keyword">struct</span> &#123;</span><br><span class="line">	DBName    <span class="type">string</span></span><br><span class="line">	isConnect <span class="type">bool</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(redis *Redis)</span></span> Connect() <span class="type">error</span> &#123;</span><br><span class="line">	fmt.Println(<span class="string">&quot;Redis Connect DB =&gt;&quot;</span> + redis.DBName)</span><br><span class="line">	redis.isConnect = <span class="literal">true</span></span><br><span class="line">	fmt.Println(<span class="string">&quot;Redis connect Success!&quot;</span>)</span><br><span class="line">	<span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(redis *Redis)</span></span> Disconnect() <span class="type">error</span> &#123;</span><br><span class="line">	fmt.Println(<span class="string">&quot;Redis Disconnect Success!&quot;</span>)</span><br><span class="line">	<span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> mysql1 = Mysql&#123;DBName: <span class="string">&quot;student&quot;</span>&#125;</span><br><span class="line">fmt.Println(<span class="string">&quot;开始连接&quot;</span>)</span><br><span class="line">mysql1.Connect()</span><br><span class="line">fmt.Println(<span class="string">&quot;断开连接&quot;</span>)</span><br><span class="line">mysql1.Disconnect()</span><br><span class="line"><span class="keyword">var</span> redis1 = Redis&#123;DBName: <span class="string">&quot;teacher&quot;</span>&#125;</span><br><span class="line">fmt.Println(<span class="string">&quot;开始连接&quot;</span>)</span><br><span class="line">redis1.Connect()</span><br><span class="line">fmt.Println(<span class="string">&quot;断开连接&quot;</span>)</span><br><span class="line">redis1.Disconnect()</span><br></pre></td></tr></table></figure>
-
-<p>可以看到，虽然定义了接口，但没有面向接口编程，很多地方有冗余。当面向接口编程时，如使用如下<code>HandleDB</code>，就可以处理多种不同的数据类型，称为go的多态：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">HandleDB</span><span class="params">(db IDatabser)</span></span> &#123;</span><br><span class="line">   fmt.Println(<span class="string">&quot;开始连接&quot;</span>)</span><br><span class="line">   db.Connect()</span><br><span class="line">   fmt.Println(<span class="string">&quot;断开连接&quot;</span>)</span><br><span class="line">   db.Disconnect()</span><br><span class="line">&#125;</span><br><span class="line">HandleDB(&amp;mysql1)</span><br><span class="line">HandleDB(&amp;redis1)</span><br></pre></td></tr></table></figure>
-
-<h3 id="12-2-3-接口赋值"><a href="#12-2-3-接口赋值" class="headerlink" title="12.2.3 接口赋值"></a>12.2.3 接口赋值</h3><p>如果用户自定义的类型实现了某个接口类型所声明的一组方法，那么这个用户定义的类型的 值 就可以赋值给这个接口。这个赋值会把用户定义的类型的值存入接口类型的值。个人认为，赋值后，这个接口实例就是类型实例。</p>
-<p>这里涉及接口变量：1、分配给接口变量的具体值 2、值的类型的描述器（接口实现者的类型）</p>
-<ul>
-<li>情况1：对象实例赋值给接口</li>
-<li>情况2：一个接口赋值给另一个接口<ul>
-<li>两个接口拥有同样的方法，他们就是相同，可以相互赋值。</li>
-<li>接口A方法集是接口B方法集的子集（B&gt;A），B可以赋值给A。反之不行</li>
-</ul>
-</li>
-</ul>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 接口IDatabser</span></span><br><span class="line"><span class="keyword">type</span> IDatabser <span class="keyword">interface</span> &#123;</span><br><span class="line">	Connect() <span class="type">error</span></span><br><span class="line">	Disconnect() <span class="type">error</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 接口IRedisr，是IDatabser的子集</span></span><br><span class="line"><span class="keyword">type</span> IRedisr <span class="keyword">interface</span> &#123;</span><br><span class="line">	Connect() <span class="type">error</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 自定义类型，用于实现接口</span></span><br><span class="line"><span class="comment">/* 来自12.2.2，实现了Connect()和Disconnect()方法</span></span><br><span class="line"><span class="comment">type Redis struct &#123;</span></span><br><span class="line"><span class="comment">	DBName    string</span></span><br><span class="line"><span class="comment">	isConnect bool</span></span><br><span class="line"><span class="comment">&#125;</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 情况1：类型的对象实例赋值给接口</span></span><br><span class="line"><span class="keyword">var</span> idb IDatabser = &amp;Redis&#123;DBName: <span class="string">&quot;teacher&quot;</span>&#125; <span class="comment">// IDatabser接口idb就是这个Redis实例</span></span><br><span class="line"><span class="comment">// 情况2：一个接口赋值给他的子集接口</span></span><br><span class="line"><span class="keyword">var</span> irds IRedisr = idb <span class="comment">// IRedisr接口irds被IDatabser接口idb赋值，并忽略了没有实现的方法</span></span><br><span class="line">irds.Connect()</span><br><span class="line"><span class="comment">// irds.Disconnect() 不可用</span></span><br><span class="line">fmt.Println(reflect.TypeOf(idb)) <span class="comment">// *main.Redis</span></span><br><span class="line">fmt.Println(reflect.TypeOf(irds)) <span class="comment">// *main.Redis</span></span><br></pre></td></tr></table></figure>
-
-<p><img src="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/iimage/image-20230510115437386.png" alt="image-20230510115437386"></p>
-<h2 id="12-3-接口嵌入-组合接口"><a href="#12-3-接口嵌入-组合接口" class="headerlink" title="12.3 接口嵌入&#x2F;组合接口"></a>12.3 接口嵌入&#x2F;组合接口</h2><p>类似于C++的继承。如果接口A作为接口B的嵌入字段，那么B隐式包含了A接口的所有方法。</p>
-<ul>
-<li><p>除了嵌入接口，接口不能嵌入其他类型。</p>
-</li>
-<li><p>不能嵌入自身，包括直接嵌入和间接嵌入。</p>
-<p>否则都会报<code>invalid recursive type</code>错误。</p>
-</li>
-</ul>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> interfaceA <span class="keyword">interface</span> &#123;</span><br><span class="line">    Method()</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">type</span> interfaceB <span class="keyword">interface</span> &#123;</span><br><span class="line">    interfaceA</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-
-<h2 id="12-4-空接口"><a href="#12-4-空接口" class="headerlink" title="12.4 空接口"></a>12.4 空接口</h2><p><code>interface&#123;&#125;</code>不包含任何方法的接口，所以空接口可以存储任意类型的数值。但空接口存的内容 不能 能赋值给其他明确的类型（当然使用<code>:=</code>是可用的，但并不是其他类型，编译器仍推断其为空接口）。</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> str <span class="type">string</span> = <span class="string">&quot;123&quot;</span> </span><br><span class="line"><span class="keyword">var</span> interfaceStr <span class="keyword">interface</span>&#123;&#125; = str <span class="comment">// 空接口</span></span><br><span class="line"><span class="keyword">var</span> str2 = interfaceStr <span class="comment">// 可以</span></span><br><span class="line"><span class="comment">// var str2 string = interfaceStr // 不可以</span></span><br><span class="line">fmt.Println(reflect.TypeOf(interfaceStr)) <span class="comment">// string</span></span><br><span class="line">fmt.Println(reflect.TypeOf(str2))  <span class="comment">// string</span></span><br></pre></td></tr></table></figure>
-
-<p>空接口常用在函数参数里，如下，用来传递多个不同类型的参数。</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Log</span><span class="params">(paras ...<span class="keyword">interface</span>&#123;&#125;)</span></span> &#123;</span><br><span class="line">   <span class="keyword">for</span> _, para := <span class="keyword">range</span> paras &#123;</span><br><span class="line">      fmt.Println(para)</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br><span class="line">interList := <span class="built_in">make</span>([]<span class="keyword">interface</span>&#123;&#125;, <span class="number">3</span>)</span><br><span class="line">interList[<span class="number">0</span>] = <span class="number">1</span></span><br><span class="line">interList[<span class="number">1</span>] = <span class="string">&quot;2&quot;</span></span><br><span class="line">interList[<span class="number">2</span>] = []<span class="type">string</span>&#123;<span class="string">&quot;str1&quot;</span>, <span class="string">&quot;str2&quot;</span>&#125;</span><br><span class="line">Log(interList...)  <span class="comment">// ...意思是将该切片拆散传入参数列表</span></span><br></pre></td></tr></table></figure>
-
-
-
-<h2 id="12-5-类型断言"><a href="#12-5-类型断言" class="headerlink" title="12.5 类型断言"></a>12.5 类型断言</h2><p>通过类型断言，我们可以将接口值转换为其底层的具体类型，并访问该类型特有的方法或属性。</p>
-<p><strong>类型断言是应用在接口变量上的操作</strong>，空接口不能赋值给其他类型，只能用类型断言。</p>
-<p>类型断言其实就是类型转换，但不是强制类型转换，存了int的空接口只能用类型断言赋值给int变量。</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">valT, ok := X.(T) </span><br></pre></td></tr></table></figure>
-<p>断言失败时会抛出panic，除非用两个变量接收检查的结果。<br>判断接口变量X，是否为T类型，</p>
-<ul>
-<li>如果断言成功，valT是接口变量X的动态值，</li>
-<li>如果断言失败，valT的类型为T，值为T的初始值</li>
-</ul>
-<h3 id="动态类型和静态类型"><a href="#动态类型和静态类型" class="headerlink" title="动态类型和静态类型"></a>动态类型和静态类型</h3><ul>
-<li>动态类型</li>
-<li>静态类型</li>
-</ul>
-<blockquote>
-<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/258617170">22. 图解：Go语言中的静态类型与动态类型 - 知乎 (zhihu.com)</a></p>
-</blockquote>
-<h3 id="情况1：TypeName是具体类型"><a href="#情况1：TypeName是具体类型" class="headerlink" title="情况1：TypeName是具体类型"></a>情况1：TypeName是具体类型</h3><p>如果断言的类型T是一个具体类型，X.(T)就检查X的<strong>动态类型</strong>是否和T的相同</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">checkType</span><span class="params">(valT <span class="keyword">interface</span>&#123;&#125;, ok <span class="type">bool</span>)</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> ok &#123;</span><br><span class="line">		fmt.Println(<span class="string">&quot;断言成功&quot;</span>)</span><br><span class="line">	&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">		fmt.Println(<span class="string">&quot;断言失败&quot;</span>)</span><br><span class="line">	&#125;</span><br><span class="line">	fmt.Printf(<span class="string">&quot;type =&gt; %T value =&gt; %v\n&quot;</span>, valT, valT)</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> interfaceX <span class="keyword">interface</span>&#123;&#125; = <span class="number">1</span> <span class="comment">// 空接口存int类型</span></span><br><span class="line">	valT0, OK := interfaceX.(<span class="type">string</span>) <span class="comment">// 断言为string，失败，valT0是string类型，初始值&quot;&quot;</span></span><br><span class="line">	checkType(valT0, OK)  </span><br><span class="line">    <span class="comment">//  断言失败</span></span><br><span class="line">    <span class="comment">// type =&gt; string value =&gt; </span></span><br><span class="line">	valT1, OK := interfaceX.(<span class="type">int</span>)  <span class="comment">// 断言为int，成功</span></span><br><span class="line">	checkType(valT1, OK) </span><br><span class="line">    <span class="comment">//  断言成功                </span></span><br><span class="line">    <span class="comment">// type =&gt; int value =&gt; 1</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="情况2：TypeName是接口类型"><a href="#情况2：TypeName是接口类型" class="headerlink" title="情况2：TypeName是接口类型"></a>情况2：TypeName是接口类型</h3><p>如果断言的类型TypeName是一个接口类型，就检查interfaceX的<strong>动态类型</strong>是否满足TypeName的接口</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 接口Person</span></span><br><span class="line"><span class="keyword">type</span> Person <span class="keyword">interface</span> &#123;</span><br><span class="line">	Speak()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Student结构体类型</span></span><br><span class="line"><span class="keyword">type</span> Student <span class="keyword">struct</span> &#123;</span><br><span class="line">	Nmae <span class="type">string</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 实现Person接口方法，所以Student是接口Person的实例</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(s Student)</span></span> Speak() &#123;</span><br><span class="line">	fmt.Println(s.Nmae)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">checkType</span><span class="params">(valT <span class="keyword">interface</span>&#123;&#125;, ok <span class="type">bool</span>)</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> ok &#123;</span><br><span class="line">		fmt.Println(<span class="string">&quot;断言成功&quot;</span>)</span><br><span class="line">	&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">		fmt.Println(<span class="string">&quot;断言失败&quot;</span>)</span><br><span class="line">	&#125;</span><br><span class="line">	fmt.Printf(<span class="string">&quot;type =&gt; %T value =&gt; %v\n&quot;</span>, valT, valT)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> student <span class="keyword">interface</span>&#123;&#125; = Student&#123;<span class="string">&quot;walle&quot;</span>&#125;</span><br><span class="line">	valT0, ok := student.(<span class="type">int</span>)  <span class="comment">// 检查student的动态类型是否与int相同</span></span><br><span class="line">	checkType(valT0, ok)</span><br><span class="line">	<span class="comment">// 断言失败</span></span><br><span class="line">	<span class="comment">// type =&gt; int value =&gt; 0</span></span><br><span class="line">    </span><br><span class="line">	valT1, ok := student.(Person) <span class="comment">// 检查student的动态类型是否与Person相同</span></span><br><span class="line">	checkType(valT1, ok)</span><br><span class="line">	<span class="comment">// 断言成功                             </span></span><br><span class="line">	<span class="comment">// type =&gt; main.Student value =&gt; &#123;walle&#125;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="12-5-1-ok-pattern和switch-type"><a href="#12-5-1-ok-pattern和switch-type" class="headerlink" title="12.5.1 ok-pattern和switch-type"></a>12.5.1 ok-pattern和switch-type</h3><p>接口类型断言的两种方式：ok-pattern和switch-type</p>
-<h4 id="ok-pattern"><a href="#ok-pattern" class="headerlink" title="ok-pattern"></a>ok-pattern</h4><p>适用于要断言的<strong>接口类型种类</strong>typeName较少</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> value, ok := 接口变量.(类型)； ok ==<span class="literal">true</span> &#123;</span><br><span class="line">    <span class="comment">// 是该类型时的处理</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h4 id="switch-pattern"><a href="#switch-pattern" class="headerlink" title="switch-pattern"></a>switch-pattern</h4><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">switch</span> value := 接口变量.(<span class="keyword">type</span>) &#123;</span><br><span class="line">    <span class="keyword">case</span> 类型<span class="number">1</span>:</span><br><span class="line">        <span class="comment">// 是该类型时的处理</span></span><br><span class="line">    <span class="keyword">case</span> 类型<span class="number">2</span>:</span><br><span class="line">        <span class="comment">//</span></span><br><span class="line">    <span class="keyword">default</span>:</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h4 id="例程"><a href="#例程" class="headerlink" title="例程"></a>例程</h4><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Person <span class="keyword">struct</span> &#123;</span><br><span class="line">	Name <span class="type">string</span></span><br><span class="line">	Age  <span class="type">int</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	s := <span class="built_in">make</span>([]<span class="keyword">interface</span>&#123;&#125;, <span class="number">3</span>)</span><br><span class="line">	s[<span class="number">0</span>] = <span class="number">1</span></span><br><span class="line">	s[<span class="number">1</span>] = <span class="string">&quot;abc&quot;</span></span><br><span class="line">	s[<span class="number">2</span>] = Person&#123;<span class="string">&quot;walle&quot;</span>, <span class="number">100</span>&#125;</span><br><span class="line">	<span class="comment">// ok-pattern</span></span><br><span class="line">	<span class="keyword">for</span> _, value := <span class="keyword">range</span> s &#123;</span><br><span class="line">		<span class="keyword">if</span> t, ok := value.(<span class="type">int</span>); ok &#123;</span><br><span class="line">			fmt.Printf(<span class="string">&quot;type =&gt; %T value =&gt; %v\n&quot;</span>, t, t)</span><br><span class="line">		&#125; <span class="keyword">else</span> <span class="keyword">if</span> t, ok := value.(<span class="type">string</span>); ok &#123;</span><br><span class="line">			fmt.Printf(<span class="string">&quot;type =&gt; %T value =&gt; %v\n&quot;</span>, t, t)</span><br><span class="line">		&#125; <span class="keyword">else</span> <span class="keyword">if</span> t, ok := value.(Person); ok &#123;</span><br><span class="line">			fmt.Printf(<span class="string">&quot;type =&gt; %T value =&gt; %v\n&quot;</span>, t, t)</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">// switch-pattern</span></span><br><span class="line">	<span class="keyword">for</span> _, value := <span class="keyword">range</span> s &#123;</span><br><span class="line">		<span class="keyword">switch</span> t := value.(<span class="keyword">type</span>) &#123;</span><br><span class="line">		<span class="keyword">case</span> <span class="type">int</span>:</span><br><span class="line">			fmt.Printf(<span class="string">&quot;type =&gt; %T value =&gt; %v\n&quot;</span>, t, t)</span><br><span class="line">		<span class="keyword">case</span> <span class="type">string</span>:</span><br><span class="line">			fmt.Printf(<span class="string">&quot;type =&gt; %T value =&gt; %v\n&quot;</span>, t, t)</span><br><span class="line">		<span class="keyword">case</span> Person:</span><br><span class="line">			fmt.Printf(<span class="string">&quot;type =&gt; %T value =&gt; %v\n&quot;</span>, t, t)</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-
-<h2 id="12-7-侵入式-非侵入式接口"><a href="#12-7-侵入式-非侵入式接口" class="headerlink" title="12.7 侵入式&#x2F;非侵入式接口"></a>12.7 侵入式&#x2F;非侵入式接口</h2><ul>
-<li><p>侵入式接口：需要显式地创建一个类去实现一个接口。</p>
-</li>
-<li><p>非侵入式接口：不需要显式</p>
-<p>go接口属于非侵入式，更为灵活</p>
-</li>
-</ul>
-<h2 id="12-8-有趣的接口"><a href="#12-8-有趣的接口" class="headerlink" title="12.8 有趣的接口"></a>12.8 有趣的接口</h2><h3 id="fmt包的Stringer接口"><a href="#fmt包的Stringer接口" class="headerlink" title="fmt包的Stringer接口"></a>fmt包的Stringer接口</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Stringer <span class="keyword">interface</span> &#123;</span><br><span class="line">    String() <span class="type">string</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>A <code>Stringer</code> is a type that can describe itself as a string. The <code>fmt</code> package (and many others) look for this interface to print values.</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">&quot;fmt&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> Person <span class="keyword">struct</span> &#123;</span><br><span class="line">	Name <span class="type">string</span></span><br><span class="line">	Age  <span class="type">int</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 实现了string()方法，所以是fmt包里的Stringer()接口的实例</span></span><br><span class="line"><span class="comment">// 返回值是string，打印自己的内部变量</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(p Person)</span></span> String() <span class="type">string</span> &#123;</span><br><span class="line">	<span class="keyword">return</span> fmt.Sprintf(<span class="string">&quot;%v (%v years)&quot;</span>, p.Name, p.Age)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	a := Person&#123;<span class="string">&quot;Arthur Dent&quot;</span>, <span class="number">42</span>&#125;</span><br><span class="line">	z := Person&#123;<span class="string">&quot;Zaphod Beeblebrox&quot;</span>, <span class="number">9001</span>&#125;</span><br><span class="line">	fmt.Println(a, z) <span class="comment">// a和z都可以调用String()方法</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
       
     </div>
 
