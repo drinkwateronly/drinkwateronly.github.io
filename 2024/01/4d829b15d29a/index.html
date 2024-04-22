@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.0.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/icon32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/icon16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha256-CTSx/A06dm1B063156EVh15m6Y67pAjZZaQc89LLSrU=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"drinkwateronly.github.io","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.18.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="defer的总结重点1 多个defer执行顺序多个defer出现时，defer逐个压栈；函数结束时，以先进后出方式逐个执行 重点2 defer入栈时的形参defer压栈时，其函数的实参会被计算，并赋值给形参 demo: 12345678func DeferFunc4() (t int) &#123;  &#x2F;&#x2F; 实际返回值为2    defer func(i int) &#123;        fm">
+<meta property="og:type" content="article">
+<meta property="og:title" content="defer重点总结">
+<meta property="og:url" content="https://drinkwateronly.github.io/2024/01/4d829b15d29a/index.html">
+<meta property="og:site_name" content="Wallnut">
+<meta property="og:description" content="defer的总结重点1 多个defer执行顺序多个defer出现时，defer逐个压栈；函数结束时，以先进后出方式逐个执行 重点2 defer入栈时的形参defer压栈时，其函数的实参会被计算，并赋值给形参 demo: 12345678func DeferFunc4() (t int) &#123;  &#x2F;&#x2F; 实际返回值为2    defer func(i int) &#123;        fm">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2024-01-14T05:55:00.000Z">
+<meta property="article:modified_time" content="2024-04-22T12:59:04.280Z">
+<meta property="article:author" content="Wallnut">
+<meta property="article:tag" content="Golang">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://drinkwateronly.github.io/2024/01/4d829b15d29a/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://drinkwateronly.github.io/2024/01/4d829b15d29a/","path":"2024/01/4d829b15d29a/","title":"defer重点总结"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>defer重点总结 | Wallnut</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Wallnut</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#defer%E7%9A%84%E6%80%BB%E7%BB%93"><span class="nav-number">1.</span> <span class="nav-text">defer的总结</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%87%8D%E7%82%B91-%E5%A4%9A%E4%B8%AAdefer%E6%89%A7%E8%A1%8C%E9%A1%BA%E5%BA%8F"><span class="nav-number">1.1.</span> <span class="nav-text">重点1 多个defer执行顺序</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%87%8D%E7%82%B92-defer%E5%85%A5%E6%A0%88%E6%97%B6%E7%9A%84%E5%BD%A2%E5%8F%82"><span class="nav-number">1.2.</span> <span class="nav-text">重点2 defer入栈时的形参</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%87%8D%E7%82%B93%EF%BC%9Adefer%E5%92%8Creturn%E7%9A%84%E9%A1%BA%E5%BA%8F%E5%8F%8A%E7%9C%9F%E5%AE%9E%E8%BF%94%E5%9B%9E%E5%80%BC"><span class="nav-number">1.3.</span> <span class="nav-text">重点3：defer和return的顺序及真实返回值</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%87%8D%E7%82%B94%EF%BC%9Apanic%E5%92%8Cdefer"><span class="nav-number">1.4.</span> <span class="nav-text">重点4：panic和defer</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%87%8D%E7%82%B95%EF%BC%9Apanic%E5%92%8Crecover"><span class="nav-number">1.5.</span> <span class="nav-text">重点5：panic和recover</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%87%8D%E7%82%B96%EF%BC%9A%E5%A4%9A%E4%B8%AApanic%E6%97%B6%EF%BC%8Crecover%E6%8D%95%E6%8D%89%E5%93%AA%E4%B8%AA"><span class="nav-number">1.6.</span> <span class="nav-text">重点6：多个panic时，recover捕捉哪个</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Ref"><span class="nav-number">2.</span> <span class="nav-text">Ref</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Wallnut"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">Wallnut</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">47</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">18</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/drinkwateronly" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;drinkwateronly" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://drinkwateronly.github.io/2024/01/4d829b15d29a/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Wallnut">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Wallnut">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="defer重点总结 | Wallnut">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          defer重点总结
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2024-01-14 13:55:00" itemprop="dateCreated datePublished" datetime="2024-01-14T13:55:00+08:00">2024-01-14</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2024-04-22 20:59:04" itemprop="dateModified" datetime="2024-04-22T20:59:04+08:00">2024-04-22</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Golang/" itemprop="url" rel="index"><span itemprop="name">Golang</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Golang/%E8%BF%9B%E9%98%B6%E4%B9%8B%E8%B7%AF/" itemprop="url" rel="index"><span itemprop="name">进阶之路</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="defer的总结"><a href="#defer的总结" class="headerlink" title="defer的总结"></a>defer的总结</h1><h2 id="重点1-多个defer执行顺序"><a href="#重点1-多个defer执行顺序" class="headerlink" title="重点1 多个defer执行顺序"></a>重点1 多个defer执行顺序</h2><p>多个defer出现时，defer逐个压栈；函数结束时，以先进后出方式逐个执行</p>
+<h2 id="重点2-defer入栈时的形参"><a href="#重点2-defer入栈时的形参" class="headerlink" title="重点2 defer入栈时的形参"></a>重点2 defer入栈时的形参</h2><p>defer压栈时，其函数的实参会被计算，并赋值给形参</p>
+<p>demo:</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">DeferFunc4</span><span class="params">()</span></span> (t <span class="type">int</span>) &#123;  <span class="comment">// 实际返回值为2</span></span><br><span class="line">    <span class="keyword">defer</span> <span class="function"><span class="keyword">func</span><span class="params">(i <span class="type">int</span>)</span></span> &#123;</span><br><span class="line">        fmt.Println(i)  <span class="comment">// 由于入栈时，t的值为0，入参i的值被设为t的值</span></span><br><span class="line">        fmt.Println(t)  <span class="comment">// t = 2</span></span><br><span class="line">    &#125;(t) <span class="comment">// 压栈时实参赋值给形参，即i = t的值，即0</span></span><br><span class="line">    t = <span class="number">1</span></span><br><span class="line">    <span class="keyword">return</span> <span class="number">2</span> <span class="comment">// 1. t赋值为2</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="重点3：defer和return的顺序及真实返回值"><a href="#重点3：defer和return的顺序及真实返回值" class="headerlink" title="重点3：defer和return的顺序及真实返回值"></a>重点3：defer和return的顺序及真实返回值</h2><p>defer在return后执行，但return的实际值分为如下两种情况：</p>
+<ul>
+<li><pre><code class="go">func DeferFunc3(i int) (t int) &#123;  // 1.入参i=1
+    defer func() &#123;
+        t += i  // 3. 改变了t的值，同时返回值也改变
+    &#125;()
+    return 2   // 2. 将t赋值为2
+&#125;
+// 返回3
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">- ```go</span><br><span class="line">  func DeferFunc2(i int) int &#123;  // 1.入参i=1</span><br><span class="line">      t := i</span><br><span class="line">      defer func() &#123;</span><br><span class="line">          t += 3  // 3. 改变了t的值，但不影响返回值</span><br><span class="line">      &#125;()</span><br><span class="line">      return t  // 2.将返回值赋值为t的值，此后t在defer中的改变不影响返回值</span><br><span class="line">  &#125;  </span><br><span class="line">  // 返回1</span><br><span class="line">  </span><br><span class="line">  // 相当于</span><br><span class="line">  func DeferFunc2(i int) (result int) &#123;  // 1.入参i=1</span><br><span class="line">      t := i</span><br><span class="line">      defer func() &#123;</span><br><span class="line">          t += 3  // 3. 改变了t的值，但不影响返回值</span><br><span class="line">      &#125;()</span><br><span class="line">      return t  // 2.将result赋值为t的值，此后t在defer中的改变不影响返回值</span><br><span class="line">  &#125;  </span><br><span class="line">  // 返回1</span><br></pre></td></tr></table></figure>
+</code></pre>
+</li>
+</ul>
+<h2 id="重点4：panic和defer"><a href="#重点4：panic和defer" class="headerlink" title="重点4：panic和defer"></a>重点4：panic和defer</h2><p>return和panic都会终止函数，但某个函数如果panic，则整个进程终止。</p>
+<p>defer的最大作用在panic后可以继续执行，因此可以在defer内释放资源，避免资源泄露。</p>
+<h2 id="重点5：panic和recover"><a href="#重点5：panic和recover" class="headerlink" title="重点5：panic和recover"></a>重点5：panic和recover</h2><p>在『可能发生panic的函数中』，在defer里调用recover捕捉panic并尝试恢复运行。如果捕捉到了panic，则从panic的函数返回处恢复运行，仅终止发生panic的函数。</p>
+<p>注意，如果main发生panic，则无法恢复运行。</p>
+<p>demo: 在performTask()里捕捉发生的panic并recover，使得main继续运行</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">handlePanic</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> err := <span class="built_in">recover</span>(); err != <span class="literal">nil</span> &#123; </span><br><span class="line">         <span class="comment">// r != nil时表示发生了panic</span></span><br><span class="line">		fmt.Println(<span class="string">&quot;Recovered:&quot;</span>, err)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">performTask</span><span class="params">()</span></span> <span class="type">int</span> &#123;</span><br><span class="line">	<span class="keyword">defer</span> handlePanic()  <span class="comment">// 函数运行完毕时，捕捉是否是因为panic终止函数</span></span><br><span class="line">	fmt.Println(<span class="string">&quot;task&quot;</span>)</span><br><span class="line">	<span class="built_in">panic</span>(<span class="string">&quot;panic&quot;</span>)</span><br><span class="line">	<span class="comment">// 该函数以下部分不会执行</span></span><br><span class="line">	fmt.Println(<span class="string">&quot;finish&quot;</span>)</span><br><span class="line">	<span class="keyword">return</span> <span class="number">1</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	num := performTask()</span><br><span class="line">	<span class="comment">// 从panic的函数恢复，继续执行</span></span><br><span class="line">	fmt.Println(num) <span class="comment">// 返回值初始化为0值</span></span><br><span class="line">	fmt.Println(<span class="string">&quot;Main function continues.&quot;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Performing some task...</span><br><span class="line">Recovered: Oops! Something went wrong!</span><br><span class="line">0</span><br><span class="line">Main function continues.</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="重点6：多个panic时，recover捕捉哪个"><a href="#重点6：多个panic时，recover捕捉哪个" class="headerlink" title="重点6：多个panic时，recover捕捉哪个"></a>重点6：多个panic时，recover捕捉哪个</h2><p>panic仅有最后一个可以被recover捕获因为多个异常发生时，后发生的异常会覆盖先发生的异常</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">defer</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">		<span class="keyword">if</span> err := <span class="built_in">recover</span>(); err != <span class="literal">nil</span> &#123;</span><br><span class="line">			fmt.Println(err) <span class="comment">// 捕捉不到panic</span></span><br><span class="line">		&#125;</span><br><span class="line">	&#125;()</span><br><span class="line"></span><br><span class="line">	<span class="keyword">defer</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">		<span class="keyword">if</span> err := <span class="built_in">recover</span>(); err != <span class="literal">nil</span> &#123;</span><br><span class="line">			fmt.Println(err) <span class="comment">// 只捕捉到了后panic</span></span><br><span class="line">		&#125;</span><br><span class="line">	&#125;()</span><br><span class="line"></span><br><span class="line">	<span class="keyword">defer</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(<span class="string">&quot;defer panic&quot;</span>) <span class="comment">// 后panic</span></span><br><span class="line">	&#125;()</span><br><span class="line"></span><br><span class="line">	<span class="built_in">panic</span>(<span class="string">&quot;panic&quot;</span>) <span class="comment">// 先panic</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="Ref"><a href="#Ref" class="headerlink" title="Ref"></a>Ref</h1><blockquote>
+<p><a target="_blank" rel="noopener" href="https://www.yuque.com/aceld/golang/qnubsg">https://www.yuque.com/aceld/golang/qnubsg</a></p>
+</blockquote>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Golang/" rel="tag"># Golang</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2023/12/0be9c79d0522/" rel="prev" title="Fyne——基于go的GUI库">
+                  <i class="fa fa-angle-left"></i> Fyne——基于go的GUI库
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2024/01/25e76d1f8995/" rel="next" title="GMP调度原理+源码解析">
+                  GMP调度原理+源码解析 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2024</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Wallnut</span>
+  </div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  <script src="/js/third-party/pace.js"></script>
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"drinkwateronly/comments","issue_term":"pathname","theme":"github-light"}</script>
+<script src="/js/third-party/comments/utterances.js"></script>
+
+</body>
+</html>

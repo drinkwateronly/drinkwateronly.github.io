@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.0.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/icon32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/icon16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha256-CTSx/A06dm1B063156EVh15m6Y67pAjZZaQc89LLSrU=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"drinkwateronly.github.io","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.18.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="内存篇——Buffer PoolMysql数据存储到磁盘，为了提高查询效率会加个缓存。  Server层：先前Mysql尝试过在在『Server层』设置缓冲，但缓存内容的是为『查询语句』-『查询结果』的键值对，且因命中率低被弃用。  存储引擎层缓存：而Buffer Pool是InnoDB在『存储引擎层』设计的缓冲池，是Mysql启动时申请的『连续内存空间』，默认大小为128MB。同样的，Buffe">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MySQL底层原理：chapter7内存篇">
+<meta property="og:url" content="https://drinkwateronly.github.io/2024/04/b1e0d2d10b11/index.html">
+<meta property="og:site_name" content="Wallnut">
+<meta property="og:description" content="内存篇——Buffer PoolMysql数据存储到磁盘，为了提高查询效率会加个缓存。  Server层：先前Mysql尝试过在在『Server层』设置缓冲，但缓存内容的是为『查询语句』-『查询结果』的键值对，且因命中率低被弃用。  存储引擎层缓存：而Buffer Pool是InnoDB在『存储引擎层』设计的缓冲池，是Mysql启动时申请的『连续内存空间』，默认大小为128MB。同样的，Buffe">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/image/freelist.drawio.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/image/lru.png">
+<meta property="og:image" content="https://drinkwateronly.github.io/image-20240407205728771.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/image/202404222102603.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/image/202404222102443.png">
+<meta property="article:published_time" content="2024-04-01T16:00:00.000Z">
+<meta property="article:modified_time" content="2024-04-22T13:04:48.003Z">
+<meta property="article:author" content="Wallnut">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/image/freelist.drawio.png">
+
+
+<link rel="canonical" href="https://drinkwateronly.github.io/2024/04/b1e0d2d10b11/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://drinkwateronly.github.io/2024/04/b1e0d2d10b11/","path":"2024/04/b1e0d2d10b11/","title":"MySQL底层原理：chapter7内存篇"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>MySQL底层原理：chapter7内存篇 | Wallnut</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Wallnut</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E7%AF%87%E2%80%94%E2%80%94Buffer-Pool"><span class="nav-number">1.</span> <span class="nav-text">内存篇——Buffer Pool</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E7%AE%A1%E7%90%86Buffer-Pool"><span class="nav-number">1.1.</span> <span class="nav-text">如何管理Buffer Pool</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E7%AE%A1%E7%90%86%E8%84%8F%E9%A1%B5"><span class="nav-number">1.2.</span> <span class="nav-text">如何管理脏页</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%84%8F%E9%A1%B5%E4%BB%80%E4%B9%88%E6%97%B6%E5%80%99%E5%88%B7%E7%9B%98%EF%BC%9F"><span class="nav-number">1.2.1.</span> <span class="nav-text">脏页什么时候刷盘？</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E6%8F%90%E9%AB%98%E7%BC%93%E5%AD%98%E5%91%BD%E4%B8%AD%E7%8E%87%EF%BC%9F"><span class="nav-number">1.3.</span> <span class="nav-text">如何提高缓存命中率？</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%AE%80%E5%8D%95LRU%E9%93%BE%E8%A1%A8"><span class="nav-number">1.3.1.</span> <span class="nav-text">简单LRU链表</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E6%94%B9%E8%BF%9BLRU%E4%BB%A5%E9%81%BF%E5%85%8D%E9%A2%84%E8%AF%BB%E5%A4%B1%E8%B4%A5%E5%92%8CBuffer-Pool%E6%B1%A1%E6%9F%93%E9%97%AE%E9%A2%98"><span class="nav-number">1.3.2.</span> <span class="nav-text">如何改进LRU以避免预读失败和Buffer Pool污染问题</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93%EF%BC%9A"><span class="nav-number">2.</span> <span class="nav-text">总结：</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Wallnut"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">Wallnut</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">47</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">18</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/drinkwateronly" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;drinkwateronly" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://drinkwateronly.github.io/2024/04/b1e0d2d10b11/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Wallnut">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Wallnut">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="MySQL底层原理：chapter7内存篇 | Wallnut">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          MySQL底层原理：chapter7内存篇
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2024-04-02 00:00:00" itemprop="dateCreated datePublished" datetime="2024-04-02T00:00:00+08:00">2024-04-02</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2024-04-22 21:04:48" itemprop="dateModified" datetime="2024-04-22T21:04:48+08:00">2024-04-22</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/MySQL/" itemprop="url" rel="index"><span itemprop="name">MySQL</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/MySQL/%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">底层原理</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h2 id="内存篇——Buffer-Pool"><a href="#内存篇——Buffer-Pool" class="headerlink" title="内存篇——Buffer Pool"></a>内存篇——Buffer Pool</h2><p>Mysql数据存储到磁盘，为了提高查询效率会加个缓存。</p>
+<ul>
+<li><p>Server层：先前Mysql尝试过在在『Server层』设置缓冲，但缓存内容的是为『查询语句』-『查询结果』的键值对，且因命中率低被弃用。</p>
+</li>
+<li><p>存储引擎层缓存：而Buffer Pool是InnoDB在『存储引擎层』设计的缓冲池，是Mysql启动时申请的『连续内存空间』，默认大小为<code>128MB</code>。同样的，Buffer Pool的数据以16KB的『页为单位』进行交互，叫做缓存页。</p>
+<ul>
+<li><p>当读取数据时，如果数据所在页已经在Buffer Pool中，则直接从中读取，否则去硬盘读取。</p>
+</li>
+<li><p>当修改数据时，首先修改Buffer Pool中数据所在页，并将该页标记为『脏页』，最后由后台线程将脏页写入磁盘。</p>
+<blockquote>
+<p>因此在Mysql启动的时候，会发现程序虚拟内存很大，而物理内存空间很小。因为一些页还没命中。</p>
+</blockquote>
+</li>
+</ul>
+</li>
+</ul>
+<p>Buffer Pool包括『索引页、数据页、undo页、插入缓存和自适应哈希索引、锁信息』等。</p>
+<p>为了管理这些缓存页，每个页都有一个『控制块』，存放信息包括『缓存页的表空间、页号、缓存页地址、链表节点』</p>
+<h3 id="如何管理Buffer-Pool"><a href="#如何管理Buffer-Pool" class="headerlink" title="如何管理Buffer Pool"></a>如何管理Buffer Pool</h3><p>为了快速找到『空闲』的缓存页，使用链表结构将『空闲缓存页』的『控制块』作为链表节点，称为『free链表』。</p>
+<p><img src="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/image/freelist.drawio.png" alt="img"></p>
+<p>free链表头部还有一个头节点，包含该链表的头节点地址、尾节点地址以及节点数量。每当需要从磁盘加载一个页到Buffer Pool时，从free链表取出一个控制块，存入对应缓存页并填写控制块信息，最后将该控制块从free链表移除。</p>
+<h3 id="如何管理脏页"><a href="#如何管理脏页" class="headerlink" title="如何管理脏页"></a>如何管理脏页</h3><p>类似空闲页链表的结构，同样有个Flush链表，链表各节点为脏页控制块。每当要将脏页刷到磁盘中时，后台线程从中获取一个控制块，将其对应脏页刷入磁盘，最后将该控制块从flush链表移除。</p>
+<h4 id="脏页什么时候刷盘？"><a href="#脏页什么时候刷盘？" class="headerlink" title="脏页什么时候刷盘？"></a>脏页什么时候刷盘？</h4><p>Mysql采用了Write Ahead Log 策略，即先写日志，再写磁盘，redo log让Mysql拥有崩溃恢复能力。</p>
+<ul>
+<li>redo log满时会触发主动刷盘</li>
+<li>Buffer Pool 淘汰的缓存页如果是脏页，也会触发刷盘</li>
+<li>Mysql认为空闲时，后台线程定期将适量脏页刷盘</li>
+<li>Mysql关闭时，所有脏页刷盘。</li>
+</ul>
+<p>因此，如果偶尔出现一些稍长的SQL，可能是因为脏页刷盘带来的性能抖动，可以通过调大Buffer Pool和redo log日志。</p>
+<h3 id="如何提高缓存命中率？"><a href="#如何提高缓存命中率？" class="headerlink" title="如何提高缓存命中率？"></a>如何提高缓存命中率？</h3><p>缓存空间有限，少访问的页可以根据算法淘汰。</p>
+<h4 id="简单LRU链表"><a href="#简单LRU链表" class="headerlink" title="简单LRU链表"></a>简单LRU链表</h4><p><img src="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/image/lru.png" alt="img"></p>
+<ul>
+<li>当访问的页在Buffer Pool时，该页移到链表头部</li>
+<li>当访问的页不在Buffer Pool时，从磁盘读取该页，将页移到链表头部，并淘汰末尾页。</li>
+</ul>
+<p>该算法在Mysql中没有被采用，因为LRU无法避免如下问题：</p>
+<ul>
+<li><p>预读失败</p>
+<p>Mysql预读机制：Mysql在加载数据页的时候，会将其『相邻的页』加载到内存。</p>
+<p>在LRU中，这些预读的页会放到LRU链表的头部，在Buffer Pool空间不够时，还会挤掉末尾的页。如果这些预读的页一直不被访问，预读白做了，即出现了预读失败。而可能频繁访问的页却被挤掉了。</p>
+</li>
+<li><p>Buffer Pool污染</p>
+<p>当一个SQL语句扫描了大量数据时，若Buffer Pool空间有限，可能会将所有缓存页替换出去，导致大量热数据被淘汰，称为『Buffer Pool污染』。需要区分『扫描大量数据』和『读出大量数据』，因为一些sql语句可能进行的全表扫描，但可能读出少量结果，例如<code>SELECT * FROM t_test WHERE name like &quot;%123&quot;</code>。</p>
+</li>
+</ul>
+<h4 id="如何改进LRU以避免预读失败和Buffer-Pool污染问题"><a href="#如何改进LRU以避免预读失败和Buffer-Pool污染问题" class="headerlink" title="如何改进LRU以避免预读失败和Buffer Pool污染问题"></a>如何改进LRU以避免预读失败和Buffer Pool污染问题</h4><p><img src="/image-20240407205728771.png" alt="image-20240407205728771"></p>
+<p>为了避免『预读失败』，对LRU链表划分为『young区域』和『old区域』，分别在前半段和后半段。</p>
+<ul>
+<li>预读的页放到old区域头部，预读页被淘汰，不影响young区域。</li>
+<li>页真正被访问时才将页插入到young区域头部（再改进后就不是了），当young区域的最后一个被挤出去时，会首先到old区域。</li>
+</ul>
+<p>此时还不足以避免『Buffer Pool污染』，因为当扫描大量数据时，仍然是会访问大量的页，这些缓存页会插入到young头部。因此接下来要提高进入young区域的门槛，即新增一个『停留在old区域的时间判断』</p>
+<ul>
+<li>若『本次old区域缓存页的访问时间』与其『第一次访问时间』在『某时间间隔内』，就不会被插入到young区域头部。</li>
+<li>若『本次old区域缓存页的访问时间』与其『第一次访问时间』不在『某时间间隔内』，该页被插入到young区域头部。</li>
+</ul>
+<p>该时间由默认为1s的<code>innodb_old_blocks_time</code>控制，即同时满足『被访问』与『在old区域停留时间超过1s』这两个条件时，才会被插入到young区域。</p>
+<p>『此外，young区域前1&#x2F;4被访问不会移动到链表头，只有后3&#x2F;4被访问才会，以避免节点频繁移动。』</p>
+<h2 id="总结："><a href="#总结：" class="headerlink" title="总结："></a>总结：</h2><p>Buffer Pool中有三种页和三种链表：</p>
+<ul>
+<li>空闲页：该页未被使用，位于『free链表』。</li>
+<li>干净页：该页被使用，但内容未被修改，位于『LRU链表』。</li>
+<li>脏页：该页被使用且被修改，同时位于『LRU链表』和『Flush链表』。</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/image/202404222102603.png" alt="img"></p>
+<p>注意，链表里存放的都是控制块。</p>
+<p><img src="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/image/202404222102443.png" alt="image-20240407220453796"></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2024/03/ac70036be824/" rel="prev" title="MySQL底层原理：chapter1基础篇">
+                  <i class="fa fa-angle-left"></i> MySQL底层原理：chapter1基础篇
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2024/04/143c09e76597/" rel="next" title="MySQL底层原理：chapter6内存篇">
+                  MySQL底层原理：chapter6内存篇 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2024</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Wallnut</span>
+  </div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  <script src="/js/third-party/pace.js"></script>
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"drinkwateronly/comments","issue_term":"pathname","theme":"github-light"}</script>
+<script src="/js/third-party/comments/utterances.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.0.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/icon32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/icon16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha256-CTSx/A06dm1B063156EVh15m6Y67pAjZZaQc89LLSrU=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"drinkwateronly.github.io","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.18.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="要实现事务必须遵守的四个特性？ 原子性（Atomicity）：一个事务内的操作要么全部完成，要么全部不完成。由undo log保证。 持久性（Durability）：事务处理后，对数据的修改是永久的，不因故障而丢失。由redo log保证。 隔离性（Isolation）：数据库允许同时多个事务修改读写数据，各事务相互不干扰。由 一致性（Consistency）：事务操作前后，数据满足『完整性约束』">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MySQL底层原理：chapter4事务篇">
+<meta property="og:url" content="https://drinkwateronly.github.io/2024/03/4f1acf6d0322/index.html">
+<meta property="og:site_name" content="Wallnut">
+<meta property="og:description" content="要实现事务必须遵守的四个特性？ 原子性（Atomicity）：一个事务内的操作要么全部完成，要么全部不完成。由undo log保证。 持久性（Durability）：事务处理后，对数据的修改是永久的，不因故障而丢失。由redo log保证。 隔离性（Isolation）：数据库允许同时多个事务修改读写数据，各事务相互不干扰。由 一致性（Consistency）：事务操作前后，数据满足『完整性约束』">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/image/202404222105721.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/image/202404222105920.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/image/202404222105740.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/image/202404222105225.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/image/202404222105754.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/image/202404222105033.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/image/202404222106105.png">
+<meta property="article:published_time" content="2024-03-28T16:00:00.000Z">
+<meta property="article:modified_time" content="2024-04-22T13:07:27.917Z">
+<meta property="article:author" content="Wallnut">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/image/202404222105721.png">
+
+
+<link rel="canonical" href="https://drinkwateronly.github.io/2024/03/4f1acf6d0322/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://drinkwateronly.github.io/2024/03/4f1acf6d0322/","path":"2024/03/4f1acf6d0322/","title":"MySQL底层原理：chapter4事务篇"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>MySQL底层原理：chapter4事务篇 | Wallnut</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Wallnut</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A6%81%E5%AE%9E%E7%8E%B0%E4%BA%8B%E5%8A%A1%E5%BF%85%E9%A1%BB%E9%81%B5%E5%AE%88%E7%9A%84%E5%9B%9B%E4%B8%AA%E7%89%B9%E6%80%A7%EF%BC%9F"><span class="nav-number">1.</span> <span class="nav-text">要实现事务必须遵守的四个特性？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B9%B6%E8%A1%8C%E4%BA%8B%E5%8A%A1%E7%9A%84%E5%87%BA%E7%8E%B0%E7%9A%84%E9%97%AE%E9%A2%98%EF%BC%9F"><span class="nav-number">2.</span> <span class="nav-text">并行事务的出现的问题？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B9%B6%E8%A1%8C%E4%BA%8B%E5%8A%A1%E7%9A%84%E9%9A%94%E7%A6%BB%E7%BA%A7%E5%88%AB%E6%9C%89%E5%93%AA%E4%BA%9B%EF%BC%9F"><span class="nav-number">3.</span> <span class="nav-text">并行事务的隔离级别有哪些？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9B%E7%A7%8D%E9%9A%94%E7%A6%BB%E7%BA%A7%E5%88%AB%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%EF%BC%9F"><span class="nav-number">4.</span> <span class="nav-text">四种隔离级别如何实现？</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFMVCC%EF%BC%9F"><span class="nav-number">4.1.</span> <span class="nav-text">什么是MVCC？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%8E%E5%8F%AF%E9%87%8D%E5%A4%8D%E8%AF%BB%E3%80%8F%E5%A6%82%E4%BD%95%E4%BE%9D%E9%9D%A0MVCC%E5%AE%9E%E7%8E%B0%EF%BC%9F"><span class="nav-number">4.2.</span> <span class="nav-text">『可重复读』如何依靠MVCC实现？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%8E%E8%AF%BB%E6%8F%90%E4%BA%A4%E3%80%8F%E5%A6%82%E4%BD%95%E4%BE%9D%E9%9D%A0MVCC%E5%AE%9E%E7%8E%B0%EF%BC%9F"><span class="nav-number">4.3.</span> <span class="nav-text">『读提交』如何依靠MVCC实现？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%8E%E8%AF%BB%E6%9C%AA%E6%8F%90%E4%BA%A4%E3%80%8F%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%EF%BC%9F"><span class="nav-number">4.4.</span> <span class="nav-text">『读未提交』如何实现？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%8E%E4%B8%B2%E8%A1%8C%E5%8C%96%E3%80%8F%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%EF%BC%9F"><span class="nav-number">4.5.</span> <span class="nav-text">『串行化』如何实现？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Mysql%E3%80%8E%E5%8F%AF%E9%87%8D%E5%A4%8D%E8%AF%BB%E3%80%8F%E8%A7%A3%E5%86%B3%E4%BA%86%E5%B9%BB%E8%AF%BB%E9%97%AE%E9%A2%98%E5%90%97"><span class="nav-number">5.</span> <span class="nav-text">Mysql『可重复读』解决了幻读问题吗</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BF%AB%E7%85%A7%E8%AF%BB%E5%A6%82%E4%BD%95%E9%81%BF%E5%85%8D%E5%B9%BB%E8%AF%BB%EF%BC%9F"><span class="nav-number">5.1.</span> <span class="nav-text">快照读如何避免幻读？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BD%93%E5%89%8D%E8%AF%BB%E5%A6%82%E4%BD%95%E9%81%BF%E5%85%8D%E5%B9%BB%E8%AF%BB%EF%BC%9F"><span class="nav-number">5.2.</span> <span class="nav-text">当前读如何避免幻读？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%8E%E5%8F%AF%E9%87%8D%E5%A4%8D%E8%AF%BB%E3%80%8F%E9%9A%94%E7%A6%BB%E7%BA%A7%E5%88%AB%E4%B8%8B%E5%B9%BB%E8%AF%BB%E5%9C%BA%E6%99%AF1%EF%BC%9A"><span class="nav-number">5.3.</span> <span class="nav-text">『可重复读』隔离级别下幻读场景1：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%8E%E5%8F%AF%E9%87%8D%E5%A4%8D%E8%AF%BB%E3%80%8F%E9%9A%94%E7%A6%BB%E7%BA%A7%E5%88%AB%E4%B8%8B%E5%B9%BB%E8%AF%BB%E5%9C%BA%E6%99%AF2%EF%BC%9A"><span class="nav-number">5.4.</span> <span class="nav-text">『可重复读』隔离级别下幻读场景2：</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Wallnut"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">Wallnut</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">47</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">18</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/drinkwateronly" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;drinkwateronly" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://drinkwateronly.github.io/2024/03/4f1acf6d0322/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Wallnut">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Wallnut">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="MySQL底层原理：chapter4事务篇 | Wallnut">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          MySQL底层原理：chapter4事务篇
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2024-03-29 00:00:00" itemprop="dateCreated datePublished" datetime="2024-03-29T00:00:00+08:00">2024-03-29</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2024-04-22 21:07:27" itemprop="dateModified" datetime="2024-04-22T21:07:27+08:00">2024-04-22</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/MySQL/" itemprop="url" rel="index"><span itemprop="name">MySQL</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/MySQL/%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">底层原理</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h2 id="要实现事务必须遵守的四个特性？"><a href="#要实现事务必须遵守的四个特性？" class="headerlink" title="要实现事务必须遵守的四个特性？"></a>要实现事务必须遵守的四个特性？</h2><ul>
+<li>原子性（<strong>Atomicity</strong>）：一个事务内的操作要么全部完成，要么全部不完成。由undo log保证。</li>
+<li>持久性（<strong>Durability</strong>）：事务处理后，对数据的修改是永久的，不因故障而丢失。由redo log保证。</li>
+<li>隔离性（<strong>Isolation</strong>）：数据库允许同时多个事务修改读写数据，各事务相互不干扰。由</li>
+<li>一致性（<strong>Consistency</strong>）：事务操作前后，数据满足『完整性约束』，数据库保持一致性状态。</li>
+</ul>
+<h2 id="并行事务的出现的问题？"><a href="#并行事务的出现的问题？" class="headerlink" title="并行事务的出现的问题？"></a>并行事务的出现的问题？</h2><ul>
+<li>脏读<strong>（dirty read）</strong>：即读到了其他事务未提交的数据</li>
+<li>不可重复度<strong>（non-repeatable read）</strong>：一个事务内对一个事务不修改的数据的多次读取，结果不一样</li>
+<li>幻读<strong>（phantom read）</strong>：一个事务多次读取出的数据数量不一样</li>
+</ul>
+<p>这三种的原因都是因为当前事务在执行时，其他事务对表数据进行修改、增删而被当前事务察觉，</p>
+<h2 id="并行事务的隔离级别有哪些？"><a href="#并行事务的隔离级别有哪些？" class="headerlink" title="并行事务的隔离级别有哪些？"></a>并行事务的隔离级别有哪些？</h2><p>根据事务的并行时出现的脏读、不可重复读、幻读现象，SQL标准提出了4种隔离级别规避。隔离水平从高到低（性能从低到高）排序如下：</p>
+<ul>
+<li><strong>读未提交（read uncommitted）</strong>：事务能够read到其他事务未提交（uncommitted）的数据</li>
+<li><strong>读提交（read committed）</strong>：事务提交后，对数据的变更才能被其他事务看到。</li>
+<li><strong>可重复读（repeatable read）</strong>：事务执行过程中看到的数据一直保持一致。</li>
+<li><strong>串行化（serializable ）</strong>：事务串行进行，由读写锁保证。</li>
+</ul>
+<p>在不同的隔离级别下，可能发生的现象：</p>
+<p><img src="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/image/202404222105721.png" alt="图片"></p>
+<h2 id="四种隔离级别如何实现？"><a href="#四种隔离级别如何实现？" class="headerlink" title="四种隔离级别如何实现？"></a>四种隔离级别如何实现？</h2><ul>
+<li>读未提交：无需实现</li>
+<li>「读未提交」与「读已提交」：Read View实现，可以理解为数据快照，只是快照的时机不同。下一章细说：<ul>
+<li>「读未提交」：每个语句执行前都生成一个Read View</li>
+<li>「读已提交」：启动事务时，整个事务用该Read View</li>
+</ul>
+</li>
+<li>串行化：读写锁</li>
+</ul>
+<p>MVCC和Read View息息相关：</p>
+<h3 id="什么是MVCC？"><a href="#什么是MVCC？" class="headerlink" title="什么是MVCC？"></a>什么是MVCC？</h3><p>首先，对于InnoDB存储引擎的数据表，一条记录有如下隐藏列</p>
+<ul>
+<li><code>trx_id</code>：一个事务对某条『聚簇索引』记录改动时，该列记录该事务的id</li>
+<li><code>roll_pointer</code>：每次对某条『聚簇索引』记录改动时，把旧版本写入undo日志，该列为指向旧版本的指针。</li>
+</ul>
+<p>随后，ReadView有四个重要字段</p>
+<ul>
+<li><code>create_trx_id</code>：创建该ReadView的事务的id</li>
+<li><code>m_ids</code>：创建该ReadView时，当前『活跃且未提交』的事务id列表。</li>
+<li><code>min_trx_id</code>：创建该ReadView时，当前『活跃且未提交』的事务中最小的事务id。</li>
+<li><code>min_trx_id</code>：创建该ReadView时，当前全局最大的活跃事务id+1，即数据库应该给分配下一个事务的id值。</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/image/202404222105920.png" alt="img"></p>
+<p>由此可见，当一个事务访问记录时，有如下情况：</p>
+<ul>
+<li>如果该记录的<code>trix_id</code>小于当前Read View的<code>min_trix_id</code>，则表示这个版本的记录属于『已提交事务』，对当前事务『可见』。</li>
+<li>如果该记录的<code>trix_id</code>大于当前Read View的<code>max_trix_id</code>，则表示这个版本的记录属于『未开启的事务』，对当前事务『可见』。</li>
+<li>如果该记录的<code>trix_id</code>在<code>min_trix_id</code>和<code>max_trix_id</code>之间，则要判断<code>trix_id</code>是否在<code>m_ids</code>列表中。<ul>
+<li>如果在，则表明生成该版本记录的事务仍然活跃，即未提交，因此对当前事务『不可见』</li>
+<li>如果不在，则表明生成该版本记录的事务已经被提交，因此对当前事务『可见』</li>
+</ul>
+</li>
+</ul>
+<p>这种通过『版本链』控制并发事务访问同一个记录的行为叫MVCC（多版本并发控制）。</p>
+<h3 id="『可重复读』如何依靠MVCC实现？"><a href="#『可重复读』如何依靠MVCC实现？" class="headerlink" title="『可重复读』如何依靠MVCC实现？"></a>『可重复读』如何依靠MVCC实现？</h3><p>『可重复读』的隔离级别是在事务『启动时』生成一个Read View，『整个事务期间』使用该Read View。</p>
+<p>假设启动了id为51的事务A时，仅有A事务；随后启动了id为52的事务B。两个事务都对同一条数据进行读写。在『可重复读』的隔离级别下，这两个事务创建的Read View字段为：</p>
+<img src="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/image/202404222105740.png" alt="img" style="zoom:50%;" />
+
+<p>并且有下述流程</p>
+<ol>
+<li><p>事务B对读取id&#x3D;1的记录，假设读取了balance &#x3D; 1000000</p>
+<ul>
+<li>这是因为id&#x3D;1的记录中<code>trx_id(50) &lt; B事务的min_trx_id(51)</code>，因此该记录对事务B『可见』</li>
+</ul>
+</li>
+<li><p>事务A修改该记录，修改为balance &#x3D; 2000000，但『不提交事务』</p>
+<ul>
+<li><p>这是因为id&#x3D;1的记录中<code>trx_id(50) &lt; A事务的min_trx_id(51)</code>，因此该记录对事务A『可见』</p>
+</li>
+<li><p>修改后，id&#x3D;1的记录的<code>trx_id</code>修改为51，其<code>roll_pointer</code>指向了修改前的<code>trx_id=50</code>的记录</p>
+<img src="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/image/202404222105225.png" alt="image-20240407115038407" style="zoom:50%;" /></li>
+</ul>
+</li>
+<li><p>事务B再读取id&#x3D;1的记录，读到的仍然是balance &#x3D; 1000000</p>
+<ul>
+<li>此时id&#x3D;1的记录中<code>trx_id(51) &gt;= B事务的min_trx_id(51)</code>，因此<code>trix_id(51)</code>在B事务MVCC的<code>min_trix_id(51)</code>和<code>max_trix_id(52)</code>之间，则要判断<code>trix_id</code>是否在<code>m_ids</code>列表中。</li>
+<li>由于在<code>trix_id(51)</code>在<code>m_ids([51, 52])</code>，因此该记录对事务B『不可见』</li>
+<li>事务B将通过沿着<code>roll_pointer</code>指向的undo log版本链，向下找到第一条<code>trx_id</code>满足是的事务B『可见』的记录。因此找到了<code>balance=100000</code>的记录，实现了『可重复读』。</li>
+</ul>
+</li>
+<li><p>事务A『提交事务』</p>
+</li>
+<li><p>事务B再读取id&#x3D;1的记录，读到的仍然是balance &#x3D; 1000000</p>
+<ul>
+<li>此时读取时的Read View仍然是是3.时读取时相同Read View，即使A提交了事务，但该记录对于当前Read View仍然不可见。</li>
+</ul>
+</li>
+</ol>
+<p>因此，在『可重复读』的隔离级别下，一个事务只能读到事务启动前的记录。</p>
+<h3 id="『读提交』如何依靠MVCC实现？"><a href="#『读提交』如何依靠MVCC实现？" class="headerlink" title="『读提交』如何依靠MVCC实现？"></a>『读提交』如何依靠MVCC实现？</h3><p>『读提交』的隔离级别是『每次读取数据时』生成一个Read View。</p>
+<ul>
+<li><p>事务B对读取id&#x3D;1的记录，『生成一个Read View』，读取到了balance &#x3D; 1000000</p>
+<ul>
+<li>因为id&#x3D;1的记录中<code>trx_id(50) &lt; 当前Read View的min_trx_id(51)</code>，因此该记录对事务B『可见』</li>
+</ul>
+</li>
+<li><p>事务A修改该记录，修改为balance &#x3D; 2000000，『但不提交事务』</p>
+<ul>
+<li><p>因为id&#x3D;1的记录中<code>trx_id(50) &lt; 当前Read View的min_trx_id(51)</code>，因此该记录对事务A『可见』</p>
+</li>
+<li><p>修改后，id&#x3D;1的记录的<code>trx_id</code>修改为51，其<code>roll_pointer</code>指向了修改前的<code>trx_id=50</code>的记录</p>
+<img src="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/image/202404222105754.png" alt="image-20240407115038407" style="zoom:50%;" /></li>
+</ul>
+</li>
+<li><p>事务B再读取id&#x3D;1的记录，『生成一个Read View』，读到的仍然是balance &#x3D; 1000000。</p>
+<ul>
+<li>此时id&#x3D;1的记录中<code>trx_id(51) = B事务的min_trx_id(51)</code>，因此<code>trix_id(51)</code>在B事务MVCC的<code>min_trix_id(51)</code>和<code>max_trix_id(52)</code>之间，则要判断<code>trix_id</code>是否在<code>m_ids</code>列表中。</li>
+<li>由于在<code>trix_id(51)</code>在<code>m_ids([51, 52])</code>，因此该记录对事务B『不可见』</li>
+<li>事务B将通过沿着<code>roll_pointer</code>指向的undo log版本链，向下找到第一条<code>trx_id</code>满足是的事务B『可见』的记录。因此找到了<code>balance=100000</code>的记录。</li>
+</ul>
+</li>
+<li><p>事务A『提交事务』</p>
+</li>
+<li><p>事务B再读取id&#x3D;1的记录，『生成一个Read View』，读到不再是balance&#x3D;1000000，而是balance &#x3D; 2000000。</p>
+<ul>
+<li>由于id为52的事务A已经提交事务，此时生成的Read View中<code>min_trx_id=52</code>，因此该记录对事务B『可见』</li>
+</ul>
+</li>
+</ul>
+<p>因此，每次读数据都会生成一个Read View实现的『读提交』的隔离级别下，一个事务能够读到其他事务提交的数据。</p>
+<h3 id="『读未提交』如何实现？"><a href="#『读未提交』如何实现？" class="headerlink" title="『读未提交』如何实现？"></a>『读未提交』如何实现？</h3><p>事务的并发天然就是读未提交，不需要实现。</p>
+<h3 id="『串行化』如何实现？"><a href="#『串行化』如何实现？" class="headerlink" title="『串行化』如何实现？"></a>『串行化』如何实现？</h3><p>每次读写都加锁</p>
+<h2 id="Mysql『可重复读』解决了幻读问题吗"><a href="#Mysql『可重复读』解决了幻读问题吗" class="headerlink" title="Mysql『可重复读』解决了幻读问题吗"></a>Mysql『可重复读』解决了幻读问题吗</h2><p>幻读：一个事务的同一个查询在不同时间产生了不同的结果集（数量上的不同），其直接没有执行其他任何语句。</p>
+<p>上述的MVCC实现的『可重复读』能够很大程度地避免幻读，但不能完全解决幻读。</p>
+<p><strong>首先要理解『快照读』和『当前读』的区别，mysql中除了普通查询Select是『快照读』，其他都是『当前读』。</strong></p>
+<h3 id="快照读如何避免幻读？"><a href="#快照读如何避免幻读？" class="headerlink" title="快照读如何避免幻读？"></a>快照读如何避免幻读？</h3><p>就是MVCC中的Read View，查询会利用该Read View在undo log版本链中找到第一条可见的数据，因此事务执行过程中查询的数据是一样的。因此快照读通过MVCC能够很大程度避免幻读。</p>
+<h3 id="当前读如何避免幻读？"><a href="#当前读如何避免幻读？" class="headerlink" title="当前读如何避免幻读？"></a>当前读如何避免幻读？</h3><p>『当前读』即读取的记录是数据库最新的记录。当前读的语句有<code>UPDATE</code>，<code>INSERT</code>，<code>DELETE</code>，因为这些操作都需要直到最新的数据，否则可能会与其他事务操作产生冲突。例如，如果这些操作是快照读，事务A已经删除某条数据并提交，另一个事务又更新该数据时没有意义。</p>
+<p>此外，特殊的<code>SELECT ... FOR UPDATE</code>是当前读，每次执行都获取最新的数据。</p>
+<p>『当前读』使用『间隙锁』在『可重复读』隔离级别避免幻读</p>
+<p><img src="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/image/202404222105033.png" alt="img"></p>
+<ul>
+<li>事务A执行了语句后，加上id范围为<code>(2, +∞]</code>的next-key lock (即记录锁+间隙锁的组合)。</li>
+<li>在事务B执行插入语句时，发现插入位置加入了next-key lock，因此事务B生成一个插入意向锁，阻塞等待A提交事务，避免因为B插入新记录而导致事务A幻读。</li>
+</ul>
+<h3 id="『可重复读』隔离级别下幻读场景1："><a href="#『可重复读』隔离级别下幻读场景1：" class="headerlink" title="『可重复读』隔离级别下幻读场景1："></a>『可重复读』隔离级别下幻读场景1：</h3><p><img src="https://raw.githubusercontent.com/drinkwateronly/Image-Host/main/image/202404222106105.png" alt="img"></p>
+<ul>
+<li>事务A『查询』一条<code>id=5</code>的不存在的记录，没有查询出来。</li>
+<li>事务B随后『插入』一条<code>id=5</code>的不存在的记录，并『提交事务』。</li>
+<li>事务A『更新』<code>id=5</code>的记录，虽然事务A由于MVCC的原因无法通过普通的<code>SELECT</code>查询记录，但是能更新该记录，因为<code>UPDATE</code>操作是『当前读』。</li>
+<li>事务A『查询』一条<code>id=5</code>的不存在的记录，可以查询出来。</li>
+</ul>
+<p>数据从0到有，即幻读现象。</p>
+<h3 id="『可重复读』隔离级别下幻读场景2："><a href="#『可重复读』隔离级别下幻读场景2：" class="headerlink" title="『可重复读』隔离级别下幻读场景2："></a>『可重复读』隔离级别下幻读场景2：</h3><ul>
+<li>事务 A 先执行「快照读语句」：<code>select * from t_test where id &gt; 100</code> 得到了 3 条记录。</li>
+<li>事务 B 往插入一个 <code>id= 200</code> 的记录并提交；</li>
+<li>事务 A 再执行「当前读语句」<code> select * from t_test where id &gt; 100 for update</code> 就会得到 4 条记录，此时也发生了幻读现象。</li>
+</ul>
+<p>为了避免这种幻读情况，尽量在开启事务之后，马上执行 select … for update 这类当前读的语句。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2024/03/da5aedcdcc5e/" rel="prev" title="MySQL底层原理：chapter5锁篇">
+                  <i class="fa fa-angle-left"></i> MySQL底层原理：chapter5锁篇
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2024/03/da64fbc5e739/" rel="next" title="MySQL底层原理：chapter3 索引篇之1">
+                  MySQL底层原理：chapter3 索引篇之1 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2024</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Wallnut</span>
+  </div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  <script src="/js/third-party/pace.js"></script>
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"drinkwateronly/comments","issue_term":"pathname","theme":"github-light"}</script>
+<script src="/js/third-party/comments/utterances.js"></script>
+
+</body>
+</html>
